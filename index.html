@@ -64,7 +64,7 @@ header{display:flex;justify-content:space-between;align-items:center}
 #fauto{font:inherit;font-size:14px;padding:10px 4px;border-radius:10px;border:1px solid #4a4e59;background:#1d2027;color:var(--ink)}
 #skills{flex-wrap:wrap}#skills button{flex:1 1 28%}
 #tv{overflow:auto;height:calc(100vh - 230px);border:1px solid #2a2d35;border-radius:10px;touch-action:pan-x pan-y}
-#ti{min-height:64px;margin:6px 0;font-size:14px}
+#tree{z-index:9}.nd{display:flex;flex-direction:column;align-items:center;justify-content:center}.nd span{font-size:8px;line-height:1;text-align:center;max-width:100%;overflow:hidden}.nd .ic{display:block;position:relative;width:24px;height:22px;font-size:15px;line-height:22px;text-align:center;flex:none}.nd .ic img{width:100%;height:100%;object-fit:contain}.tbig{float:left;width:48px;height:48px;margin-right:8px}.tbig .ic{display:block;position:relative;width:48px;height:48px;font-size:32px;line-height:48px;text-align:center}#ti{min-height:64px;margin:6px 0;font-size:14px}
 .pg .nd{position:absolute;width:58px;height:46px;margin:0;padding:2px;font-size:10px;line-height:1.1;border-radius:50%;background:#1d2027;border:2px solid #3a3d46;color:var(--ink);overflow:hidden}
 .pg .nd.a{border-radius:8px}.pg .nd.own{background:#7a5a1a;border-color:#e0a63a}.pg .nd.av{border-color:#9fd36a}.pg .nd.sel{outline:2px solid #fff}
 #chr{background:radial-gradient(120% 70% at 50% 0%,#2b2115,#0e0b08)}
@@ -827,15 +827,17 @@ const SKL=()=>(S.p.lo||[]).map(id=>TN[id]).filter(Boolean);
 function initTree(p){const c={uczony:'i',silacz:'s',atleta:'z'}[p.cls];p.tr=['o',c+'1',c+'2','w1','w2'];p.lo=[c+'2','w2'];p.ps=p.lvl-1}
 function effTx(n){if(n.t==='p')return Object.entries(n.e).map(([k,v])=>'+'+v+' '+LB[k]).join(', ')||'Środek drzewka';const e=n.e;return `${{p:'Atak fizyczny',m:'Zaklęcie',h:'Leczenie',b:'Wzmocnienie ataku',s:'Tarcza',r:'Krwawienie (obrażenia w czasie)',d:'Trucizna (obrażenia w czasie)',w:'Osłabienie wroga',u:'Przywołaniec'}[e.t]} · ${e.c} ${e.r==='mana'?'many':'staminy'} · CD ${e.cd}s · ×${e.m}${e.t==='h'||e.t==='s'?'% HP':''}`}
 let TSEL=null;
+const PSI={sil:'💪',zre:'🌀',int:'🧠',wit:'❤️',def:'🛡️',atkp:'⚔️',hpp:'💖',crit:'🎯',ls:'🩸',dod:'💨',stap:'🔋',manap:'🔷',spp:'✨'};
+const tIc=id=>{const n=TN[id];return icon('',`assets/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):(PSI[Object.keys(n.e||{})[0]]||'⭐'))};
 function showTree(){
   const p=S.p,old=$('tv'),sl=old?[old.scrollLeft,old.scrollTop]:[Math.max(0,TP.o.x*TZ-innerWidth/2),0],own=id=>p.tr.includes(id),av=id=>!own(id)&&TN[id].par.some(own);
   let ln='',nd='',mx=0;
   Object.keys(TN).forEach(id=>{const n=TN[id],a=TP[id];mx=Math.max(mx,a.y);
     n.par.forEach(q=>{const b=TP[q];ln+=`<line x1="${b.x}" y1="${b.y+23}" x2="${a.x}" y2="${a.y+23}" stroke="${own(id)&&own(q)?'#e0a63a':'#444'}" stroke-width="3"/>`});
-    nd+=`<button class="nd${n.t==='a'?' a':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}" data-n="${id}" style="left:${a.x-29}px;top:${a.y}px">${n.n}</button>`});
+    nd+=`<button class="nd${n.t==='a'?' a':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}" data-n="${id}" style="left:${a.x-29}px;top:${a.y}px">${id==='o'?'':tIc(id)}<span>${n.n}</span></button>`});
   const n=TSEL&&TN[TSEL],lo=p.lo.includes(TSEL);
   $('tree').innerHTML=`<button data-a="tx">Zamknij</button> <button data-a="rs">Reset drzewka (${20*p.lvl} zł)</button> <button data-a="zm">−</button><button data-a="zp">+</button><p>Wolne punkty: <b>${p.ps}</b> · pasek walki: ${p.lo.map(i=>TN[i].n).join(', ')||'—'}</p>
-  <div id="ti">${n?`<b>${n.n}</b> — ${effTx(n)}<br>${own(TSEL)?(n.t==='a'?`<button data-a="lo">${lo?'Zdejmij z paska':'Dodaj do paska (max 4)'}</button>`:'Odblokowane'):av(TSEL)?`<button data-a="un"${p.ps?'':' disabled'}>Odblokuj (1 pkt)</button>`:'Najpierw odblokuj sąsiedni węzeł'}`:'Tap w węzeł, żeby zobaczyć opis. Okrągłe: pasywki, kwadratowe: umiejętności aktywne.'}</div>
+  <div id="ti">${n?`<span class="tbig">${tIc(TSEL)}</span><b>${n.n}</b> — ${effTx(n)}<br>${own(TSEL)?(n.t==='a'?`<button data-a="lo">${lo?'Zdejmij z paska':'Dodaj do paska (max 4)'}</button>`:'Odblokowane'):av(TSEL)?`<button data-a="un"${p.ps?'':' disabled'}>Odblokuj (1 pkt)</button>`:'Najpierw odblokuj sąsiedni węzeł'}`:'Tap w węzeł, żeby zobaczyć opis. Okrągłe: pasywki, kwadratowe: umiejętności aktywne.'}</div>
   <div id="tv"><div style="position:relative;zoom:${TZ};width:${TW}px;height:${mx+90}px"><svg width="${TW}" height="${mx+90}" style="position:absolute;inset:0">${ln}</svg>${nd}</div></div>`;
   $('tree').classList.add('on');const t=$('tv');t.scrollLeft=sl[0];t.scrollTop=sl[1];
 }
