@@ -86,7 +86,7 @@ header{display:flex;justify-content:space-between;align-items:center}
 .em{aspect-ratio:1;border:1px dashed #3a3226;border-radius:10px}
 #idet{position:fixed;left:0;right:0;bottom:0;z-index:7;background:#1b150d;border-top:2px solid #b58b3c;padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 12px);font-size:14px;box-shadow:0 -8px 20px #000a}
 #idet b{font-size:17px}#idet small{display:block;opacity:.7;margin:2px 0 6px}#idet .row{display:flex;gap:8px;margin-top:8px}#idet .row button{flex:1;padding:10px}
-#hero{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:64px;height:104px;z-index:90;pointer-events:none;filter:drop-shadow(0 3px 3px #000a)}
+#hero{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:72px;height:116px;z-index:90;pointer-events:none;filter:drop-shadow(0 3px 3px #000a)}
 #fe{position:relative;flex-direction:column;justify-content:space-around}#fhero{width:68px;height:110px;filter:drop-shadow(0 3px 3px #000a)}
 .hrow{display:flex;gap:12px;align-items:center;margin:6px 0}.hv{width:100px;height:162px;flex:none}.hb{flex:1}
 .tl .sb{position:absolute;top:0;left:4px;font-size:13px}
@@ -126,7 +126,7 @@ body.noan *{animation:none!important}
 .hw{position:relative;display:block;width:100%;height:100%}
 .hw svg{position:absolute;inset:0;width:100%;height:100%}
 .himg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;z-index:1}
-.hw svg.ov{z-index:2}.hw:not(.hi) svg.ov{display:none}.hw.hi svg:not(.ov) .bd,.hw.hi svg:not(.ov) .wp{display:none}.hw svg.ov .bd,.hw svg.ov .au{display:none}
+.hwp{display:none;position:absolute;z-index:3;width:62%;height:62%;right:-30%;bottom:20%;object-fit:contain;transform:rotate(12deg);filter:drop-shadow(0 2px 2px #000a)}.hw.hi .hwp{display:block}.hw svg.ov{display:none}.hw:not(.hi) svg.ov{display:none}.hw.hi svg:not(.ov) .bd,.hw.hi svg:not(.ov) .wp{display:none}.hw svg.ov .bd,.hw svg.ov .au{display:none}
 .foe{width:92px}.foe .ic{height:74px}#poi .ic{height:96px}.obj .ic{height:78px}#fico .ic{width:190px;height:190px}
 </style>
 </head>
@@ -502,7 +502,7 @@ function heroSvg(){
   '</g>'+W(on('bron0'),0)+(on('bron0')&&on('bron0').two?'':W(on('bron1'),-30))+`</svg>`;
 }
 const heroLook=()=>{const k=(S.p.eq||{}).klata,t=k&&k.d>0?k.tier:-1;return t<0?0:t<3?1:t<6?2:3};
-function heroHtml(){return `<span class="hw">${heroSvg()}<img class="himg" src="assets/h_${S.p.cls}_${heroLook()}.png" alt="" onload="this.parentNode.classList.add('hi')" onerror="this.remove()">${heroSvg().replace('<svg','<svg class=\"ov\"')}</span>`}
+function heroHtml(){return `<span class="hw">${heroSvg()}<img class="himg" src="assets/h_${S.p.cls}_${heroLook()}.png" alt="" onload="this.parentNode.classList.add('hi')" onerror="this.remove()">${(()=>{const w=(S.p.eq||{}).bron0;return w&&w.d>0?`<img class="hwp" src="${iip(w)}" alt="" onerror="this.remove()">`:''})()}</span>`}
 function equip(id){
   const p=S.p,it=p.bag.find(o=>o.id===id);if(!it)return;let sl=it.t;
   const put=o=>{if(o)p.bag.push(o)};p.bag=p.bag.filter(o=>o!==it);
