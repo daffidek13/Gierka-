@@ -16,6 +16,7 @@ header{display:flex;justify-content:space-between;align-items:center}
 #loc span{font-size:13px;opacity:.7}
 #mini{display:grid;grid-template-columns:repeat(5,17px);gap:1px;padding:5px;background:radial-gradient(circle at 50% 40%,#1a1c22,#08090b);border:2px solid #6a5a34;border-radius:12px;box-shadow:0 0 0 1px #000,0 2px 10px #000a,inset 0 0 8px #000;flex:none}
 #mini i{width:17px;height:17px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-style:normal;line-height:1;position:relative;overflow:hidden}
+#mini.d7{grid-template-columns:repeat(7,14px);gap:2px}#mini.d7 i{width:14px;height:14px;font-size:8px;border-radius:2px}
 #mini i.fg{filter:saturate(.5) brightness(.55)}
 #mini i.me{outline:2px solid var(--amber);outline-offset:-1px;z-index:2;box-shadow:0 0 8px var(--amber)}
 #mini i.me::after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff,0 0 0 2px #e0a63a;animation:mpulse 1.4s ease-in-out infinite}
@@ -112,15 +113,15 @@ header{align-items:flex-start;gap:10px}
 .em{aspect-ratio:1;border:1px dashed #3a3226;border-radius:10px}
 #idet{position:fixed;left:0;right:0;bottom:0;z-index:7;background:#1b150d;border-top:2px solid #b58b3c;padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 12px);font-size:14px;box-shadow:0 -8px 20px #000a}
 #idet b{font-size:17px}#idet small{display:block;opacity:.7;margin:2px 0 6px}#idet .row{display:flex;gap:8px;margin-top:8px}#idet .row button{flex:1;padding:10px}
-#hero{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:80px;height:128px;z-index:90;pointer-events:none;filter:drop-shadow(0 3px 3px #000a)}
-#fe{position:relative;flex-direction:column;justify-content:space-around}#fhero{width:84px;height:134px;filter:drop-shadow(0 3px 3px #000a)}
+#hero{position:absolute;left:50%;transform:translateX(-50%);bottom:2px;width:150px;height:240px;z-index:90;pointer-events:none;filter:drop-shadow(0 3px 3px #000a)}
+#fe{position:relative;flex-direction:column;justify-content:space-around}#fhero{width:120px;height:192px;filter:drop-shadow(0 3px 3px #000a)}
 .hrow{display:flex;gap:12px;align-items:center;margin:6px 0}.hv{width:100px;height:162px;flex:none}.hb{flex:1}
 .tl .sb{position:absolute;top:0;left:4px;font-size:13px}
 .wl{position:absolute;pointer-events:none;z-index:1}
 .obj{position:absolute;pointer-events:auto;width:90px;transform:translate(-50%,-85%);padding:0;border:0;background:none;color:inherit;font:inherit;text-align:center;z-index:50}
 .obj .ic{font-size:44px;display:block;position:relative;height:56px;filter:drop-shadow(0 3px 2px #0008)}
 .obj small{display:block;font-size:12px;margin-top:4px;text-shadow:0 1px 2px #000}
-#fx{position:fixed;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;background:#000c;border-radius:10px;padding:3px 10px;font-size:12px;white-space:nowrap;display:none}
+#fx{position:fixed;top:calc(env(safe-area-inset-top,0px) + 84px);left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;background:#000c;border-radius:10px;padding:3px 10px;font-size:12px;white-space:nowrap;display:none}
 #pots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 #pots button{font:inherit;font-size:13px;padding:6px 8px;border-radius:10px;border:1px solid #4a4e59;background:#1d2027;color:var(--ink)}
 #hint .pb{margin-top:6px}
@@ -158,6 +159,59 @@ body.noan *{animation:none!important}
 .hau{position:absolute;left:5%;right:5%;bottom:-2%;height:12%;z-index:0;opacity:.9}
 .hw svg.ov{display:none}.hw:not(.hi) .hau{display:none}.hw.hi svg:not(.ov){display:none}
 .foe{width:92px}.foe .ic{height:74px}#poi .ic{height:96px}.obj .ic{height:78px}#fico .ic{width:190px;height:190px}
+
+/* ===== UI v2: pełnoekranowe tło, UI jako nakładki ===== */
+#app{position:relative;padding:0;gap:0}
+#field{position:absolute;inset:0;border-radius:0}
+#view{padding:0}
+#view::after{content:"";position:absolute;inset:0;z-index:60;pointer-events:none;background:linear-gradient(#000b,#0000 24%,#0000 58%,#000d)}
+header{position:absolute;left:0;right:0;top:0;z-index:2;padding:calc(env(safe-area-inset-top,0px) + 14px) 12px 0;pointer-events:none}
+header #mini{pointer-events:auto}
+#loc{max-width:58%}
+#hud{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 70px);width:56%;z-index:2;pointer-events:none;gap:3px}
+#hud .r:first-child{flex-direction:column;gap:3px}
+#hud .b{flex:none;height:14px;border-radius:7px;background:#000a;border-color:#fff3}
+#hud .b span{font-size:10.5px;justify-content:flex-start;padding-left:7px}
+#hud .r:nth-child(2){display:contents}
+#hud .xp{position:fixed;left:0;right:0;top:0;height:4px;border:0;border-radius:0;background:#0008}
+#hud .xp span{display:none}
+#hud .g{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 116px);height:22px;padding:0 10px;border-radius:12px;background:#000a}
+#mini{background:#000a;border-color:#6a5a34;backdrop-filter:blur(3px)}
+#hero{bottom:calc(env(safe-area-inset-bottom,0px) + 96px);width:170px;height:272px}
+#foes{z-index:80}
+#hint{position:absolute;left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 100px);z-index:2;font-size:0;width:44px}
+#hint .pb{display:flex;flex-direction:column;gap:8px;margin:0}
+#hint button{width:42px;height:42px;padding:0;margin:0;border-radius:50%;font-size:12px;background:#000a;border:2px solid #6a5a34;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;white-space:nowrap}
+#dock{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:2;display:flex;gap:9px;padding:7px 12px;background:#000b;border:1px solid #6a5a34;border-radius:30px;backdrop-filter:blur(4px)}
+#dock button{width:46px;height:46px;border-radius:50%;padding:0;font-size:21px;background:radial-gradient(#4a3c22,#1a140a);border:2px solid #8a7440;color:var(--ink)}
+#toast{bottom:calc(env(safe-area-inset-bottom,0px) + 84px)}
+/* walka */
+#fight{padding:0;gap:0;background:#000}
+#fe{position:absolute;inset:0;border-radius:0;flex:none}
+#fe::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(#000b,#0000 24%,#0000 52%,#000e)}
+#fcnt{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 26px);z-index:5;text-shadow:0 2px 4px #000}
+#fight .bar.e{position:absolute;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:6;height:12px;border-radius:7px;border:1px solid #fff3}
+#fight .bar.e span{font-size:10px;line-height:12px}
+#fe{align-items:center}
+#fico{position:absolute;left:calc(50% - 85px);top:15%;width:170px;height:170px}
+#fico .ic{width:170px;height:170px;line-height:170px}
+#fhero{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 190px);transform:translateX(-50%);width:130px;height:208px}
+#flog{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:5;text-shadow:0 1px 3px #000;pointer-events:none}
+#fight>.bar.h,#fight>.bar.m,#fight>.bar.s{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 148px);height:13px;z-index:6;border:1px solid #fff3;border-radius:7px}
+#fight>.bar span{font-size:10px;line-height:13px}
+#fight>.bar.h{left:12px;width:35%}#fight>.bar.m{left:calc(12px + 35% + 5px);width:calc(32% - 5px)}#fight>.bar.s{right:12px;width:calc(33% - 12px)}
+#pots{position:absolute;left:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 176px);z-index:6;flex-direction:column;gap:6px;justify-content:flex-start;flex-wrap:nowrap}
+#pots button{width:40px;height:40px;padding:0;border-radius:50%;background:#000a;border:2px solid #6a5a34;font-size:15px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center}#pots button small{font-size:10px}
+#skills{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:6;flex-wrap:nowrap;justify-content:center;gap:12px;align-items:flex-start}
+#skills button{flex:none;width:68px;padding:0;background:none;border:0;overflow:visible;display:flex;flex-direction:column;align-items:center}
+#skills .ik{display:block;position:relative;width:62px;height:62px;border-radius:50%;border:3px solid #c9a24a;background:radial-gradient(#3a2e18,#120d06);box-shadow:0 0 12px #000;overflow:hidden;font-size:24px;line-height:56px}
+#skills .ik .ic{height:100%;width:100%;font-size:26px;line-height:56px}
+#skills .ik i{position:absolute;left:0;right:0;top:0;background:#000b;height:0;z-index:3}
+#skills em{font-style:normal;font-size:10.5px;margin-top:4px;text-shadow:0 1px 2px #000;line-height:1.1;max-width:70px;height:23px;overflow:hidden}
+#skills small{font-size:10px;color:#9fd0ff}
+#skills .emp{opacity:.5}#skills .emp .ik{border-style:dashed;border-color:#6a5a34;color:#8a7440}
+#fauto,#flee{position:absolute;z-index:7;right:10px;font-size:12px;padding:5px 10px;border-radius:14px;background:#000a;border:1px solid #6a5a34;color:var(--ink)}
+#flee{top:calc(env(safe-area-inset-top,0px) + 62px)}#fauto{top:calc(env(safe-area-inset-top,0px) + 94px)}
 </style>
 </head>
 <body>
@@ -169,7 +223,7 @@ body.noan *{animation:none!important}
   <div id="hud"></div>
   <main id="field"><div id="view"><div id="poi"></div><div id="foes"></div><div id="wx"></div><div id="hero"></div></div></main>
   <div id="hint">Przesuń palcem, żeby przejść na sąsiednie pole</div>
-<div style="display:flex;gap:8px"><button id="chb" style="flex:1">Postać i plecak</button><button id="cdb" aria-label="Księga">📖</button><button id="opb" aria-label="Opcje">⚙</button></div></div>
+<div id="dock"><button id="chb" aria-label="Postać i plecak">🎒</button><button id="tbt" aria-label="Drzewko">🌳</button><button id="mpb" aria-label="Mapa">🗺️</button><button id="cdb" aria-label="Księga">📖</button><button id="opb" aria-label="Opcje">⚙️</button></div></div>
 <div id="fight"><div id="fcnt"></div><div class="bar e"><u id="ebar"></u><span id="etxt"></span></div><div id="fe"><span id="fico"></span><div id="fhero"></div></div><div id="flog"></div>
 <div class="bar h"><u id="hbar"></u><span id="htxt"></span></div><div class="bar m"><u id="mbar"></u><span id="mtxt"></span></div><div class="bar s"><u id="sbar"></u><span id="stxt"></span></div>
 <div id="pots"></div><div id="skills"></div><button id="fauto">Autoclick</button><button id="flee">Uciekaj</button></div>
@@ -308,8 +362,9 @@ function render(dx=0,dy=0,pp=0){
   $('hint').innerHTML=(S.loc?'Przesuń palcem, żeby chodzić po lochu':'Przesuń palcem, żeby przejść na sąsiednie pole')+potBtns();
   // minimapa 5x5
   let m='';
-  for(let j=-2;j<=2;j++)for(let i=-2;i<=2;i++){const me=i===0&&j===0;
-    if(S.loc){const L=S.loc,c=LC(L,L.x+i,L.y+j),sn=L.vis[L.fl+':'+(L.x+i)+','+(L.y+j)]||me,near=Math.abs(i)+Math.abs(j)<=1;
+  const D7=!!S.loc;$('mini').className=D7?'d7':'';
+  for(let j=D7?-S.loc.y:-2;j<=(D7?6-S.loc.y:2);j++)for(let i=D7?-S.loc.x:-2;i<=(D7?6-S.loc.x:2);i++){const me=i===0&&j===0;
+    if(S.loc){const L=S.loc,c=LC(L,L.x+i,L.y+j),sn=L.vis[L.fl+':'+(L.x+i)+','+(L.y+j)]||me,near=Math.abs(i)+Math.abs(j)<=2;
       if(!c){m+=`<i style="background:#0d0e11"></i>`;continue}
       const ic=sn||near?(c.exit?'🚪':c.up?'⬆️':c.down?'⬇️':c.big?'🎁':c.chest?'📦':c.trap&&sn?'⚠️':c.foes&&c.foes.length?'<b style="width:5px;height:5px;border-radius:50%;background:#d9604c;display:block"></b>':''):'';
       m+=`<i class="${me?'me':''}${sn?'':' fg'}" style="background:${sn?'#a99d82':'#7a7160'}">${me?'':ic}</i>`;continue}
@@ -325,7 +380,7 @@ let tt;function toast(s,ms){const e=$('toast');e.textContent=s;e.classList.add('
 
 function hudUi(){const p=S.p;if(!p||!$('hud'))return;const pc=(a,b)=>Math.max(0,Math.min(100,a/b*100)).toFixed(1),xn=xpn(p.lvl);
   $('hud').innerHTML=`<div class="r"><div class="b hp"><u style="width:${pc(p.hp,mh())}%"></u><span>❤ ${Math.ceil(p.hp)}/${mh()}</span></div><div class="b mp"><u style="width:${pc(p.mana,mm())}%"></u><span>✦ ${Math.floor(p.mana)}/${mm()}</span></div><div class="b sp"><u style="width:${pc(p.sta,sm())}%"></u><span>⚡ ${Math.floor(p.sta)}/${sm()}</span></div></div>
-  <div class="r"><div class="b xp"><u style="width:${pc(p.xp,xn)}%"></u><span>Poz. ${p.lvl} · ${p.xp}/${xn} XP</span></div><div class="g">🪙 ${p.gold}</div></div>`}
+  <div class="r"><div class="b xp"><u style="width:${pc(p.xp,xn)}%"></u><span>Poz. ${p.lvl} · ${p.xp}/${xn} XP</span></div><div class="g">Poz. ${p.lvl} · 🪙 ${p.gold}</div></div>`}
 setInterval(()=>{if(!F&&S.p)hudUi()},800);
 function heroAnim(k,dx){if(!AN())return;const h=document.querySelector((F?'#fhero':'#hero')+' .hw');if(!h)return;
   if(k==='walk')h.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${(dx||0)*5}px,-9px) rotate(${(dx||0)*4}deg)`,offset:.35},{transform:'translate(0,0) rotate(0)'},{transform:'translate(0,-4px)',offset:.7},{transform:'none'}],{duration:340,easing:'ease-out'});
@@ -552,7 +607,7 @@ const HIMG={},HCACHE={};
 function hLoad(list){return new Promise(res=>{const t=list.slice();const nx=()=>{if(!t.length)return res(null);const u=t.shift();if(HIMG[u]!==undefined){if(HIMG[u])return res(HIMG[u]);return nx()}const im=new Image();im.onload=()=>{HIMG[u]=im;res(im)};im.onerror=()=>{HIMG[u]=null;nx()};im.src=u};nx()})}
 function hPieces(){const e=S.p.eq||{},c=S.p.cls,L=[];for(const k of HORD){const it=e[k];if(it&&it.d>0)L.push([k,`l_${c}_${HLS[k]}_${it.ac||'plyta'}`])}const w=e.bron0;if(w&&w.d>0)L.push(['bron0',`l_${c}_w_${wkey(w)}`]);return L}
 function heroSig(){return S.p.cls+'|'+hPieces().map(p=>p[1]).join(',')}
-async function heroCompose(sig){const c=S.p.cls,W=360,H=560,out=document.createElement('canvas');out.width=W;out.height=H;const o=out.getContext('2d');
+async function heroCompose(sig){const c=S.p.cls,W=320,H=512,out=document.createElement('canvas');out.width=W;out.height=H;const o=out.getContext('2d');o.translate(-20,-40);
   const bn=`b_${c}`,bi=await hLoad([`assets/${bn}.png`]);if(!bi||!HMAN[bn])return null;o.drawImage(bi,HMAN[bn][0],HMAN[bn][1]);
   for(const[,n]of hPieces()){const m=HMAN[n];if(!m)continue;const xn='x_'+n.slice(2);
     if(HMAN[xn]){const xi=await hLoad([`assets/${xn}.png`]);if(xi){o.globalCompositeOperation='destination-out';o.drawImage(xi,HMAN[xn][0],HMAN[xn][1]);o.globalCompositeOperation='source-over'}}
@@ -639,7 +694,7 @@ function showChar(){
   <div style="height:${it?230:20}px"></div>${det}`;
   $('chr').classList.add('on');
 }
-$('chb').onclick=()=>{if(!F&&S.p.cls)showChar()};
+$('chb').onclick=()=>{if(!F&&S.p.cls)showChar()};$('tbt').onclick=()=>{if(!F&&S.p.cls)showTree()};$('mpb').onclick=openMap;
 $('chr').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p;
   if(b.id==='cx'){SEL=null;$('chr').classList.remove('on');render();if(S.loot)showLoot();return}
   if(a&&a.startsWith('at')&&p.pw){p.pw--;const k=a.slice(2);if(k==='wit')p.wit++;else p.b[k]++}
@@ -792,7 +847,7 @@ function fxUi(){const a=EF.map(e=>`${pI(e.k)} ${POT[e.k][2]} ${Math.ceil(e.t)}s`
 setInterval(()=>{const p=S.p;if(!p.cls)return;let end=false;
   for(let i=EF.length-1;i>=0;i--){const e=EF[i],a=e.tot*.1/e.d;if(e.type==='hp')p.hp=Math.min(mh(),p.hp+a);else if(e.type==='mana')p.mana=Math.min(mm(),p.mana+a);else p.sta=Math.min(sm(),p.sta+a);e.t-=.1;if(e.t<=0){EF.splice(i,1);end=true}}
   fxUi();if(F){upd()}else if(end||(EF.length&&++fxn%10===0))render()},100);
-function renderPots(){const p=S.p.pot||{};$('pots').innerHTML=Object.keys(POT).filter(k=>p[k]>0).map(k=>`<button data-p="${k}">${pI(k)} ${POT[k][2]} ×${p[k]}</button>`).join('')}
+function renderPots(){const p=S.p.pot||{};$('pots').innerHTML=Object.keys(POT).filter(k=>p[k]>0).map(k=>`<button data-p="${k}">${pI(k)}<small>×${p[k]}</small></button>`).join('')}
 $('pots').onclick=e=>{const b=e.target.closest('button');if(b&&F)usePot(b.dataset.p)};
 function spawnWd(f){ // wędrujące potwory pojawiają się na pustych polach
   const k=f.x+','+f.y;S.wd=S.wd||{};const w=S.wd[k];
@@ -808,14 +863,14 @@ let F=null;
 const alive=()=>Math.ceil(F.hp/F.hpu);
 function bar(id,v,max,t){$(id+'bar').style.width=Math.max(0,Math.min(100,v/max*100))+'%';$(id+'txt').textContent=t}
 function upd(){const p=S.p;bar('e',F.hp,F.hpu*F.g.n,Math.ceil(F.hp)+' HP');bar('h',p.hp,mh(),`HP ${Math.ceil(p.hp)}/${mh()}`);bar('m',p.mana,mm(),`Mana ${Math.floor(p.mana)}/${mm()}`);bar('s',p.sta,sm(),`Stamina ${Math.floor(p.sta)}/${sm()}`);
-  $('fcnt').textContent=`${E[F.g.key][0]} ×${alive()}`;document.querySelectorAll('#skills button').forEach((b,j)=>b.lastChild.style.height=F.cd[j]/F.sl[j].e.cd*100+'%')}
+  $('fcnt').textContent=`${E[F.g.key][0]} ×${alive()}`;document.querySelectorAll('#skills button').forEach((b,j)=>{const i=b.querySelector('i');if(i&&F.sl[j])i.style.height=F.cd[j]/F.sl[j].e.cd*100+'%'})}
 function startFight(i,amb){
   if(F||!S.p.cls)return;const f=cur(),g=f.foes[i];if(!g||isDead(f,i))return;
   const m=1+Math.hypot(S.x,S.y)/25+(S.map||0)*.8,st0=ST[g.key],hpu=Math.round(st0[0]*m);
   F={f,i,g,hpu,hp:hpu*g.n,dmg:st0[1]*m*(!S.loc&&tod()==='noc'?1.15:1),xp:st0[2]*(!S.loc&&tod()==='noc'?1.2:1),t0:Date.now(),t:0,hits:0,cd:SKL().map(()=>0),sl:SKL(),amb};if(has('tarcza'))F.sh=Math.round(mh()*.15);
   $('fe').style.background=`url(assets/t_${S.loc?S.loc.k:f.t}.jpg) center/cover,linear-gradient(160deg,${T[f.t].c},${T[f.t].c2})`;
   $('fico').innerHTML=icon('',`assets/e_${g.key}.png`,E[g.key][1]);
-  $('skills').innerHTML=F.sl.map((k,j)=>`<button data-j="${j}">${icon('',`assets/s_${k.id}.png`,SKI[k.e.t]||'✨')}${k.n}<br><small>${k.e.c} ${k.e.r==='mana'?'many':'staminy'}</small><i></i></button>`).join('');
+  $('skills').innerHTML=[0,1,2,3].map(j=>{const k=F.sl[j];return k?`<button data-j="${j}"><span class="ik">${icon('',`assets/s_${k.id}.png`,SKI[k.e.t]||'✨')}<i></i></span><em>${k.n}</em><small>${k.e.c}${k.e.r==='mana'?'✦':'⚡'}</small></button>`:`<button data-j="${j}" class="emp"><span class="ik">＋</span><em>Wolny slot</em><small>&nbsp;</small></button>`}).join('');
   $('flog').textContent=amb?`${E[g.key][0]} atakuje!`:'Walka!';
   $('fhero').innerHTML=heroHtml();autoUi();renderPots();$('fight').classList.add('on');F.iv=setInterval(tick,100);upd();fightIntro(g,amb);
 }
@@ -855,7 +910,7 @@ function hit(d){if(!F)return;const t=st();let cr=false;
   if(AN()){const dir=Math.random()<.5?-1:1;$('fico').animate([{transform:`translateX(${dir*(cr?18:8)}px) scale(${cr?1.14:1.05})`,filter:'brightness(2.2)'},{transform:'none',filter:'none'}],{duration:cr?240:150});if(cr){shake($('fight'),7,260);const[bx,by]=ctr($('fico'));burst(bx,by,['✨','💥'],6,70)}}F.hp-=d;if(F.hp<=0)win();else upd()}
 $('fe').addEventListener('pointerdown',()=>{if(!F)return;heroAnim('atk');$('fico').animate([{transform:'scale(.9)'},{transform:'none'}],{duration:90});hit(Math.round(atk()*(F.buff>0?F.bm:1)))});
 $('skills').addEventListener('click',e=>{
-  const b=e.target.closest('button');if(!b||!F)return;const j=+b.dataset.j,k=F.sl[j].e,p=S.p,r=k.r;
+  const b=e.target.closest('button');if(!b||!F)return;const j=+b.dataset.j;if(!F.sl[j]){toast('Wolny slot: przypisz umiejętność w drzewku');return}const k=F.sl[j].e,p=S.p,r=k.r;
   if(F.cd[j]>0)return;if(p[r]<k.c){toast('Za mało '+(r==='mana'?'many':'staminy'));return}
   p[r]-=k.c;F.cd[j]=k.cd;sfx.skill();skillFx(F.sl[j],k);
   if(k.t==='h'){p.hp=Math.min(mh(),p.hp+Math.round(mh()*k.m/100)+sp())}
