@@ -518,21 +518,24 @@ function heroSvg(){
 }
 // ---- Postać: składana z pasów gotowych obrazów (głowa/tors/ramiona/rękawice/nogi/buty) ----
 const HSL=['helm','klata','spodnie','buty','rekawice','naramienniki'];
-const HZ={ // [y0,y1,x0,x1] w % kadru 320x512
-  spodnie:[50,88,0,100],klata:[22,52,0,100],buty:[86,100,0,100],naramienniki:[23,36,0,100],rekawice:[48,66,0,100],helm:[0,24,0,100]},HORD=['spodnie','klata','buty','naramienniki','rekawice','helm'];
+const HZ={ // [y0,y1,[[x0,x1],...]] w % kadru 320x512
+  spodnie:[50,88,[[0,100]]],klata:[22,52,[[0,100]]],buty:[86,100,[[0,100]]],naramienniki:[23,38,[[0,33],[67,100]]],rekawice:[48,68,[[0,34],[66,100]]],helm:[0,24,[[0,100]]]},HORD=['spodnie','klata','buty','naramienniki','rekawice','helm'];
 const HIMG={},HCACHE={};
 const hLvl=t=>t<3?1:t<6?2:3;
-function hSrcs(c,it){if(!it||!(it.d>0))return[`assets/h_${c}_0.png`];const a=it.ac||'plyta',l=hLvl(it.tier||0);return[`assets/h_${c}_${a}_${l}.png`,`assets/h_${c}_${l}.png`,`assets/h_${c}_0.png`]}
+function hDom(){const e=S.p.eq||{},w=HSL.map(k=>e[k]).filter(i=>i&&i.d>0);if(!w.length)return null;const c={};w.forEach(i=>{const a=i.ac||'plyta';c[a]=(c[a]||0)+1});const k=e.klata&&e.klata.d>0?(e.klata.ac||'plyta'):'';return Object.keys(c).sort((a,b)=>c[b]-c[a]||(a===k?-1:b===k?1:0))[0]}
+function hSrcs(c,it,dom){if(!dom)return[`assets/h_${c}_0.png`];if(!it||!(it.d>0))return[`assets/h_${c}_${dom}_0.png`,`assets/h_${c}_0.png`];const l=hLvl(it.tier||0);return[`assets/h_${c}_${dom}_${l}.png`,`assets/h_${c}_${l}.png`,`assets/h_${c}_0.png`]}
 function hLoad(list){return new Promise(res=>{const t=list.slice();const nx=()=>{if(!t.length)return res(null);const u=t.shift();if(HIMG[u]!==undefined){if(HIMG[u])return res(HIMG[u]);return nx()}const im=new Image();im.onload=()=>{HIMG[u]=im;res(im)};im.onerror=()=>{HIMG[u]=null;nx()};im.src=u};nx()})}
-function heroSig(){const e=S.p.eq||{};return S.p.cls+'|'+HSL.map(k=>{const it=e[k];return it&&it.d>0?(it.ac||'p')+hLvl(it.tier||0):'0'}).join('')}
+function heroSig(){const e=S.p.eq||{};return S.p.cls+'|'+(hDom()||'-')+HSL.map(k=>{const it=e[k];return it&&it.d>0?hLvl(it.tier||0):'0'}).join('')}
 async function heroCompose(sig){const c=S.p.cls,e=S.p.eq||{},W=320,H=512,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
-  const base=await hLoad([`assets/h_${c}_0.png`]);if(!base)return null;
-  const don={};for(const k of HSL)don[k]=await hLoad(hSrcs(c,e[k]));
+  const dom=hDom(),base=await hLoad(hSrcs(c,null,dom));if(!base)return null;
+  const don={};for(const k of HSL)don[k]=await hLoad(hSrcs(c,e[k],dom));
   const uniq=new Set(HSL.map(k=>don[k]&&don[k].src));
   if(uniq.size<=1&&don.klata){x.drawImage(don.klata,0,0,W,H);return cv.toDataURL()}
   x.drawImage(base,0,0,W,H);
-  for(const k of HORD){const im=don[k];if(!im)continue;const[y0,y1,x0,x1]=HZ[k],t=document.createElement('canvas');t.width=W;t.height=H;const g=t.getContext('2d');g.drawImage(im,0,0,W,H);
-    g.globalCompositeOperation='destination-in';if('filter' in g)g.filter='blur(5px)';g.fillStyle='#fff';g.fillRect(W*x0/100,H*y0/100+4,W*(x1-x0)/100,H*(y1-y0)/100-8);x.drawImage(t,0,0)}
+  for(const k of HORD){const im=don[k];if(!im)continue;const[y0,y1,xs]=HZ[k],t=document.createElement('canvas');t.width=W;t.height=H;const g=t.getContext('2d'),m=document.createElement('canvas');m.width=W;m.height=H;const q=m.getContext('2d');
+    if('filter' in q)q.filter='blur(5px)';q.fillStyle='#fff';for(const[a,b]of xs)q.fillRect(W*a/100+(a?3:-10),H*y0/100+(y0?4:-10),W*(b-a)/100-(a?3:0)-(b<100?3:-10),H*(y1-y0)/100-(y0?4:0)-(y1<100?4:-10));
+    g.drawImage(im,0,0,W,H);g.globalCompositeOperation='destination-in';g.drawImage(m,0,0);
+    x.globalCompositeOperation='destination-out';x.drawImage(m,0,0);x.globalCompositeOperation='source-over';x.drawImage(t,0,0)}
   return cv.toDataURL()}
 function heroHtml(){const e=S.p.eq||{},sc=setCnt(),top=Object.keys(sc).sort((a,b)=>sc[b]-sc[a])[0],sig=heroSig(),url=HCACHE[sig],
   w=e.bron0,W=w&&w.d>0?`<img class="pl pl-bron" src="${iip(w)}" alt="" style="z-index:9${w.r>=2?`;filter:drop-shadow(0 0 ${w.r}px ${RC[w.r]})`:''}" onerror="this.remove()">`:'';
