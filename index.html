@@ -64,10 +64,23 @@ header{display:flex;justify-content:space-between;align-items:center}
 #fauto{font:inherit;font-size:14px;padding:10px 4px;border-radius:10px;border:1px solid #4a4e59;background:#1d2027;color:var(--ink)}
 #skills{flex-wrap:wrap}#skills button{flex:1 1 28%}
 #tv{overflow:auto;height:calc(100vh - 230px);border:1px solid #2a2d35;border-radius:10px;touch-action:pan-x pan-y}
-#tree{z-index:9}.nd{display:flex;flex-direction:column;align-items:center;justify-content:center}.nd span{font-size:8px;line-height:1;text-align:center;max-width:100%;overflow:hidden}.nd .ic{display:block;position:relative;width:24px;height:22px;font-size:15px;line-height:22px;text-align:center;flex:none}.nd .ic img{width:100%;height:100%;object-fit:contain}.tbig{float:left;width:48px;height:48px;margin-right:8px}.tbig .ic{display:block;position:relative;width:48px;height:48px;font-size:32px;line-height:48px;text-align:center}#ti{min-height:64px;margin:6px 0;font-size:14px}
-.pg .nd{position:absolute;width:58px;height:46px;margin:0;padding:2px;font-size:10px;line-height:1.1;border-radius:50%;background:#1d2027;border:2px solid #3a3d46;color:var(--ink);overflow:hidden}
-.pg .nd.a{border-radius:8px}.pg .nd.own{background:#7a5a1a;border-color:#e0a63a}.pg .nd.av{border-color:#9fd36a}.pg .nd.sel{outline:2px solid #fff}
-#chr{background:radial-gradient(120% 70% at 50% 0%,#2b2115,#0e0b08)}
+#tree{z-index:9}
+.nd,#tree .nd{position:absolute;width:80px;margin:0;padding:0;background:none!important;border:0!important;box-shadow:none!important;min-height:0;border-radius:0!important;display:flex;flex-direction:column;align-items:center;color:var(--ink)}
+.ndc{display:block;position:relative;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2b303b,#12141a);border:3px solid #3a3e49;box-shadow:inset 0 0 8px #000c;overflow:hidden}
+.nd.a .ndc{border-radius:15px}
+.nd .ic{display:block;position:relative;width:100%;height:100%;font-size:26px;line-height:50px;text-align:center;filter:none;animation:none}
+.nd .ej{font-size:26px;line-height:50px;display:block}.nd .ic img{width:100%;height:100%;object-fit:contain;padding:2px}
+.nd em{font-style:normal;display:block;line-height:50px;text-align:center;font-size:28px;color:#f0b84a}
+.nd span{font-size:10px;line-height:1.05;text-align:center;margin-top:3px;width:80px;height:21px;overflow:hidden;color:#8d919c;text-shadow:0 1px 2px #000}
+.nd:not(.own):not(.av) .ic{filter:grayscale(.7) brightness(.75)}
+.nd.av .ndc{border-color:var(--bc);box-shadow:0 0 0 2px #8ccf6a55,0 0 12px #8ccf6a;animation:ndp 1.6s ease-in-out infinite}
+.nd.av span{color:#cfe8bd}
+.nd.own .ndc{border-color:#f0b84a;background:radial-gradient(circle at 35% 30%,#5b4420,#241a0c);box-shadow:0 0 14px #f0b84acc,inset 0 0 8px #000a}
+.nd.own span{color:#f6dca0}
+.nd.sel .ndc{outline:3px solid #fff;outline-offset:2px}
+@keyframes ndp{50%{box-shadow:0 0 0 3px #8ccf6a33,0 0 20px #8ccf6a}}
+#tv{background:radial-gradient(90% 40% at 50% 0%,#2b2415,transparent),radial-gradient(60% 50% at 15% 80%,#1c1a2e66,transparent),#0d0e12}.tbig{float:left;width:48px;height:48px;margin-right:8px}.tbig .ic{display:block;position:relative;width:48px;height:48px;font-size:32px;line-height:48px;text-align:center}#ti{min-height:64px;margin:6px 0;font-size:14px}
+.pg .pg .pg .pg .pg #chr{background:radial-gradient(120% 70% at 50% 0%,#2b2115,#0e0b08)}
 #chr h3{color:#d9b26a;font-weight:normal;letter-spacing:.5px;border-bottom:1px solid #5a4630;padding-bottom:4px;margin:18px 0 8px}
 .ttl{margin:12px 0 8px;font-size:22px;color:#f0dcae;font-weight:normal}
 .hd{display:flex;gap:8px;justify-content:space-between}
@@ -818,9 +831,9 @@ const dep=id=>TD[id]??(TD[id]=TN[id].par.length?1+Math.max(...TN[id].par.map(dep
 (function(){const BX={s:-390,z:-130,i:130,w:390},rows={};
   Object.keys(TN).forEach(id=>{(rows[dep(id)]=rows[dep(id)]||[]).push(id)});
   Object.keys(rows).sort((a,b)=>a-b).forEach(d=>{const ids=rows[d];
-    ids.forEach(id=>{const n=TN[id];TP[id]={x:!n.par.length?0:n.par[0]==='o'?BX[id[0]]:n.par.reduce((a,q)=>a+TP[q].x,0)/n.par.length,y:10+d*80}});
+    ids.forEach(id=>{const n=TN[id];TP[id]={x:!n.par.length?0:n.par[0]==='o'?BX[id[0]]:n.par.reduce((a,q)=>a+TP[q].x,0)/n.par.length,y:14+d*104}});
     ids.sort((a,b)=>TP[a].x-TP[b].x);
-    for(let k=0;k<60;k++)for(let i=0;i<ids.length-1;i++){const A=TP[ids[i]],B=TP[ids[i+1]],g=66-(B.x-A.x);if(g>0){A.x-=g/2;B.x+=g/2}}});
+    for(let k=0;k<60;k++)for(let i=0;i<ids.length-1;i++){const A=TP[ids[i]],B=TP[ids[i+1]],g=80-(B.x-A.x);if(g>0){A.x-=g/2;B.x+=g/2}}});
   const xs=Object.values(TP).map(p=>p.x),mn=Math.min(...xs);Object.values(TP).forEach(p=>p.x+=40-mn);TW=Math.max(...xs)-mn+100;
 })();
 const SKL=()=>(S.p.lo||[]).map(id=>TN[id]).filter(Boolean);
@@ -831,10 +844,11 @@ const PSI={sil:'💪',zre:'🌀',int:'🧠',wit:'❤️',def:'🛡️',atkp:'⚔
 const tIc=id=>{const n=TN[id];return icon('',`assets/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):(PSI[Object.keys(n.e||{})[0]]||'⭐'))};
 function showTree(){
   const p=S.p,old=$('tv'),sl=old?[old.scrollLeft,old.scrollTop]:[Math.max(0,TP.o.x*TZ-innerWidth/2),0],own=id=>p.tr.includes(id),av=id=>!own(id)&&TN[id].par.some(own);
-  let ln='',nd='',mx=0;
+  let ln='',nd='',mx=0;const BC={s:'#d2573d',z:'#4fb36e',i:'#4f8fe6',w:'#e0709f',h:'#e0b04a',o:'#e0b04a'};
   Object.keys(TN).forEach(id=>{const n=TN[id],a=TP[id];mx=Math.max(mx,a.y);
-    n.par.forEach(q=>{const b=TP[q];ln+=`<line x1="${b.x}" y1="${b.y+23}" x2="${a.x}" y2="${a.y+23}" stroke="${own(id)&&own(q)?'#e0a63a':'#444'}" stroke-width="3"/>`});
-    nd+=`<button class="nd${n.t==='a'?' a':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}" data-n="${id}" style="left:${a.x-29}px;top:${a.y}px">${id==='o'?'':tIc(id)}<span>${n.n}</span></button>`});
+    n.par.forEach(q=>{const b=TP[q],on=own(id)&&own(q),ok=own(q)&&av(id),m=(b.y+56+a.y)/2;
+      ln+=`<path d="M${b.x} ${b.y+28}C${b.x} ${m},${a.x} ${m},${a.x} ${a.y+28}" fill="none" stroke="${on?'#f0b84a':ok?'#8ccf6a':'#2f333d'}" stroke-width="${on?5:3.5}" stroke-linecap="round"${on?' style="filter:drop-shadow(0 0 4px #f0b84a)"':''}/>`});
+    nd+=`<button class="nd${n.t==='a'?' a':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}" data-n="${id}" style="left:${a.x-40}px;top:${a.y}px;--bc:${BC[id[0]]||'#aaa'}"><b class="ndc">${id==='o'?'<em>★</em>':tIc(id)}</b><span>${n.n}</span></button>`});
   const n=TSEL&&TN[TSEL],lo=p.lo.includes(TSEL);
   $('tree').innerHTML=`<button data-a="tx">Zamknij</button> <button data-a="rs">Reset drzewka (${20*p.lvl} zł)</button> <button data-a="zm">−</button><button data-a="zp">+</button><p>Wolne punkty: <b>${p.ps}</b> · pasek walki: ${p.lo.map(i=>TN[i].n).join(', ')||'—'}</p>
   <div id="ti">${n?`<span class="tbig">${tIc(TSEL)}</span><b>${n.n}</b> — ${effTx(n)}<br>${own(TSEL)?(n.t==='a'?`<button data-a="lo">${lo?'Zdejmij z paska':'Dodaj do paska (max 4)'}</button>`:'Odblokowane'):av(TSEL)?`<button data-a="un"${p.ps?'':' disabled'}>Odblokuj (1 pkt)</button>`:'Najpierw odblokuj sąsiedni węzeł'}`:'Tap w węzeł, żeby zobaczyć opis. Okrągłe: pasywki, kwadratowe: umiejętności aktywne.'}</div>
