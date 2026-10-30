@@ -89,7 +89,7 @@ header{align-items:flex-start;gap:10px}
 .nd.av span{color:#cfe8bd}
 .nd.own .ndc{border-color:#f0b84a;background:radial-gradient(circle at 35% 30%,#5b4420,#241a0c);box-shadow:0 0 14px #f0b84acc,inset 0 0 8px #000a}
 .nd.own span{color:#f6dca0}
-.nd.sel .ndc{outline:3px solid #fff;outline-offset:2px}
+.nd.sel .ndc{outline:3px solid #fff;outline-offset:2px}.nd.dm{opacity:.45}.nd.sel,.nd:not(.dm){transition:opacity .15s}
 @keyframes ndp{50%{box-shadow:0 0 0 3px #8ccf6a33,0 0 20px #8ccf6a}}
 #tv{background:radial-gradient(90% 40% at 50% 0%,#2b2415,transparent),radial-gradient(60% 50% at 15% 80%,#1c1a2e66,transparent),#0d0e12}.tbig{float:left;width:48px;height:48px;margin-right:8px}.tbig .ic{display:block;position:relative;width:48px;height:48px;font-size:32px;line-height:48px;text-align:center}#ti{min-height:64px;margin:6px 0;font-size:14px}
 .pg .pg .pg .pg .pg #chr{background:radial-gradient(120% 70% at 50% 0%,#2b2115,#0e0b08)}
@@ -1156,15 +1156,18 @@ const TR=[
 ['hx1','Zapis combo','h1','p',{},{f:'combo',ic:'🎼',d:'Combo umiejętności zadają dodatkowe +25%.'}],
 ['hx2','Mistrz żywiołów','h3','p',{spp:6,crit:3}]];
 const TN={};TR.forEach(r=>TN[r[0]]={id:r[0],n:r[1],par:r[2]?r[2].split(','):[],t:r[3],e:r[4],x:r[5]||null});
-const TD={},TP={};let TW=0,TZ=.8;
+const TD={},TP={};let TW=0,TH=0,TZ=.7;
 const dep=id=>TD[id]??(TD[id]=TN[id].par.length?1+Math.max(...TN[id].par.map(dep)):0);
-(function(){const BX={s:-390,z:-130,i:130,w:390},rows={};
-  Object.keys(TN).forEach(id=>{(rows[dep(id)]=rows[dep(id)]||[]).push(id)});
+const TRAD=d=>d?84+(d-1)*88:0,TBR={z:-135,i:-45,s:45,w:135},TBN={s:'SIŁA',z:'ZWINNOŚĆ',i:'UMYSŁ',w:'ŻYCIE'};
+(function(){const rows={};let mxd=0;
+  Object.keys(TN).forEach(id=>{const d=dep(id);mxd=Math.max(mxd,d);(rows[d]=rows[d]||[]).push(id)});
+  const rad=a=>a*Math.PI/180,avg=ids=>{let sx=0,sy=0;ids.forEach(q=>{sx+=Math.sin(rad(TP[q].th));sy+=Math.cos(rad(TP[q].th))});return Math.atan2(sx,sy)*180/Math.PI};
   Object.keys(rows).sort((a,b)=>a-b).forEach(d=>{const ids=rows[d];
-    ids.forEach(id=>{const n=TN[id];TP[id]={x:!n.par.length?0:n.par[0]==='o'?BX[id[0]]:n.par.reduce((a,q)=>a+TP[q].x,0)/n.par.length,y:14+d*104}});
-    ids.sort((a,b)=>TP[a].x-TP[b].x);
-    for(let k=0;k<60;k++)for(let i=0;i<ids.length-1;i++){const A=TP[ids[i]],B=TP[ids[i+1]],g=80-(B.x-A.x);if(g>0){A.x-=g/2;B.x+=g/2}}});
-  const xs=Object.values(TP).map(p=>p.x),mn=Math.min(...xs);Object.values(TP).forEach(p=>p.x+=40-mn);TW=Math.max(...xs)-mn+100;
+    ids.forEach(id=>{const n=TN[id];TP[id]={th:!n.par.length?0:n.par[0]==='o'?TBR[id[0]]:avg(n.par),r:TRAD(+d)}});
+    if(+d>0){ids.sort((a,b)=>TP[a].th-TP[b].th);const g=Math.max(7,78/TRAD(+d)*180/Math.PI);
+      for(let k=0;k<120;k++)for(let i=0;i<ids.length-1;i++){const A=TP[ids[i]],B=TP[ids[i+1]],e=g-(B.th-A.th);if(e>0){A.th-=e/2;B.th+=e/2}}}});
+  const R=TRAD(mxd)+80;TW=TH=R*2;
+  Object.values(TP).forEach(p=>{p.cx=R+p.r*Math.sin(rad(p.th));p.cy=R-p.r*Math.cos(rad(p.th));p.x=p.cx;p.y=p.cy-28});
 })();
 const SKL=()=>(S.p.lo||[]).map(id=>TN[id]).filter(Boolean);
 function initTree(p){const c={uczony:'i',silacz:'s',atleta:'z'}[p.cls];p.tr=['o',c+'1',c+'2','w1','w2'];p.lo=[c+'2','w2'];p.ps=p.lvl-1}
@@ -1174,22 +1177,28 @@ const PSI={sil:'💪',zre:'🌀',int:'🧠',wit:'❤️',def:'🛡️',atkp:'⚔
 const tIc=id=>{const n=TN[id];return icon('',`assets/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):((n.x&&n.x.ic)||PSI[Object.keys(n.e||{})[0]]||'⭐'))};
 const cflOf=id=>{const x=TN[id].x;return x&&x.ex?Object.values(TN).find(q=>q.id!==id&&q.x&&q.x.ex===x.ex&&S.p.tr.includes(q.id)):null};
 function showTree(){
-  const p=S.p,old=$('tv'),sl=old?[old.scrollLeft,old.scrollTop]:[Math.max(0,TP.o.x*TZ-innerWidth/2),0],own=id=>p.tr.includes(id),av=id=>!own(id)&&TN[id].par.some(own);
-  let ln='',nd='',mx=0;const BC={s:'#d2573d',z:'#4fb36e',i:'#4f8fe6',w:'#e0709f',h:'#e0b04a',o:'#e0b04a'};
-  Object.keys(TN).forEach(id=>{const n=TN[id],a=TP[id];mx=Math.max(mx,a.y);
-    n.par.forEach(q=>{const b=TP[q],on=own(id)&&own(q),ok=own(q)&&av(id),m=(b.y+56+a.y)/2;
-      ln+=`<path d="M${b.x} ${b.y+28}C${b.x} ${m},${a.x} ${m},${a.x} ${a.y+28}" fill="none" stroke="${on?'#f0b84a':ok?'#8ccf6a':'#2f333d'}" stroke-width="${on?5:3.5}" stroke-linecap="round"${on?' style="filter:drop-shadow(0 0 4px #f0b84a)"':''}/>`});
-    nd+=`<button class="nd${n.t==='a'?' a':''}${n.x&&(n.x.f||n.x.ar||n.x.wp||n.x.ex)?' kx':''}${!own(id)&&cflOf(id)?' bl':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}" data-n="${id}" style="left:${a.x-40}px;top:${a.y}px;--bc:${BC[id[0]]||'#aaa'}"><b class="ndc">${id==='o'?'<em>★</em>':tIc(id)}</b><span>${n.n}</span></button>`});
+  const p=S.p,old=$('tv'),sl=old?[old.scrollLeft,old.scrollTop]:[Math.max(0,TP.o.cx*TZ-innerWidth/2),Math.max(0,TP.o.cy*TZ-(innerHeight-230)/2)],own=id=>p.tr.includes(id),av=id=>!own(id)&&TN[id].par.some(own);
+  let ln='',nd='';const BC={s:'#d2573d',z:'#4fb36e',i:'#4f8fe6',w:'#e0709f',h:'#e0b04a',o:'#e0b04a'};
+  const anc=new Set(),kids=new Set(),W=TW/2;if(TSEL&&TN[TSEL]){const up=q=>{if(anc.has(q))return;anc.add(q);TN[q].par.forEach(up)};up(TSEL);Object.values(TN).forEach(q=>{if(q.par.includes(TSEL))kids.add(q.id)})}
+  const pth=(b,a,c)=>{let d='';for(let k=0;k<=8;k++){const t=k/8,r=b.r+(a.r-b.r)*t,th=(b.th+(a.th-b.th)*t)*Math.PI/180;d+=(k?'L':'M')+(W+r*Math.sin(th)).toFixed(1)+' '+(W-r*Math.cos(th)).toFixed(1)}return d};
+  let bg='';for(let d=1;TRAD(d)<W-60;d++)bg+=`<circle cx="${W}" cy="${W}" r="${TRAD(d)}" fill="none" stroke="#1d2027" stroke-width="2"/>`;
+  [0,90,180,270].forEach(a=>{const t=a*Math.PI/180;bg+=`<line x1="${W}" y1="${W}" x2="${W+(W-40)*Math.sin(t)}" y2="${W-(W-40)*Math.cos(t)}" stroke="#1d2027" stroke-width="2" stroke-dasharray="4 8"/>`});
+  Object.keys(TBR).forEach(k=>{const t=TBR[k]*Math.PI/180;bg+=`<text x="${W+(W-90)*Math.sin(t)}" y="${W-(W-90)*Math.cos(t)}" fill="${BC[k]}" opacity=".5" font-size="22" font-weight="bold" text-anchor="middle" letter-spacing="3">${TBN[k]}</text>`});
+  Object.keys(TN).forEach(id=>{const n=TN[id],a=TP[id];
+    n.par.forEach(q=>{const b=TP[q],on=own(id)&&own(q),ok=own(q)&&av(id),hp=TSEL&&anc.has(id)&&anc.has(q),hk=TSEL&&(q===TSEL&&kids.has(id)),dim=TSEL&&!hp&&!hk;
+      ln+=`<path d="${pth(b,a)}" fill="none" stroke="${hp?'#7fd8ff':hk?'#cfe8bd':on?'#f0b84a':ok?'#8ccf6a':'#2f333d'}" stroke-width="${hp?7:on?5:3.5}" stroke-linecap="round" stroke-linejoin="round"${hk?' stroke-dasharray="3 8"':''} opacity="${dim?.35:1}"${on||hp?` style="filter:drop-shadow(0 0 5px ${hp?'#7fd8ff':'#f0b84a'})"`:''}/>`});
+    nd+=`<button class="nd${n.t==='a'?' a':''}${n.x&&(n.x.f||n.x.ar||n.x.wp||n.x.ex)?' kx':''}${!own(id)&&cflOf(id)?' bl':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}${TSEL&&!anc.has(id)&&!kids.has(id)&&TSEL!==id?' dm':''}" data-n="${id}" style="left:${a.x-40}px;top:${a.y}px;--bc:${BC[id[0]]||'#aaa'}"><b class="ndc">${id==='o'?'<em>★</em>':tIc(id)}</b><span>${n.n}</span></button>`});
+  let cf='';if(TSEL&&TN[TSEL]&&TN[TSEL].x&&TN[TSEL].x.ex){Object.values(TN).forEach(q=>{if(q.id!==TSEL&&q.x&&q.x.ex===TN[TSEL].x.ex){const A=TP[TSEL],B=TP[q.id];cf+=`<line x1="${A.cx}" y1="${A.cy}" x2="${B.cx}" y2="${B.cy}" stroke="#ff5a4a" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round"/>`}})}
   const n=TSEL&&TN[TSEL],lo=p.lo.includes(TSEL);
-  $('tree').innerHTML=`<button data-a="tx">Zamknij</button> <button data-a="rs">Reset drzewka (${20*p.lvl} zł)</button> <button data-a="zm">−</button><button data-a="zp">+</button><p>Wolne punkty: <b>${p.ps}</b> · pasek walki: ${p.lo.map(i=>TN[i].n).join(', ')||'—'}</p>
+  $('tree').innerHTML=`<button data-a="tx">Zamknij</button> <button data-a="rs">Reset drzewka (${20*p.lvl} zł)</button> <button data-a="zm">−</button><button data-a="zp">+</button><button data-a="ct">◎</button><p>Wolne punkty: <b>${p.ps}</b> · pasek walki: ${p.lo.map(i=>TN[i].n).join(', ')||'—'}</p>
   <div id="ti">${n?`<span class="tbig">${tIc(TSEL)}</span><b>${n.n}</b> — ${effTx(n)}<br>${own(TSEL)?(n.t==='a'?`<button data-a="lo">${lo?'Zdejmij z paska':'Dodaj do paska (max 4)'}</button>`:'Odblokowane'):av(TSEL)?(cflOf(TSEL)?`Zablokowane: wybrałeś „${cflOf(TSEL).n}” (zmiana tylko przez reset drzewka)`:`<button data-a="un"${p.ps?'':' disabled'}>Odblokuj (1 pkt)</button>`):'Najpierw odblokuj sąsiedni węzeł'}`:'Tap w węzeł po opis. Ozdobne węzły to talenty od zbroi, broni i wyborów (niektóre się wykluczają).<br><small>COMBO w 8 s: osłabienie→atak ×1.5 · tarcza→cios ×1.3 · krwawienie/trucizna→czar ×1.4</small>'}</div>
-  <div id="tv"><div style="position:relative;zoom:${TZ};width:${TW}px;height:${mx+90}px"><svg width="${TW}" height="${mx+90}" style="position:absolute;inset:0">${ln}</svg>${nd}</div></div>`;
+  <div id="tv"><div style="position:relative;zoom:${TZ};width:${TW}px;height:${TH}px"><svg width="${TW}" height="${TH}" style="position:absolute;inset:0">${bg}${ln}${cf}</svg>${nd}</div></div>`;
   $('tree').classList.add('on');const t=$('tv');t.scrollLeft=sl[0];t.scrollTop=sl[1];
 }
 $('tree').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.p,a=b.dataset.a;
   if(a==='tx'){$('tree').classList.remove('on');showChar();return}
   if(b.dataset.n)TSEL=b.dataset.n;
-  else if(a==='zp')TZ=Math.min(1.4,TZ+.15);else if(a==='zm')TZ=Math.max(.5,TZ-.15);
+  else if(a==='zp')TZ=Math.min(1.4,TZ+.15);else if(a==='zm')TZ=Math.max(.3,TZ-.12);else if(a==='ct'){showTree();const t=$('tv');t.scrollLeft=TP.o.cx*TZ-t.clientWidth/2;t.scrollTop=TP.o.cy*TZ-t.clientHeight/2;return}
   else if(a==='un'&&p.ps&&TSEL){const n=TN[TSEL];if(cflOf(TSEL)){toast('Wykluczone przez: '+cflOf(TSEL).n);return}if(!p.tr.includes(TSEL)&&n.par.some(q=>p.tr.includes(q))){p.ps--;p.tr.push(TSEL);if(n.t==='a'&&p.lo.length<4)p.lo.push(TSEL)}}
   else if(a==='lo'){const i=p.lo.indexOf(TSEL);if(i>=0)p.lo.splice(i,1);else if(p.lo.length<4)p.lo.push(TSEL);else toast('Pasek ma max 4 umiejętności')}
   else if(a==='rs'){const c=20*p.lvl;if(p.gold<c){toast('Za mało złota');return}p.gold-=c;initTree(p)}
