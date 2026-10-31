@@ -226,7 +226,9 @@ header #mini{pointer-events:auto}
 #town .ban img{position:absolute;left:50%;bottom:-6px;height:150px;transform:translateX(-50%);filter:drop-shadow(0 6px 6px #0008)}
 #town .ban b{position:absolute;left:12px;top:8px;font-size:22px;color:#fff;text-shadow:0 2px 4px #000}
 #town .ban small{position:absolute;left:12px;top:36px;color:#ffe9a8;text-shadow:0 1px 3px #000;font-size:13px}
-#town .b-zamek{background:linear-gradient(#8a93a8,#c9cfdc 55%,#5d6b55 55%)}#town .b-obozowisko{background:linear-gradient(#e8a96b,#f6d9a8 55%,#a58b52 55%)}#town .b-klasztor{background:linear-gradient(#9fb0d6,#e0e6f5 55%,#6f8f5a 55%)}#town .b-miasteczko{background:linear-gradient(#86b7e6,#d8ecf8 55%,#7a9a4c 55%)}#town .tn{text-align:center;opacity:.8}
+#town .b-zamek{background:linear-gradient(#8a93a8,#c9cfdc 55%,#5d6b55 55%)}#town .b-obozowisko{background:linear-gradient(#e8a96b,#f6d9a8 55%,#a58b52 55%)}#town .b-klasztor{background:linear-gradient(#9fb0d6,#e0e6f5 55%,#6f8f5a 55%)}#town .b-miasteczko{background:linear-gradient(#86b7e6,#d8ecf8 55%,#7a9a4c 55%)}.gx{position:relative;display:inline-block}.gx i{position:absolute;right:-4px;bottom:-5px;font:bold 9px/11px sans-serif;font-style:normal;color:#fff;background:#000b;border-radius:4px;padding:0 3px}.gx.t2{filter:drop-shadow(0 0 3px #7fd0ff)}.gx.t3{filter:drop-shadow(0 0 4px #ffd66b)}.gx.t4{filter:drop-shadow(0 0 5px #ff6bd6)}
+.rg{font-size:11px;opacity:.7}.fch{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.fch button{padding:4px 10px;border-radius:14px;font-size:12px;background:#1e1913;border:1px solid #5a4630;color:#e8dcb8;width:auto;margin:0}.fch button.on{background:#6a5230;color:#fff;border-color:#e0a63a}.sl{display:inline-block;margin:2px 3px 2px 0;padding:2px 8px;border-radius:10px;font-size:12px;border:1px solid #4a3f2e;opacity:.6}.sl.eq{opacity:1;border-color:#7fd37f;color:#bff0bf}.sl.bg{opacity:1;border-color:#e0a63a;color:#ffe3a0}
+#town .tn{text-align:center;opacity:.8}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .tcard{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px!important;text-align:center;border-radius:14px!important;border:2px solid #6a5a34!important;background:linear-gradient(160deg,#2b2115,#14100a)!important;box-shadow:inset 0 0 14px #0009}
 .tcard .ui{width:52px;height:52px;font-size:36px;margin-bottom:4px}
@@ -341,8 +343,15 @@ const POT={hp:['Mikstura życia','🧪','Życie','Leczy 40% HP przez 8 s'],mana:
  regen:['Mikstura regeneracji','💚','Regen.','Leczy 36% HP przez 12 s (też poza walką)'],precyzja:['Eliksir precyzji','🎯','Precyz.','Walka: +35% szansy na krytyk przez 20 s']};
 const potPrice=k=>['hp','mana','sta'].includes(k)?15+S.p.lvl*3:40+S.p.lvl*6;
 // Klejnoty (gniazda w przedmiotach), pora dnia, pogoda, wydarzenia, zagadki
-const GEM={rubin:['Rubin','🔴',{atkp:4}],szafir:['Szafir','🔵',{manap:6}],szmaragd:['Szmaragd','🟢',{crit:2}],topaz:['Topaz','🟡',{hpp:4}],onyks:['Onyks','⚫',{ls:1}]};
-const rndGem=()=>({k:'gem',gk:Object.keys(GEM)[Math.floor(Math.random()*5)],v:1});
+const GEM={rubin:['Rubin','🔴',{w:{atkp:4},a:{hp:12},j:{sil:2}}],szafir:['Szafir','🔵',{w:{spp:4},a:{manap:6},j:{int:2}}],szmaragd:['Szmaragd','🟢',{w:{crit:2},a:{dod:1.5},j:{zre:2}}],topaz:['Topaz','🟡',{w:{stap:5},a:{hpp:4},j:{wit:2}}],onyks:['Onyks','⚫',{w:{ls:1},a:{def:3},j:{crit:1}}]};
+const GTN=['Zwykły','Szlifowany','Doskonały','Bezbłędny'],GTM=[1,2,3.5,5.5],GRN=['','II','III','IV'],GGN={w:'Broń',a:'Pancerz',j:'Biżuteria'};
+const gP=k=>{const m=/^([a-z]+)(\d?)$/.exec(k)||[0,'onyks',''];return[GEM[m[1]]?m[1]:'onyks',m[2]?+m[2]:1]},gKey=(b,t)=>t>1?b+t:b;
+const gName=k=>{const[b,t]=gP(k);return(t>1?GTN[t-1]+' ':'')+GEM[b][0]};
+const gTxt=(k,gr)=>{const[b,t]=gP(k);return Object.entries(GEM[b][2][gr]).map(([a,v])=>'+'+(Math.round(v*GTM[t-1]*10)/10)+' '+LB[a]).join(', ')};
+const gemEff=(k,gr)=>gr?gTxt(k,gr):['w','a','j'].map(g=>GGN[g]+': '+gTxt(k,g)).join(' · ');
+const gKeys=p=>Object.keys(p.gem||{}).filter(k=>p.gem[k]>0&&GEM[gP(k)[0]]).sort((a,b)=>{const x=gP(a),y=gP(b),K=Object.keys(GEM);return K.indexOf(x[0])-K.indexOf(y[0])||x[1]-y[1]});
+const gCost=t=>40*t;
+const rndGem=()=>{const L=(S&&S.p&&S.p.lvl)||1,t=Math.random()<Math.min(.3,L*.012)?(Math.random()<.2?3:2):1;return{k:'gem',gk:gKey(Object.keys(GEM)[Math.floor(Math.random()*5)],t),v:1}};
 const WX={deszcz:{n:'Deszcz',e:'🌧️',s:{manap:10,dod:-5}},mgla:{n:'Mgła',e:'🌫️',s:{dod:8,crit:-5}},burza:{n:'Burza',e:'⛈️',s:{spp:25,def:-10}}};
 const TODE={dzien:'☀️',zmierzch:'🌇',noc:'🌙',swit:'🌅'};
 const tod=()=>{const k=(S.steps||0)%160;return k<80?'dzien':k<100?'zmierzch':k<140?'noc':'swit'};
@@ -426,9 +435,8 @@ function fightIntro(g,amb){if(!AN())return;const bo=g.boss||g.key==='krolowa'||g
   $('fico').animate([{transform:'translateY(-130px) scale(1.8)',opacity:0},{transform:'translateY(8px) scale(.95)',opacity:1,offset:.7},{transform:'none'}],{duration:520,delay:120,fill:'backwards',easing:'ease-out'});
   if(amb||bo)shake($('fight'),9,420);if(bo)banner('BOSS!','#ff5a4a');else if(amb)banner('ZASADZKA!','#ff9a3c')}
 const pic=(p,e)=>`<span class="si">${icon('',p,e)}</span>`;
-const pI=k=>pic(`assets/ui/pot_${k}.png`,POT[k][1]),gI=k=>pic(`assets/ui/gem_${k}.png`,gemSvg(k));
+const pI=k=>pic(`assets/ui/pot_${k}.png`,POT[k][1]),gI=k=>{const[b,t]=gP(k);return `<span class="gx t${t}">${pic(`assets/ui/gem_${b}.png`,gemSvg(b))}${t>1?`<i>${GRN[t-1]}</i>`:''}</span>`};
 const GCOL={rubin:['#d8334a','#ff93a0','#7d1020'],szafir:['#3b73e0','#9cc0ff','#17337c'],szmaragd:['#2fb866','#9af0b8','#0d5a2c'],topaz:['#e8b434','#ffe9a0','#8a620c'],onyks:['#4a4f63','#a0a6c0','#14161f']};
-const gemEff=k=>Object.entries(GEM[k][2]).map(([a,v])=>'+'+v+' '+LB[a]).join(', ');
 const gemSvg=k=>{const c=GCOL[k]||GCOL.onyks;return `<svg viewBox="0 0 32 32" style="width:1.15em;height:1.15em;vertical-align:-.22em"><path d="M16 3 27 11 16 29 5 11z" fill="${c[0]}" stroke="${c[2]}" stroke-width="1.2" stroke-linejoin="round"/><path d="M16 3 27 11 16 14 5 11z" fill="${c[1]}"/><path d="M5 11 16 14 16 29z" fill="${c[2]}" opacity=".55"/><path d="M10 7 14 5.5 12 9.5z" fill="#fff" opacity=".8"/></svg>`};
 const wkey=it=>/Kostur/.test(it.n)?'kostur':/Młot/.test(it.n)?'mlot':/Maczuga/.test(it.n)?'maczuga':/Topór/.test(it.n)?'topor':/Sztylet/.test(it.n)?'sztylet':'miecz';
 const iip=it=>it.t==='bron'?`assets/items/i_${wkey(it)}.png`:(it.t==='amulet'||it.t==='pierscien')?`assets/items/i_${it.t}.png`:`assets/items/i_${it.t}_${it.ac||'plyta'}.png`;
@@ -510,9 +518,15 @@ const ACH=[['k1','Pierwsza krew','Pokonaj pierwszego wroga',()=>S.kills>=1,50],[
  ['lg','Legenda w plecaku','Zdobądź legendarny przedmiot',()=>(S.cnt.leg||0)>=1,500],['up5','Kowal','Ulepsz przedmiot do +5',()=>(S.cnt.up5||0)>=1,500],['rd3','Zagadkowicz','Rozwiąż 3 zagadki',()=>(S.cnt.rid||0)>=3,400],
  ['set6','Pełny komplet','Załóż 6 części jednego zestawu',()=>Object.values(setCnt()).some(v=>v>=6),1000]];
 function chkAch(){let g=false;ACH.forEach(a=>{if(!S.ach[a[0]]&&a[3]()){S.ach[a[0]]=1;S.p.gold+=a[4];g=true;toast(`🏆 ${a[1]} · +${a[4]} zł`,3500);sfx.lvl()}});if(g)save()}
+function rangeCodex(){const L=S.p.lvl,dist=Math.hypot(S.x,S.y)+(S.map||0)*30,c1=Math.ceil(2+dist/6+L/3),c2=Math.ceil(2+dist/30+L/20),t0=Math.min(8,Math.floor((dist+L*1.2)/14)),t1=Math.min(8,Math.floor((dist+L*1.2)/14+2.19));
+  const bs=t=>`<br>Pancerz bazowy: płyta ${2+3*t}, skóra ${1+2*t}, szata ${Math.max(1,t)}; broń: +${4*t+4}% ataku (dwuręczna +${4*t+10}%)`;
+  return `<h3>Co może wypaść</h3><div class="at" style="display:block"><small>Dla Twojego poziomu (${L}) i miejsca (${Math.round(dist)} pól od miasta). Zakresy rosną, im dalej i wyżej.<br><b>Poziom przedmiotu:</b> ${t0+1}–${t1+1} (max 9)${bs(t1)}<br><b>Losowe atrybuty</b> (Sił, Zręcz, Int, Wit): 1–${c1} · HP: 3–${3*c1} · Pancerz: 1–${Math.ceil(c1/2)}<br><b>Losowe premie:</b> kradzież życia, krytyk, unik: 1–${c2} · atak, moc zaklęć, HP w %: 2–${2*c2}<br><b>Ile losowań:</b> Zwykły 0 · Magiczny 2 atrybuty · Rzadki 3 atrybuty + 1 premia · Legendarny 4 atrybuty + 2 premie<br><b>Gniazda:</b> Zwykły 0 · Magiczny 0–1 · Rzadki 1–2 · Legendarny 2–3<br>Przedmioty z kompletów to tylko Rzadkie i Legendarne. W opisie przedmiotu przy każdej statystyce zobaczysz, ile było stałe, a ile z losowania (i w jakim zakresie).</small></div>`}
 function setCodex(){const c=setCnt(),p=S.p,L=o=>Object.entries(o).map(([k,v])=>'+'+v+' '+LB[k]).join(', ');
-  return '<h3>Komplety</h3><p><small>Rzadkie i legendarne przedmioty mogą należeć do kompletu. Który wypada, zależy od miejsca walki lub skrzyni. Element możesz też wykuć u kowala z materiałów regionu.</small></p>'+Object.keys(SETS).map(id=>{const T=SETS[id],mk=SETM[id];return `<div class="at" style="display:block"><b style="color:${T.c}">${T.n}</b>${c[id]?` · założone: ${c[id]}`:''}<br><small>📍 ${setWhere(id)}<br>${ui('m_'+mk,MR[mk][1])} ${MR[mk][0]}: ${p.mat[mk]||0}</small>${Object.entries(T.b).map(([th,b])=>`<div style="opacity:${(c[id]||0)>=+th?1:.65}"><small>${th} szt.: ${L(b)}</small></div>`).join('')}</div>`}).join('')+
-  '<h3>Materiały</h3>'+[['szmaty','Szmaty','wszędzie, z walk i skrzyń'],['stal','Stal','skrzynie, lochy, jaskinie'],['esn','Esencja','skrzynie, bossowie, rozbijanie przedmiotów']].map(([k,n,w])=>`<div class="at"><div><b>${ui(k==='esn'?'esencja':k,'')} ${n}: ${p.mat[k]||0}</b><br><small>${w}</small></div></div>`).join('')+Object.keys(MR).map(k=>{const rs=Object.keys(REGSET).filter(r=>REGSET[r].some(s=>SETM[s]===k)).map(r=>REGN[r]).join(', ');return `<div class="at"><div><b>${ui('m_'+k,MR[k][1])} ${MR[k][0]}: ${p.mat[k]||0}</b><br><small>${rs}</small></div></div>`}).join('')}
+  return '<h3>Komplety</h3><p><small>Rzadkie i legendarne przedmioty mogą należeć do kompletu. Który wypada, zależy od miejsca walki lub skrzyni. Element możesz też wykuć u kowala z materiałów regionu.</small></p>'+Object.keys(SETS).map(id=>{const T=SETS[id],mk=SETM[id];const all=[...Object.values(p.eq||{}),...p.bag,...(S.stash||[])].filter(i=>i&&i.set===id),own=all.length,miss=Math.max(0,6-own),eqs=Object.values(p.eq||{}).filter(i=>i&&i.set===id),bgs=[...p.bag,...(S.stash||[])].filter(i=>i.set===id),
+      sl=TYL.map(([t,n])=>{const e=eqs.filter(i=>i.t===t).length,b=bgs.filter(i=>i.t===t).length;return `<span class="sl ${e?'eq':b?'bg':''}">${e?'✔':b?'🎒':'○'} ${n}${e+b>1?' ×'+(e+b):''}</span>`}).join(''),
+      lack=TYL.filter(([t])=>!all.some(i=>i.t===t)).map(x=>x[1]),can=Math.floor((p.mat[mk]||0)/12);
+    return `<div class="at" style="display:block"><b style="color:${T.c}">${T.n}</b>${c[id]?` · założone: ${c[id]}`:''} · <b>${own}/6</b>${miss?`, brakuje ${miss}`:' · komplet do założenia!'}<br><small>📍 ${setWhere(id)}<br>${ui('m_'+mk,MR[mk][1])} ${MR[mk][0]}: ${p.mat[mk]||0}${can?` · starczy na ${can} wykuć (12 szt. za element)`:' · element do wykucia: 12 szt.'}</small><div style="margin:4px 0">${sl}</div><small style="opacity:.8">✔ założone · 🎒 w plecaku/schowku · ○ nie masz${miss&&lack.length?'<br>Brakujące typy: '+lack.join(', '):''}</small>${Object.entries(T.b).map(([th,b])=>`<div style="opacity:${(c[id]||0)>=+th?1:.65}"><small>${th} szt.: ${L(b)}</small></div>`).join('')}</div>`}).join('')+
+  rangeCodex()+'<h3>Materiały</h3>'+[['szmaty','Szmaty','wszędzie, z walk i skrzyń'],['stal','Stal','skrzynie, lochy, jaskinie'],['esn','Esencja','skrzynie, bossowie, rozbijanie przedmiotów']].map(([k,n,w])=>`<div class="at"><div><b>${ui(k==='esn'?'esencja':k,'')} ${n}: ${p.mat[k]||0}</b><br><small>${w}</small></div></div>`).join('')+Object.keys(MR).map(k=>{const rs=Object.keys(REGSET).filter(r=>REGSET[r].some(s=>SETM[s]===k)).map(r=>REGN[r]).join(', ');return `<div class="at"><div><b>${ui('m_'+k,MR[k][1])} ${MR[k][0]}: ${p.mat[k]||0}</b><br><small>${rs}</small></div></div>`}).join('')}
 function showCodex(){const n=ACH.filter(a=>S.ach[a[0]]).length,t=S.pt||0,w=wth(),
   where=k=>Object.entries(SP).filter(([,l])=>l.includes(k)).map(([x])=>T[x].n).join(', ')||({krolowa:'boss jaskiń',licz:'boss ruin',boss:'Władca Zła',smok:'rzadko w górach'}[k]||'?');
   $('codex').innerHTML=`<button data-a="x">✕ Zamknij</button>
@@ -553,18 +567,31 @@ function forgeHtml(){const p=S.p,g=100+p.lvl*25;let h='<h3>Wykuwanie kompletów<
   Object.keys(SETS).forEach(id=>{const T=SETS[id],mk=SETM[id],have=p.mat[mk]||0;h+=`<button class="it" data-a="fg:${id}" style="border-color:${T.c}"><b style="color:${T.c}">${T.n}</b> · ${ui('m_'+mk,MR[mk][1])} ${have} ${MR[mk][0]}<br><small>Zdobędziesz w: ${setWhere(id)}</small></button>`;
     if(FSET===id){const ok=(n)=>have>=n&&p.gold>=g&&(p.mat.stal||0)>=3;h+=`<div class="at" style="display:block"><small>Koszt: ${g} zł + 3 stali + materiał · wybrany element 12, losowy 6 · jakość: rzadki</small><br><button data-a="fc:${id}:?"${ok(6)?'':' disabled'}>🎲 Losowy element (6)</button> ${FS.map(([k,n])=>`<button data-a="fc:${id}:${k}"${ok(12)?'':' disabled'}>${n} (12)</button>`).join(' ')}</div>`}});
   return h}
+function gemHtml(p,all,nm){
+  const K=gKeys(p),Bs=Object.keys(GEM);let h=`<h3>Klejnoty</h3><p><small>Klejnot działa inaczej zależnie od miejsca: w broni, pancerzu i biżuterii (amulet, pierścień) daje inne bonusy. 3 jednakowe klejnoty łączysz w jeden mocniejszy (do poziomu IV).</small></p>`;
+  const comb=[];Bs.forEach(b=>[1,2,3].forEach(t=>{const k=gKey(b,t),n=p.gem[k]||0;if(n>=3)comb.push(`<button class="it" data-a="gc:${k}"${p.gold>=gCost(t)?'':' disabled'}>${gI(k)} 3× ${gName(k)} → ${gI(gKey(b,t+1))} ${gName(gKey(b,t+1))} · ${gCost(t)} zł · masz ${n}<br><small>${gemEff(gKey(b,t+1))}</small></button>`)}));
+  h+=`<h4>Łączenie</h4>`+(comb.length?`<button class="it" data-a="gca">✨ Połącz wszystko, co się da</button>`+comb.join(''):'<p><small>Brak trzech jednakowych klejnotów do połączenia.</small></p>');
+  h+=`<h4>Wstawianie</h4>`;
+  const open=all.filter(([,i])=>(i.sn||0)>(i.so||[]).length);
+  h+=K.length?(open.map(([id,i])=>{const gr=enG(i);return `<div class="at" style="display:block">${nm(i)} <small>${GGN[gr]} · gniazda ${(i.so||[]).length}/${i.sn}</small><br>${K.map(g=>`<button data-a="gm:${id}:${g}">${gI(g)} ${gName(g)} ×${p.gem[g]} <small>(${gTxt(g,gr)})</small></button>`).join(' ')}</div>`}).join('')||'<p>Żaden przedmiot nie ma wolnego gniazda.</p>'):'<p>Nie masz klejnotów. Wypadają ze skrzyń i bossów.</p>';
+  const ful=all.filter(([,i])=>i.so&&i.so.length);
+  if(ful.length)h+=`<h4>Wyjmowanie</h4><p><small>Wyjęcie kosztuje 50 zł × poziom klejnotu. Klejnot wraca do ciebie.</small></p>`+ful.map(([id,i])=>`<div class="at" style="display:block">${nm(i)}<br>${i.so.map((g,x)=>`<button data-a="gx:${id}:${x}">${gI(g)} ${gName(g)} ✕ <small>(${50*gP(g)[1]} zł)</small></button>`).join(' ')}</div>`).join('');
+  return h}
 function showSmith(){const p=S.p;p.gem=p.gem||{};const all=[...Object.entries(p.eq).map(([k,i])=>['e:'+k,i]),...p.bag.map(i=>['b:'+i.id,i])],nm=it=>`${iic(it)} <span style="color:${RC[it.r]}">${it.n}${it.up?' +'+it.up:''}</span>`;
   $('smith').innerHTML=`<button data-a="x">✕ Zamknij</button><h3>${ui('kowal','🔨')} Kowal</h3><p>${ui('zloto','🪙')} ${p.gold} · ${ui('stal','🔩')} ${p.mat.stal} ${gemTxt()}</p>
   <h3>Ulepszanie</h3><p><small>Każde + zwiększa statystyki przedmiotu o 12%. Przy porażce tracisz materiały. Maksimum +10.</small></p>`+
   (all.filter(([,i])=>(i.up||0)<10).map(([id,i])=>{const[g,st]=upCost(i);return `<button class="it" data-a="up:${id}">${nm(i)} → +${(i.up||0)+1}<br><small>${g} zł + ${st} stali · szansa ${upCh(i)}%${id[0]==='e'?' · założony':''}</small></button>`}).join('')||'<p>Brak przedmiotów.</p>')+
-  `<h3>Klejnoty</h3>`+(Object.values(p.gem).some(v=>v>0)?(all.filter(([,i])=>(i.sn||0)>(i.so||[]).length).map(([id,i])=>`<div class="at" style="display:block">${nm(i)} <small>gniazda ${(i.so||[]).length}/${i.sn}</small><br>${Object.keys(GEM).filter(g=>p.gem[g]>0).map(g=>`<button data-a="gm:${id}:${g}">${gI(g)} ${GEM[g][0]} ×${p.gem[g]} <small>(${gemEff(g)})</small></button>`).join(' ')}</div>`).join('')||'<p>Żaden przedmiot nie ma wolnego gniazda.</p>'):'<p>Nie masz klejnotów. Wypadają ze skrzyń i bossów. Wstawiony klejnot zostaje na stałe.</p>')+
+  gemHtml(p,all,nm)+
   forgeHtml()+`<h3>Przetapianie</h3><p><small>Trzy przedmioty z plecaka tej samej rzadkości (najsłabsze) dają jeden wyższej rzadkości.</small></p>`+[0,1,2].map(r=>{const n=p.bag.filter(o=>o.r===r).length,c=(r+1)*60+p.lvl*8;return `<button class="it" data-a="fu${r}"${n>=3&&p.gold>=c?'':' disabled'}>Przetop 3× ${RN[r]} → 1× ${RN[r+1]} (${c} zł) · masz ${n}</button>`}).join('');
   $('smith').classList.add('on')}
 $('smith').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p;
   if(a==='x'){$('smith').classList.remove('on');openTown();return}
   if(a.startsWith('up:')){const it=getIt(a.slice(3));if(!it)return;const[g,st]=upCost(it);if(p.gold<g||p.mat.stal<st){toast('Za mało złota lub stali');return}p.gold-=g;p.mat.stal-=st;
     if(Math.random()*100<upCh(it)){it.up=(it.up||0)+1;toast(`Ulepszono do +${it.up}!`);sfx.win();if(it.up>=5)S.cnt.up5=1}else{toast('Ulepszenie nieudane, materiały stracone');sfx.hurt()}}
-  else if(a.startsWith('gm:')){const q=a.split(':'),g=q.pop(),it=getIt(q.slice(1).join(':'));if(!it||!(p.gem[g]>0))return;it.so=it.so||[];if(it.so.length>=(it.sn||0))return;p.gem[g]--;it.so.push(g);toast(`${GEM[g][0]} wstawiony`);sfx.loot()}
+  else if(a.startsWith('gm:')){const q=a.split(':'),g=q.pop(),it=getIt(q.slice(1).join(':'));if(!it||!(p.gem[g]>0))return;it.so=it.so||[];if(it.so.length>=(it.sn||0))return;p.gem[g]--;it.so.push(g);toast(`${gName(g)} wstawiony: ${gemEff(g,enG(it))}`);sfx.loot()}
+  else if(a.startsWith('gc:')){const k=a.slice(3),[b,t]=gP(k);if((p.gem[k]||0)<3||t>=4||p.gold<gCost(t)){toast('Nie można połączyć');return}p.gold-=gCost(t);p.gem[k]-=3;const nk=gKey(b,t+1);p.gem[nk]=(p.gem[nk]||0)+1;toast(`Połączono: ${gName(nk)}`);sfx.win()}
+  else if(a==='gca'){let n=0;for(let t=1;t<=3;t++)Object.keys(GEM).forEach(b=>{const k=gKey(b,t),nk=gKey(b,t+1);while((p.gem[k]||0)>=3&&p.gold>=gCost(t)){p.gold-=gCost(t);p.gem[k]-=3;p.gem[nk]=(p.gem[nk]||0)+1;n++}});toast(n?`Połączono ${n}× — klejnoty ulepszone`:'Nic do połączenia lub brak złota');if(n)sfx.win()}
+  else if(a.startsWith('gx:')){const q=a.split(':'),x=+q.pop(),it=getIt(q.slice(1).join(':'));if(!it||!it.so||!it.so[x])return;const g=it.so[x],c=50*gP(g)[1];if(p.gold<c){toast('Za mało złota');return}p.gold-=c;it.so.splice(x,1);p.gem[g]=(p.gem[g]||0)+1;toast(`${gName(g)} wyjęty`);sfx.loot()}
   else if(a.startsWith('fg:')){const id=a.slice(3);FSET=FSET===id?null:id}
   else if(a.startsWith('fc:')){const[,id,ty]=a.split(':'),rnd=ty==='?',mk=SETM[id],c=rnd?6:12,g=100+p.lvl*25;if((p.mat[mk]||0)<c||p.gold<g||(p.mat.stal||0)<3){toast('Za mało materiałów, stali lub złota');return}if(p.bag.length>=30){toast('Plecak pełny');return}p.mat[mk]-=c;p.gold-=g;p.mat.stal-=3;const it=genItem(2,0,{set:id,ty:rnd?undefined:ty,tier:Math.min(8,Math.floor(p.lvl/2.5))});p.bag.push(it);toast('Wykuto: '+it.n);sfx.win()}
   else if(a.startsWith('fu')){const r=+a.slice(2),c=(r+1)*60+p.lvl*8,l=p.bag.filter(o=>o.r===r).sort((x,y)=>x.tier-y.tier).slice(0,3);if(l.length<3||p.gold<c)return;p.gold-=c;p.bag=p.bag.filter(o=>!l.includes(o));const it=genItem(r+1);p.bag.push(it);if(it.r===3)bump('leg');toast('Przetopiono: '+it.n);sfx.chest()}
@@ -574,7 +601,7 @@ $('smith').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b
 let ESEL=null,SSEL=null;
 const GRD=['amulet','helm','naramienniki','bron0','klata','bron1','pierscien0','spodnie','pierscien1','rekawice','buty'];
 function igrid(sel,eq){const p=S.p,_=SEL;SEL=sel;const h=(eq?`<h3>Założone</h3><div class="dl">${GRD.map(k=>p.eq[k]?tile(p.eq[k],'e:'+k):'<div></div>').join('')}</div>`:'')+`<h3>Plecak ${p.bag.length}/30</h3><div class="bg">${p.bag.map(i=>tile(i,'b:'+i.id)).join('')||'<p>Pusty</p>'}</div>`;SEL=_;return h}
-function iinfo(it){return `<div style="color:${RC[it.r]}"><b>${iic(it)} ${it.n}${it.up?' +'+it.up:''}</b></div><small>${RN[it.r]} · ${it.ac?ACN[it.ac]+' · ':''}poziom ${(it.tier||0)+1}${it.set?' · z kompletu':''}</small>${Object.keys(it.s).map(k=>`<div>+${it.s[k]} ${LB[k]}</div>`).join('')}${enTxt(it)}${(it.sn||0)?`<div>Gniazda: ${Array.from({length:it.sn},(_,i)=>it.so&&it.so[i]?gI(it.so[i]):'◇').join(' ')}</div>`:''}${it.fx?`<div style="color:#e0a63a">✦ ${FXD[it.fx][0]}</div>`:''}`}
+function iinfo(it){return `<div style="color:${RC[it.r]}"><b>${iic(it)} ${it.n}${it.up?' +'+it.up:''}</b></div><small>${RN[it.r]} · ${it.ac?ACN[it.ac]+' · ':''}poziom ${(it.tier||0)+1}${it.set?' · z kompletu':''}</small>${Object.keys(it.s).map(k=>`<div>+${it.s[k]} ${LB[k]}${rgTxt(it,k)}</div>`).join('')}${enTxt(it)}${(it.sn||0)?`<div>Gniazda: ${Array.from({length:it.sn},(_,i)=>it.so&&it.so[i]?gI(it.so[i]):'◇').join(' ')}</div>${(it.so&&it.so.length)?'<small>'+it.so.map(g=>gName(g)+': '+gemEff(g,enG(it))).join(' · ')+'</small>':''}`:''}${it.fx?`<div style="color:#e0a63a">✦ ${FXD[it.fx][0]}</div>`:''}`}
 function showEnch(){const p=S.p;p.mat.esn=p.mat.esn||0;const it=ESEL&&getIt(ESEL);if(ESEL&&!it)ESEL=null;let act='';
   if(it){const eq=ESEL[0]==='e';
     if(!it.en){const a=enAdd(it);act+=`<button class="it" data-a="ea">✧ Zaklnij: ${a.g} zł + ${a.e} ✨<br><small>Losowe zaklęcie z puli dla tego typu przedmiotu (poziom 1/5).</small></button>`}
@@ -618,10 +645,11 @@ function showStash(){const p=S.p,st=S.stash=S.stash||[],find=d=>d&&(d[0]==='s'?s
   $('stash').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span></div><h3>📦 Schowek ${st.length}/60</h3><p><small>Tu zostawiasz przedmioty na później (np. części kompletów). Dotknij przedmiot, a potem przenieś go.</small></p>
   ${it?`<div class="at" style="display:block">${iinfo(it)}</div><button class="it" data-a="mv">${STSEL[0]==='s'?'⬇ Zabierz do plecaka':'⬆ Włóż do schowka'}</button>`:''}
   <div class="row"><button data-a="sa">⬆ Wszystkie zwykłe i magiczne z plecaka</button></div>
-  <h3>Schowek</h3>${g(st,'s')}<h3>Plecak ${p.bag.length}/30</h3>${g(p.bag,'b')}<div style="height:30px"></div>`;
+  ${bfHtml([...st,...p.bag])}<h3>Schowek</h3>${g(st.filter(bfOk),'s')}<h3>Plecak ${p.bag.length}/30</h3>${g(p.bag.filter(bfOk),'b')}<div style="height:30px"></div>`;
   $('stash').classList.add('on')}
 $('stash').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p,st=S.stash=S.stash||[];
   if(a==='x'){$('stash').classList.remove('on');openTown();return}
+  if(a&&a.startsWith('bf:')){bfClick(a);showStash();return}
   if(a&&a.startsWith('st:')){STSEL=a.slice(3);showStash();return}
   if(a==='mv'&&STSEL){const id=STSEL.slice(2);if(STSEL[0]==='s'){const i=st.findIndex(o=>o.id===id);if(p.bag.length>=30){toast('Plecak pełny');return}p.bag.push(st.splice(i,1)[0])}else{const i=p.bag.findIndex(o=>o.id===id);if(st.length>=60){toast('Schowek pełny');return}st.push(p.bag.splice(i,1)[0])}STSEL=null}
   else if(a==='sa'){const l=p.bag.filter(o=>o.r<=1);if(st.length+l.length>60){toast('Schowek pełny');return}p.bag=p.bag.filter(o=>o.r>1);st.push(...l);toast('Przeniesiono: '+l.length)}
@@ -729,11 +757,11 @@ const enUp=it=>({g:Math.round(enAdd(it).g*(it.en.l+1)*.7),e:3+it.en.l*3,c:[85,65
 const enRe=it=>({g:Math.round(enAdd(it).g*.6),e:2+it.en.l+it.r});
 const enSock=it=>({g:200*((it.sn||0)+1),e:5+(it.sn||0)*4,c:[80,55,35][it.sn||0]});
 const deVal=it=>[1,3,7,16][it.r]+Math.floor((it.tier||0)/2)+(it.up||0)+(it.en?it.en.l*2:0);
-const sellPrice=it=>Math.round((3+it.r*it.r*10+(it.tier||0)*(2+it.r*2))*(1+.2*(it.up||0)))+(it.so||[]).length*20+(it.en?15*it.en.l:0)+(it.set?25:0)+(it.fx?15:0);
+const sellPrice=it=>Math.round((3+it.r*it.r*10+(it.tier||0)*(2+it.r*2))*(1+.2*(it.up||0)))+(it.so||[]).reduce((q,g)=>q+20*gP(g)[1],0)+(it.en?15*it.en.l:0)+(it.set?25:0)+(it.fx?15:0);
 const enTxt=it=>it.en&&ENS[it.en.k]?`<div style="color:#b98cff">✧ ${ENS[it.en.k][0]} ${it.en.l}/5: +${enV(it)} ${LB[ENS[it.en.k][1]]}</div>`:'';
 const ARS=['helm','klata','spodnie','buty','rekawice','naramienniki'],acN=ac=>{const e=S.p.eq||{};return ARS.filter(k=>e[k]&&e[k].d>0&&(e[k].ac||'plyta')===ac).length},wkNow=()=>{const w=(S.p.eq||{}).bron0;return w&&w.d>0?wkey(w):''};
 const st=()=>{const p=S.p,b=p.b||{sil:0,zre:0,int:0},r=ZERO();r.sil=b.sil;r.zre=b.zre;r.int=b.int;r.wit=p.wit||0;
-  for(const k in p.eq||{}){const it=p.eq[k];if(it&&it.d>0){const mu=1+.12*(it.up||0);for(const a in it.s)r[a]+=it.s[a]*mu;(it.so||[]).forEach(g=>{for(const a in GEM[g][2])r[a]+=GEM[g][2][a]});if(it.en&&ENS[it.en.k])r[ENS[it.en.k][1]]+=enV(it)}}
+  for(const k in p.eq||{}){const it=p.eq[k];if(it&&it.d>0){const mu=1+.12*(it.up||0);for(const a in it.s)r[a]+=it.s[a]*mu;(it.so||[]).forEach(g=>{const[b,t]=gP(g),src=GEM[b][2][enG(it)];for(const a in src)r[a]+=src[a]*GTM[t-1]});if(it.en&&ENS[it.en.k])r[ENS[it.en.k][1]]+=enV(it)}}
   const sc=setCnt();for(const id in sc)for(const th in SETS[id].b)if(sc[id]>=+th)for(const a in SETS[id].b[th])r[a]+=SETS[id].b[th][a];
   (p.tr||[]).forEach(id=>{const n=TN[id];if(n&&n.t==='p')for(const a in n.e)r[a]+=n.e[a];const x=n&&n.x;if(!x)return;if(x.ar){const c=acN(x.ar[0]);for(const a in x.ar[1])r[a]+=x.ar[1][a]*c}if(x.wp&&x.wp[0].split(',').includes(wkNow()))for(const a in x.wp[1])r[a]+=x.wp[1][a]});
   if(p.bl&&p.bl.n>0)for(const a in p.bl.s)r[a]+=p.bl.s[a];const w=!S.loc&&WX[wth()];if(w)for(const a in w.s)r[a]+=w.s[a];return r};
@@ -787,10 +815,10 @@ function genItem(fr,bo,op){
     if(jw){if(ty==='amulet')s.hpp=tier*2+2;else s.crit=1+Math.floor(tier/2)}else if(ac==='plyta')s.def=2+tier*3;else if(ac==='skora'){s.def=1+tier*2;s.zre=1+Math.floor(tier*.9);s.dod=1+Math.floor(tier/2)}else{s.def=Math.max(1,tier);s.int=1+Math.floor(tier*1.1);s.manap=2+tier*2}}
   const pool=REGSET[GCTX||ctxReg()]||[],sid=(op&&op.set)||(r>=2&&pool.length&&Math.random()<(r===3?.6:.35)?pool[Math.floor(Math.random()*pool.length)]:null);
   if(sid){n=noun+' '+SETS[sid].n;col=SETS[sid].c}
-  const ks=['sil','zre','int','wit','hp','def'];
+  const b0={...s},ks=['sil','zre','int','wit','hp','def'];
   for(let i=0;i<[0,2,3,4][r];i++){const k=ks[Math.floor(Math.random()*6)],v=1+Math.floor(Math.random()*(2+dist/6+L/3));s[k]=(s[k]||0)+(k==='hp'?v*3:k==='def'?Math.ceil(v/2):v)}
   for(let i=0;i<[0,0,1,2][r];i++){const k=['ls','crit','dod','atkp','spp','hpp'][Math.floor(Math.random()*6)],v=1+Math.floor(Math.random()*(2+dist/30+L/20));s[k]=(s[k]||0)+(['atkp','spp','hpp'].includes(k)?v*2:v)}
-  const md=20+r*10;return{id:Math.random().toString(36).slice(2),t:ty,n,r,s,d:md,md,two,col,set:sid,tier,ac,fx:(r>=3||(r===2&&Math.random()<.4))?Object.keys(FXD)[Math.floor(Math.random()*6)]:null,so:[],sn:r>=2?1+(r===3?1:0)+(Math.random()<.25?1:0):(r===1&&Math.random()<.2?1:0)};
+  const md=20+r*10;return{id:Math.random().toString(36).slice(2),t:ty,n,r,s,b:b0,rc:[2+dist/6+L/3,2+dist/30+L/20],d:md,md,two,col,set:sid,tier,ac,fx:(r>=3||(r===2&&Math.random()<.4))?Object.keys(FXD)[Math.floor(Math.random()*6)]:null,so:[],sn:r>=2?1+(r===3?1:0)+(Math.random()<.25?1:0):(r===1&&Math.random()<.2?1:0)};
 }
 function heroSvg(){
   const e=S.p.eq||{},cl={uczony:'#4a56a8',silacz:'#8a4a3a',atleta:'#3f7f5a'}[ART()]||'#555',on=k=>e[k]&&e[k].d>0?e[k]:null,
@@ -897,8 +925,22 @@ const slotFor=it=>{const e=S.p.eq;if(it.t==='pierscien')return!e.pierscien0?'pie
 const CHD={zloto:'Złoto: kupujesz za nie u kowala, w sklepie, karczmie i na wyprawach.',szmaty:'Szmaty: naprawa sprzętu i przetapianie.',stal:'Stal: ulepszanie u kowala i wykuwanie kompletów.',esn:'Esencja: zaklinanie, wzmacnianie zaklęć i gniazda u zaklinacza. Zdobędziesz ją też rozbijając przedmioty.'};
 function chipsHtml(){const p=S.p,c=(ic,v,info)=>`<span data-info="${info.replace(/"/g,'&quot;')}">${ic} ${v}</span>`;
   return c(ui('zloto','🪙'),p.gold,CHD.zloto)+c(ui('szmaty','🧵'),p.mat.szmaty,CHD.szmaty)+c(ui('stal','🔩'),p.mat.stal,CHD.stal)+c(ui('esencja','✨'),p.mat.esn||0,CHD.esn)
-   +Object.keys(GEM).filter(g=>(p.gem||{})[g]>0).map(g=>c(gI(g),p.gem[g],`${GEM[g][0]}: w gnieździe daje ${gemEff(g)}.`)).join('')
+   +gKeys(p).map(g=>c(gI(g),p.gem[g],`${gName(g)}: w gnieździe daje — ${gemEff(g)}.`)).join('')
    +Object.keys(MR).filter(k=>(p.mat[k]||0)>0).map(k=>{const sid=Object.keys(SETM).find(x=>SETM[x]===k);return c(ui('m_'+k,MR[k][1]),p.mat[k],`${MR[k][0]}: do wykucia elementu kompletu „${SETS[sid].n}” u kowala. Zdobędziesz w: ${setWhere(sid)}.`)}).join('')}
+const AF1=['sil','zre','int','wit','hp','def'],AF2=['ls','crit','dod','atkp','spp','hpp'];
+function affRange(k,it){const c=it.rc||[2+(it.tier||0)*14/6+S.p.lvl/3,2+(it.tier||0)*14/30+S.p.lvl/20];
+  if(AF1.includes(k)){const m=Math.ceil(c[0]);return k==='hp'?[3,3*m]:k==='def'?[1,Math.ceil(m/2)]:[1,m]}
+  if(AF2.includes(k)){const m=Math.ceil(c[1]);return['atkp','spp','hpp'].includes(k)?[2,2*m]:[1,m]}return null}
+function rgTxt(it,k){if(!it.b)return'';const v=it.s[k]||0,b=it.b[k]||0,r=affRange(k,it);
+  if(v>b&&r)return ` <span class="rg">(${b?'baza '+b+' + ':''}los ${r[0]}–${r[1]})</span>`;
+  return b&&v<=b?' <span class="rg">(stała)</small>':''}
+const TYL=[['helm','Hełm'],['klata','Klata'],['spodnie','Spodnie'],['buty','Buty'],['rekawice','Rękawice'],['naramienniki','Naramienniki'],['amulet','Amulet'],['pierscien','Pierścień'],['bron','Broń']];
+let BF={t:'',s:''};
+const bfOk=i=>(!BF.t||i.t===BF.t)&&(!BF.s||(BF.s==='*'?!!i.set:i.set===BF.s));
+function bfHtml(list){const cn=t=>list.filter(i=>i.t===t).length,sets=[...new Set(list.filter(i=>i.set).map(i=>i.set))];
+  const b=(a,l,on)=>`<button data-a="bf:${a}" class="${on?'on':''}">${l}</button>`;
+  return `<div class="fch">${b('t:','Wszystko',!BF.t&&!BF.s)}${TYL.filter(([t])=>cn(t)).map(([t,n])=>b('t:'+t,n+' '+cn(t),BF.t===t)).join('')}${sets.length?b('s:*','★ Komplety',BF.s==='*'):''}</div>${sets.length&&BF.s?`<div class="fch">${sets.map(id=>`<button data-a="bf:s:${id}" class="${BF.s===id?'on':''}" style="border-color:${SETS[id].c}">${SETS[id].n}</button>`).join('')}</div>`:''}`}
+function bfClick(a){const q=a.split(':'),v=q[2]||'';if(q[1]==='t'){if(!v)BF={t:'',s:''};else BF.t=BF.t===v?'':v}else{if(v==='*')BF.s=BF.s?'':'*';else BF.s=BF.s===v?'*':v}}
 let MSEL=null;
 function tile(it,d,lab){return `<button class="tl${it?' fi':''}${SEL===d||(MSEL&&MSEL.has(d))?' on':''}" data-a="s:${d}" style="--c:${it?RC[it.r]:'#4a3f2e'}">${it?`${icon('',iip(it),ico(it))}${it.d<=0?'<em>!</em>':''}${it.set?`<b class="sb" style="color:${SETS[it.set].c}">★</b>`:''}${it.fx?'<b class="sb" style="top:auto;bottom:4px;color:#e0a63a">✦</b>':''}${it.en?'<b class="sb" style="top:auto;bottom:4px;left:auto;right:4px;color:#b98cff">✧</b>':''}<i style="width:${it.d/it.md*100}%"></i>`:`<span class="ph">${lab||''}</span>`}</button>`}
 function showChar(){
@@ -907,7 +949,7 @@ function showChar(){
   let det='';
   if(it){const old=SEL[0]==='b'?p.eq[slotFor(it)]:null,ks=[...new Set([...Object.keys(it.s),...(old?Object.keys(old.s):[])])];
     det=`<div id="idet"><b style="color:${RC[it.r]}">${it.n}${it.up?' +'+it.up:''}</b> <small>${RN[it.r]} · ${it.two?'dwuręczna · ':''}${it.ac?ACN[it.ac]+' · ':''}wytrzymałość ${it.d}/${it.md}${it.d<=0?' (zepsuty)':''}</small>
-    ${ks.map(k=>{const v=it.s[k]||0,dl=old?v-(old.s[k]||0):0;return `<div>${v?'+'+v:'—'} ${LB[k]}${old&&dl?` <span style="color:${dl>0?'#7fd37f':'#ff7b6b'}">(${dl>0?'+':''}${dl})</span>`:''}</div>`}).join('')||'<div>Brak bonusów</div>'}
+    ${ks.map(k=>{const v=it.s[k]||0,dl=old?v-(old.s[k]||0):0;return `<div>${v?'+'+v:'—'} ${LB[k]}${v?rgTxt(it,k):''}${old&&dl?` <span style="color:${dl>0?'#7fd37f':'#ff7b6b'}">(${dl>0?'+':''}${dl})</span>`:''}</div>`}).join('')||'<div>Brak bonusów</div>'}
     ${(it.sn||0)?`<div>Gniazda: ${Array.from({length:it.sn},(_,i)=>it.so&&it.so[i]?gI(it.so[i]):'◇').join(' ')}</div>`:''}
     ${it.fx?`<div style="color:#e0a63a">✦ ${FXD[it.fx][0]}: ${FXD[it.fx][1]}</div>`:''}${enTxt(it)}
     ${it.set?`<div style="color:${SETS[it.set].c}">Komplet ${SETS[it.set].n}: założone ${setCnt()[it.set]||0} szt. (bonusy za 2/4/6)</div>`:''}
@@ -920,13 +962,13 @@ function showChar(){
     <div class="dcol">${['amulet','pierscien0','pierscien1','bron0','bron1'].map(k=>tile(p.eq[k],'e:'+k,SLN[k])).join('')}</div></div>
   <div class="hb dbars">${bar('x',p.xp,xpn(p.lvl),`XP ${p.xp}/${xpn(p.lvl)}`)}${bar('h',p.hp,mh(),`HP ${Math.ceil(p.hp)}/${mh()}`)}${bar('m',mm(),mm(),`Mana ${mm()}`)}${bar('s',sm(),sm(),`Stamina ${sm()}`)}</div>
   <div class="chips">${chipsHtml()}</div>
-  ${Object.keys(p.gem||{}).some(g=>p.gem[g]>0)?`<h3>Klejnoty</h3>${Object.keys(GEM).filter(g=>p.gem[g]>0).map(g=>`<div class="at"><div><b>${gI(g)} ${GEM[g][0]} ×${p.gem[g]}</b><br><small>W gnieździe daje ${gemEff(g)}. Wstawisz go u kowala.</small></div></div>`).join('')}`:''}
+  ${gKeys(p).length?`<h3>Klejnoty</h3>${gKeys(p).map(g=>`<div class="at"><div><b>${gI(g)} ${gName(g)} ×${p.gem[g]}</b><br><small>W gnieździe: ${['w','a','j'].map(x=>GGN[x]+' '+gTxt(g,x)).join(' · ')}. Wstawisz go u kowala.</small></div></div>`).join('')}`:''}
   ${p.scrolls?`<button class="wide" data-a="scroll">📜 Użyj zwoju powrotu (${p.scrolls}): teleport do miasta</button>`:''}
   <h3>Mikstury</h3>${Object.keys(POT).map(k=>{const n=(p.pot||{})[k]||0;return `<div class="at"><div><b>${pI(k)} ${POT[k][0]} ×${n}</b><br><small>${POT[k][3]}</small></div>${n&&['hp','mana','sta'].includes(k)?`<button data-a="pu:${k}">Użyj</button>`:''}</div>`}).join('')}
   <h3>Statystyki</h3><div class="sg">${[['Atak',atk()],['Moc zaklęć',sp()],['Odporność na ciosy',Math.round(rs())+'%'],['Krytyk',Math.round(Math.min(60,t.zre*.5+t.crit))+'%'],['Unik',Math.round(Math.min(35,t.zre+t.dod))+'%'],['Kradzież życia',Math.round(t.ls)+'%']].map(([a,b])=>`<div class="sc"><small>${a}</small><b>${b}</b></div>`).join('')}</div>
   <h3>Atrybuty · wolne punkty: ${p.pw}</h3>${[['wit','Witalność','zdrowie i odporność'],['sil','Siła','atak fizyczny, pancerz'],['zre','Zręczność','krytyk, unik, stamina'],['int','Inteligencja','moc zaklęć i mana']].map(([k,n,d])=>`<div class="at"><div><b>${n} ${Math.round(t[k])}</b><br><small>${d}</small></div>${p.pw?`<button class="plus" data-a="at${k}">+</button>`:''}</div>`).join('')}
   ${setsHtml()}
-  <h3>Plecak ${p.bag.length}/30 <span style="float:right"><button data-a="sm" style="margin:0">${MSEL?'Gotowe':'Zaznacz'}</button> <button data-a="sort" style="margin:0">Sortuj: ${['rzadkość','typ','poziom'][S.sm||0]}</button></span></h3><div class="bg">${Array.from({length:30},(_,i)=>p.bag[i]?tile(p.bag[i],'b:'+p.bag[i].id):'<div class="em"></div>').join('')}</div>
+  <h3>Plecak ${p.bag.length}/30 <span style="float:right"><button data-a="sm" style="margin:0">${MSEL?'Gotowe':'Zaznacz'}</button> <button data-a="sort" style="margin:0">Sortuj: ${['rzadkość','typ','poziom'][S.sm||0]}</button></span></h3>${bfHtml(p.bag)}<div class="bg">${BF.t||BF.s?(p.bag.filter(bfOk).map(i=>tile(i,'b:'+i.id)).join('')||'<p><small>Brak pasujących przedmiotów</small></p>'):Array.from({length:30},(_,i)=>p.bag[i]?tile(p.bag[i],'b:'+p.bag[i].id):'<div class="em"></div>').join('')}</div>
   <div style="height:${it||MSEL?230:20}px"></div>${det}${MSEL?`<div id="idet"><b>Zaznaczono: ${MSEL.size}</b><div class="row"><button data-a="mq0">Zaznacz zwykłe</button><button data-a="mq1">+ magiczne</button><button data-a="mq2">+ rzadkie</button></div><div class="row"><button data-a="mdrop"${MSEL.size?'':' disabled'}>Wyrzuć zaznaczone</button><button data-a="mx">Anuluj</button></div></div>`:''}`;
   $('chr').classList.add('on');
 }
@@ -935,13 +977,14 @@ $('chb').onclick=()=>{if(!F&&S.p.cls)showChar()};$('tbt').onclick=()=>{if(!F&&S.
 $('chr').onclick=e=>{const ci=e.target.closest('[data-info]');if(ci){toast(ci.dataset.info,4000);return}const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p;
   if(b.id==='cx'){SEL=null;MSEL=null;$('chr').classList.remove('on');render();if(S.loot)showLoot();return}
   if(a&&a.startsWith('at')&&p.pw){p.pw--;const k=a.slice(2);if(k==='wit')p.wit++;else p.b[k]++}
+  else if(a&&a.startsWith('bf:')){bfClick(a)}
   else if(a==='sort'){const m=S.sm=((S.sm||0)+1)%3;p.bag.sort((x,y)=>m===0?(y.r-x.r)||(y.tier-x.tier):m===1?(x.t<y.t?-1:x.t>y.t?1:y.r-x.r):(y.tier-x.tier)||(y.r-x.r))}
   else if(a&&a.startsWith('pu:')){usePot(a.slice(3))}
   else if(a==='tree'){showTree();return}
   else if(a==='scroll'&&p.scrolls){p.scrolls--;S.x=0;S.y=0;S.visited['0,0']=1;S.loc=null;SEL=null;$('chr').classList.remove('on');save();render();return}
   else if(a==='sm'){MSEL=MSEL?null:new Set();SEL=null}
   else if(a==='mx'){MSEL=null}
-  else if(a&&a.startsWith('mq')){const r=+a.slice(2);p.bag.forEach(x=>{if(x.r<=r)MSEL.add('b:'+x.id)})}
+  else if(a&&a.startsWith('mq')){const r=+a.slice(2);p.bag.forEach(x=>{if(x.r<=r&&bfOk(x))MSEL.add('b:'+x.id)})}
   else if(a==='mdrop'&&MSEL&&MSEL.size){const l=p.bag.filter(x=>MSEL.has('b:'+x.id));if(l.some(x=>x.r>=2)&&!confirm('Wśród zaznaczonych są rzadkie przedmioty. Wyrzucić '+l.length+' szt.?'))return;p.bag=p.bag.filter(x=>!MSEL.has('b:'+x.id));toast('Wyrzucono: '+l.length);MSEL=null}
   else if(a&&a.startsWith('s:')){if(MSEL){if(a.startsWith('s:b:')){const d=a.slice(2);MSEL.has(d)?MSEL.delete(d):MSEL.add(d)}}else SEL=a.slice(2)}
   else if(a==='do'&&SEL){const v=SEL.slice(2);if(SEL[0]==='e'){if(p.bag.length>=30){toast('Plecak pełny');return}if(p.eq[v]){p.bag.push(p.eq[v]);delete p.eq[v]}}else equip(v);SEL=null}
@@ -1058,7 +1101,7 @@ function openLocMap(){const L=S.loc,c=$('mapc'),cs=Math.min(54,Math.floor(Math.m
   g.save();g.shadowColor='#e0a63a';g.shadowBlur=12;g.strokeStyle='#e0a63a';g.lineWidth=3;g.strokeRect(L.x*cs+3,L.y*cs+3,cs-6,cs-6);g.fillStyle='#fff';g.beginPath();g.arc(L.x*cs+cs/2,L.y*cs+cs/2,cs*.12,0,7);g.fill();g.restore();
   $('mapinfo').textContent=`${POI[L.k][0]} · piętro ${L.fl+1}/${L.fls} · jasne pokoje odwiedzone, ciemne jeszcze nie · amber: Ty`;$('ov').classList.add('on')}
 // ---------- łup po walce / ze skrzyni: wybierasz, co zabierasz ----------
-function lootTxt(o){return o.k==='item'?`${iic(o.it)} ${fmt(o.it)}`:o.k==='pot'?`${pI(o.pk)} ${POT[o.pk][0]} ×${o.v}`:o.k==='gem'?`${gI(o.gk)} ${GEM[o.gk][0]} ×${o.v}`:o.k==='szmaty'?`${ui('szmaty','🧵')} Szmaty ×${o.v}`:o.k==='esn'?`${ui('esencja','✨')} Esencja ×${o.v}`:MR[o.k]?`${ui('m_'+o.k,MR[o.k][1])} ${MR[o.k][0]} ×${o.v}`:`${ui('stal','🔩')} Stal ×${o.v}`}
+function lootTxt(o){return o.k==='item'?`${iic(o.it)} ${fmt(o.it)}`:o.k==='pot'?`${pI(o.pk)} ${POT[o.pk][0]} ×${o.v}`:o.k==='gem'?`${gI(o.gk)} ${gName(o.gk)} ×${o.v}`:o.k==='szmaty'?`${ui('szmaty','🧵')} Szmaty ×${o.v}`:o.k==='esn'?`${ui('esencja','✨')} Esencja ×${o.v}`:MR[o.k]?`${ui('m_'+o.k,MR[o.k][1])} ${MR[o.k][0]} ×${o.v}`:`${ui('stal','🔩')} Stal ×${o.v}`}
 function openLoot(l,t){if(!l.length){return}S.loot={t,l};save();showLoot(1);if(l.some(o=>o.k==='item'&&o.it.r===3)){banner('LEGENDARNY!','#ff9a3c');sfx.lvl()}}
 function lootScore(it){return Object.values(it.s||{}).reduce((n,v)=>n+v,0)+(it.sn||0)*2+(it.fx?4:0)}
 function showLoot(fresh){const L=S.loot;if(!L||!L.l.length){S.loot=null;$('loot').classList.remove('on');return}
