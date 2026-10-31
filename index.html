@@ -495,7 +495,7 @@ function render(dx=0,dy=0,pp=0){
   const fo=field(S.x,S.y),f=cur(),t=T[f.t],v=$('view');
   v.style.background=`linear-gradient(160deg,${t.c},${t.c2})`;
   let tsrc=`assets/world/t_${S.loc?S.loc.k:f.t}.jpg`,fl2=false;if(S.loc){const rv=roomVar();if(rv){tsrc=rv.src;fl2=rv.flip}}const tkey=tsrc+(fl2?'F':''),old=v.querySelector('img.tile');
-  if(!old||old.dataset.s!==tkey){if(old)old.remove();const im=new Image();im.className='tile';im.alt='';im.decoding='async';im.dataset.s=tkey;if(fl2)im.style.transform='scaleX(-1)';im.onerror=()=>im.remove();im.src=tsrc;v.prepend(im)}
+  if(!old||old.dataset.s!==tkey){if(old)old.remove();const im=new Image();im.className='tile';im.alt='';im.decoding='async';im.dataset.s=tkey;if(fl2)im.style.transform='scaleX(-1)';if(tsrc.includes('_r_'))im.style.objectFit='fill';im.onerror=()=>im.remove();im.src=tsrc;v.prepend(im)}
   {const hs=heroSig()+'|'+auraKey(),he=$('hero');if(he.dataset.s!==hs||!he.firstChild){he.innerHTML=heroHtml();he.dataset.s=hs}}wxSet(S.loc?'':tod(),S.loc?'':wth());$('tname').textContent=S.loc?POI[S.loc.k][0]:f.poi&&SET[f.poi]?f.nm:t.n;
   $('coords').textContent=`Pole ${S.x}, ${S.y} · mapa ${(S.map||0)+1} · ${TODE[tod()]}${wth()?WX[wth()].e:''}${bossHint()}`;
   if(S.loc){S.loc.vis=S.loc.vis||{};S.loc.vis[S.loc.fl+':'+S.loc.x+','+S.loc.y]=1;$('coords').textContent=`Piętro ${S.loc.fl+1} z ${S.loc.fls}`}
