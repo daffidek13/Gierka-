@@ -322,9 +322,10 @@ body.play .orb{display:block}#orbL{left:-12px}#orbR{right:-12px}
 #view.dg #hero{bottom:calc(env(safe-area-inset-bottom,0px) + 160px)}
 
 #loot img{-webkit-user-drag:none;user-select:none}
-#loot .lc,#loot .lmc{touch-action:pan-y;transition:transform .2s,opacity .2s,box-shadow .15s}
+#loot{touch-action:pan-y}
+#loot .lc,#loot .lmc{transition:transform .2s,opacity .2s,box-shadow .15s}
 #loot .sel{outline:2px solid #ffd34a;outline-offset:2px}
-#loot .gr{box-shadow:0 0 22px #6fe08a,inset 0 0 14px #6fe08a66!important}#loot .gl{box-shadow:0 0 22px #e0644a,inset 0 0 14px #e0644a66!important}
+#loot.gr{box-shadow:inset 0 0 40px #6fe08a88}#loot.gl{box-shadow:inset 0 0 40px #e0644a88}
 </style>
 </head>
 <body>
@@ -1202,7 +1203,7 @@ function showLoot(fresh){const L=S.loot;if(!L||!L.l.length){S.loot=null;$('loot'
   const p=S.p,items=[],oth=[];L.l.forEach((o,i)=>(o.k==='item'?items:oth).push([o,i]));
   const card=([o,i],n)=>{const it=o.it,old=p.eq[slotFor(it)],d=old?lootScore(it)-lootScore(old):1,top=Object.entries(it.s).slice(0,3).map(([k,v])=>`<span>+${v} ${LB[k]}</span>`).join('');
     return `<button class="lc${fresh?' pop2':''}" data-i="${i}" style="--i:${n};--c:${RC[it.r]}"><span class="lci">${iic(it)}</span>${d>0?'<em class="up">▲</em>':d<0?'<em class="dn">▼</em>':''}${it.set?`<b class="lcs" style="color:${SETS[it.set].c}">★</b>`:''}<b class="lcn" style="color:${RC[it.r]}">${it.n}${it.up?' +'+it.up:''}</b><small class="lcr">${RN[it.r]}${it.ac?' · '+ACN[it.ac]:''}</small><span class="lst">${top}</span>${it.fx?`<small class="lfx">✦ ${FXD[it.fx][0]}</small>`:''}</button>`};
-  $('loot').innerHTML=`<div class="lth"><div class="ltt">${L.t}</div><small>${LTG()?'Przeciągnij w prawo, żeby zabrać, w lewo, żeby zostawić · albo dotknij dwa razy':'Dotknij, żeby zabrać'} · Plecak ${p.bag.length}/30</small></div>`+
+  $('loot').innerHTML=`<div class="lth"><div class="ltt">${L.t}</div><small>${LTG()?'Przeciągnij w prawo: same materiały · w lewo: zostaw · dwa dotknięcia: weź wszystko · dotknięcie przedmiotu: weź go':'Dotknij, żeby zabrać'} · Plecak ${p.bag.length}/30</small></div>`+
    (items.length?`<div class="lg">${items.map((x,n)=>card(x,n)).join('')}</div>`:'')+
    (oth.length?`<div class="lm">${oth.map(([o,i],n)=>`<button class="lmc${fresh?' pop2':''}" data-i="${i}" style="--i:${n+items.length}">${lootTxt(o)}</button>`).join('')}</div>`:'')+
    `<div class="lbt"><button class="main" data-a="all">Weź wszystko</button><div class="row"><button data-a="mats">Same materiały</button><button data-a="bag">Plecak</button><button data-a="leave">Zostaw</button></div><small>Reszta zostaje na ziemi w tym miejscu.</small></div>`;
@@ -1213,20 +1214,28 @@ function lootAct(i,mode){const L=S.loot;if(!L||!L.l[i])return false;
   else{if(L.g){toast('To i tak leży na ziemi');return false}const gk=gkey();(S.ground[gk]=S.ground[gk]||[]).push(L.l[i]);L.l.splice(i,1);toast('Zostawiono na ziemi')}
   if(L.g){if(L.l.length)S.ground[L.g]=L.l;else delete S.ground[L.g]}
   save();showLoot();render();return true}
-let LD=null,LTP={i:-1,t:0};
-$('loot').addEventListener('dragstart',e=>e.preventDefault());
-$('loot').addEventListener('pointerdown',e=>{if(!LTG()||!S.loot||LD)return;const c=e.target.closest('.lc,.lmc');if(!c)return;LD={c,id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,mv:0}});
-$('loot').addEventListener('pointermove',e=>{if(!LD||e.pointerId!==LD.id)return;const dx=e.clientX-LD.x,dy=e.clientY-LD.y;
-  if(!LD.mv&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.2){LD.mv=1;try{$('loot').setPointerCapture(e.pointerId)}catch(_){}}
-  if(LD.mv){LD.dx=dx;const c=LD.c;c.style.transition='none';c.style.transform=`translateX(${dx}px) rotate(${dx/28}deg)`;c.style.opacity=Math.max(.35,1-Math.abs(dx)/320);c.classList.toggle('gr',dx>60);c.classList.toggle('gl',dx<-60)}});
-$('loot').addEventListener('pointercancel',()=>{if(LD){const c=LD.c;c.style.transform='';c.style.opacity='';c.classList.remove('gr','gl')}LD=null});
-$('loot').addEventListener('pointerup',e=>{if(!LD||e.pointerId!==LD.id)return;const g=LD;LD=null;const c=g.c,i=+c.dataset.i;
-  if(g.mv){const dx=g.dx;if(Math.abs(dx)>80){const dir=dx>0?1:-1;c.style.transition='transform .16s ease-in,opacity .16s';c.style.transform=`translateX(${dir*420}px) rotate(${dir*14}deg)`;c.style.opacity='0';
-      setTimeout(()=>{if(!lootAct(i,dir>0?'take':'leave')){c.style.transition='transform .2s';c.style.transform='';c.style.opacity='';c.classList.remove('gr','gl')}},150)}
-    else{c.style.transition='transform .2s,opacity .2s';c.style.transform='';c.style.opacity='';c.classList.remove('gr','gl')}return}
+function lootBulk(mode){const L=S.loot;if(!L)return;
+  if(mode==='leave'){if(L.l.length&&!L.g){const gk=gkey();S.ground[gk]=(S.ground[gk]||[]).concat(L.l)}S.loot=null;toast('Zostawiono na ziemi')}
+  else if(mode==='mats')L.l=L.l.filter(o=>o.k==='item'||!takeLoot(o));
+  else L.l=L.l.filter(o=>!takeLoot(o));
+  if(L.g){if(L.l.length)S.ground[L.g]=L.l;else delete S.ground[L.g]}
+  save();showLoot();render()}
+let LD=null,LTP=0,LTM=0;
+const lootEl=$('loot');
+lootEl.addEventListener('dragstart',e=>e.preventDefault());
+lootEl.addEventListener('pointerdown',e=>{if(!LTG()||!S.loot||LD||e.target.closest('.lbt'))return;LD={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,mv:0,c:e.target.closest('.lc,.lmc')}});
+lootEl.addEventListener('pointermove',e=>{if(!LD||e.pointerId!==LD.id)return;const dx=e.clientX-LD.x,dy=e.clientY-LD.y;
+  if(!LD.mv&&Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.2){LD.mv=1;clearTimeout(LTM);try{lootEl.setPointerCapture(e.pointerId)}catch(_){}}
+  if(LD.mv){LD.dx=dx;lootEl.style.transition='none';lootEl.style.transform=`translateX(${dx*.6}px)`;lootEl.style.opacity=Math.max(.4,1-Math.abs(dx)/420);lootEl.classList.toggle('gr',dx>70);lootEl.classList.toggle('gl',dx<-70)}});
+const lootReset=()=>{lootEl.style.transition='transform .2s,opacity .2s';lootEl.style.transform='';lootEl.style.opacity='';lootEl.classList.remove('gr','gl')};
+lootEl.addEventListener('pointercancel',()=>{if(LD)lootReset();LD=null});
+lootEl.addEventListener('pointerup',e=>{if(!LD||e.pointerId!==LD.id)return;const g=LD;LD=null;
+  if(g.mv){const dx=g.dx;lootReset();if(Math.abs(dx)>90)setTimeout(()=>lootBulk(dx>0?'mats':'leave'),120);return}
   if(Math.abs(e.clientX-g.x)>12||Math.abs(e.clientY-g.y)>12)return;
-  const now=Date.now();if(LTP.i===i&&now-LTP.t<420){LTP={i:-1,t:0};lootAct(i,'take');return}
-  LTP={i,t:now};document.querySelectorAll('#loot .sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel')});
+  const now=Date.now();
+  if(now-LTP<380){LTP=0;clearTimeout(LTM);lootBulk('all');return}
+  LTP=now;clearTimeout(LTM);
+  if(g.c){const i=+g.c.dataset.i;LTM=setTimeout(()=>{LTP=0;lootAct(i,'take')},390)}});
 function takeLoot(o){const p=S.p;
   if(o.k==='item'){if(p.bag.length>=30){toast('Plecak pełny');return false}p.bag.push(o.it);if(o.it.r===3)bump('leg')}
   else if(o.k==='pot'){p.pot=p.pot||{};if((p.pot[o.pk]||0)>=9){toast('Masz już maksimum (9) takich mikstur');return false}p.pot[o.pk]=(p.pot[o.pk]||0)+o.v}
