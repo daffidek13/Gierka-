@@ -17,7 +17,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import os,shutil
-          P={'pot_':'ui','gem_':'ui','s_':'skills','b_':'hero','l_':'hero','x_':'hero','h_':'hero','i_':'items','u_':'ui','m_':'ui','t_':'world','p_':'world','e_':'enemies'}
+          P={'pot_':'ui','gem_':'ui','s_':'skills','b_':'hero','l_':'hero','x_':'hero','h_':'hero','i_':'items','u_':'ui','m_':'ui','t_':'world','p_':'world','d_':'world','e_':'enemies'}
           for fn in sorted(os.listdir('assets')):
               p='assets/'+fn
               if not os.path.isfile(p): continue
