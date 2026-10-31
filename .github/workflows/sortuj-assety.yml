@@ -1,1 +1,36 @@
-
+name: Sortuj assety
+# Wgrywasz pliki płasko do folderu assets/, a ten workflow sam rozkłada je do podfolderów.
+on:
+  push:
+    paths:
+      - 'assets/*'
+      - '.github/workflows/sortuj-assety.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Przenieś pliki do podfolderów
+        run: |
+          python3 - <<'PY'
+          import os,shutil
+          P={'pot_':'ui','gem_':'ui','s_':'skills','b_':'hero','l_':'hero','x_':'hero','h_':'hero','i_':'items','u_':'ui','m_':'ui','t_':'world','p_':'world','e_':'enemies'}
+          for fn in sorted(os.listdir('assets')):
+              p='assets/'+fn
+              if not os.path.isfile(p): continue
+              for pre in sorted(P,key=len,reverse=True):
+                  if fn.startswith(pre):
+                      os.makedirs('assets/'+P[pre],exist_ok=True)
+                      shutil.move(p,'assets/%s/%s'%(P[pre],fn)); break
+              else:
+                  print('Pominięto (nieznany prefiks):',fn)
+          PY
+      - name: Zapisz zmiany
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || (git commit -m "Sortowanie assetów w podfoldery" && git push)
