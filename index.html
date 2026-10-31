@@ -1105,7 +1105,7 @@ function roomHtml(){const L=S.loc,k=L.k,have=n=>{const u=`assets/world/d_${k}_${
   if(op(1,0)&&have('door_side'))P('right:0;width:12%;top:40%;height:26%','door_side',';transform:scaleX(-1)');
   if(op(0,1)&&have('door_bottom'))P('left:34%;width:32%;bottom:5%;height:9%','door_bottom');
   return r.join('')}
-function walls(){const L=S.loc,r=[];
+function walls(){const L=S.loc,r=[];if(HIMG[`assets/world/d_${L.k}_wall_top.png`])return '';
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{const open=!!LC(L,L.x+dx,L.y+dy),H=dx===0,sd=dy<0?'top':dy>0?'bottom':dx<0?'left':'right',gr=dy<0?'180deg':dy>0?'0deg':dx<0?'90deg':'270deg';
     (open?[[0,32],[68,32]]:[[0,100]]).forEach(([a,z])=>r.push(`<i class="wl" style="${sd}:0;${H?`left:${a}%;width:${z}%;height:13%`:`top:${a}%;height:${z}%;width:10%`};background:linear-gradient(${gr},#000f,#0000)"></i>`))});
   return r.join('')}
