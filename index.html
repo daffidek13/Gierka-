@@ -298,6 +298,28 @@ body.night .foe::before,body.night .obj::before{opacity:.8}
 #skills button .gl{position:absolute;top:-4px;right:-2px;font-size:15px;line-height:1;color:#ffd34a;text-shadow:0 0 4px #000,0 0 6px #000;font-weight:bold}
 .gpk{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.gpk button{padding:8px 2px;border-radius:10px;background:#1e1913;border:1px solid #5a4630;color:inherit;font:inherit;display:flex;flex-direction:column;align-items:center}.gpk button.on{border-color:#ffd34a;background:#3a2c14}.gpk b{font-size:24px}.gpk small{font-size:11px;opacity:.8;text-align:center}
 #gpad{display:block;margin:8px auto;border:2px solid #6a5a34;border-radius:12px;background:#0b0b0e;touch-action:none;max-width:100%}#gres{text-align:center;min-height:24px}
+
+/* kule HUD, pokoje z gory */
+.orb{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) - 12px);width:96px;height:101px;z-index:5;pointer-events:none;display:none}
+body.play .orb{display:block}#orbL{left:-12px}#orbR{right:-12px}
+.orb .of{position:absolute;left:14.5%;top:18.4%;width:70.8%;height:66.7%;border-radius:50%;overflow:hidden;background:#100808;box-shadow:inset 0 0 14px #000}
+.orb .of u{position:absolute;bottom:0;height:0;transition:height .25s;box-shadow:inset 0 3px 3px #fff5}
+.orb .of::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 34% 24%,#fff7,#0000 38%),radial-gradient(circle at 50% 110%,#0007,#0000 55%)}
+.orb img{position:absolute;inset:0;width:100%;height:100%}
+.orb.nf .of{outline:3px solid #8a6a34}
+.orb .ot{position:absolute;left:14.5%;top:18.4%;width:70.8%;height:66.7%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-shadow:0 1px 3px #000,0 0 4px #000;line-height:1.05;font-size:15px}
+.orb .ot small{font-size:9px;opacity:.85}
+#orbR .ot{flex-direction:row;align-items:center}#orbR .ot span{flex:1;text-align:center;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center}#orbR .ot i{font-style:normal;font-size:9px;opacity:.9}
+#hud .r:first-child{display:none}
+#fight>.bar.h,#fight>.bar.m,#fight>.bar.s{display:none}
+#skills{gap:5px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
+#skills button{width:50px}
+#skills .ik{width:46px;height:46px;border-width:2px;line-height:42px}
+#skills .ik .ic{line-height:42px}
+#skills em{font-size:9px;max-width:54px;height:20px}#skills small{font-size:9px}
+#dock{gap:4px;padding:5px 8px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}#dock button{width:37px;height:37px;font-size:18px}#dock .ui{width:25px;height:25px;font-size:18px}
+@media(max-width:380px){#dock,#skills{transform-origin:50% 100%}#dock{transform:translateX(-50%) scale(.86)}#skills{transform:scale(.86)}}
+#view.dg #hero{bottom:calc(env(safe-area-inset-bottom,0px) + 138px)}
 </style>
 </head>
 <body>
@@ -314,7 +336,7 @@ body.night .foe::before,body.night .obj::before{opacity:.8}
 <div class="bar h"><u id="hbar"></u><span id="htxt"></span></div><div class="bar m"><u id="mbar"></u><span id="mtxt"></span></div><div class="bar s"><u id="sbar"></u><span id="stxt"></span></div>
 <div id="pots"></div><div id="skills"></div><button id="fauto">Autoclick</button><button id="flee">Uciekaj</button></div>
 <div id="chr" class="pg"></div><div id="ench" class="pg"></div><div id="shop" class="pg"></div><div id="stash" class="pg"></div><div id="town" class="pg"></div><div id="cls" class="pg"></div><div id="tree" class="pg"></div><div id="skb" class="pg"></div>
-<div id="loot" class="pg"></div><div id="ev" class="pg"></div><div id="smith" class="pg"></div><div id="codex" class="pg"></div><div id="opt" class="pg"></div><div id="fade"></div><div id="fx"></div><div id="toast"></div>
+<div id="loot" class="pg"></div><div id="ev" class="pg"></div><div id="smith" class="pg"></div><div id="codex" class="pg"></div><div id="opt" class="pg"></div><div id="fade"></div><div id="fx"></div><div class="orb" id="orbL"><div class="of"><u style="background:linear-gradient(#ff8a7a,#c8241f 55%,#6a0a0a)"></u></div><img src="assets/ui/u_orb_hp.png" alt="" onerror="this.parentNode.classList.add('nf')"><div class="ot"></div></div><div class="orb" id="orbR"><div class="of"><u style="left:0;width:50%;background:linear-gradient(#8ccaff,#2a62d0 55%,#10307a)"></u><u style="left:50%;width:50%;background:linear-gradient(#ffe58a,#e0a020 55%,#8a5008)"></u></div><img src="assets/ui/u_orb_ms.png" alt="" onerror="this.parentNode.classList.add('nf')"><div class="ot"></div></div><div id="toast"></div>
 <div id="ov">
   <canvas id="mapc"></canvas>
   <p id="mapinfo"></p>
@@ -334,7 +356,7 @@ const T={
 };
 const E={szkielet:['Szkielet','💀'],ork:['Ork','👹'],wilk:['Wilk','🐺'],goblin:['Goblin','👺'],pajak:['Pająk','🕷️'],troll:['Troll','🧌'],smok:['Smok','🐉'],skorpion:['Skorpion','🦂'],topielec:['Topielec','🧟']};
 const SP={laka:['wilk','goblin'],las:['pajak','ork','wilk'],gory:['ork','troll'],bagno:['topielec','szkielet'],pustynia:['szkielet','skorpion']};
-const SLOT=[[24,47],[76,47],[50,40],[13,62],[87,62]],slot=i=>SLOT[i%5];
+const SLOT=[[24,47],[76,47],[50,40],[13,62],[87,62]],SLOTD=[[32,46],[68,46],[50,38],[26,58],[74,58]],slot=i=>($('view').classList.contains('dg')?SLOTD:SLOT)[i%5];
 const POI={miasto:['Miasto','🏰'],wioska:['Wioska','🏘️'],miasteczko:['Miasteczko','🏙️'],zamek:['Zamek','🏯'],obozowisko:['Obóz','⛺'],klasztor:['Klasztor','⛪'],jaskinia:['Jaskinia','🕳️'],ruiny:['Ruiny','🏚️']};
 const SET={miasto:1,wioska:1,miasteczko:1,zamek:1,obozowisko:1,klasztor:1};
 const SVD={wioska:[['karczma'],[['shop',.7],['stash',.4],['zad',.5],['smith',.3]]],miasteczko:[['shop','karczma'],[['smith',.8],['zad',.8],['stash',.6],['ench',.25]]],zamek:[['smith','zad'],[['shop',.5],['ench',.4],['karczma',.6],['stash',.5]]],obozowisko:[['shop'],[['karczma',.5],['smith',.3],['zad',.4]]],klasztor:[['karczma'],[['ench',.7],['shop',.25],['stash',.5],['zad',.2]]]};
@@ -479,7 +501,7 @@ function render(dx=0,dy=0,pp=0){
   if(S.loc){S.loc.vis=S.loc.vis||{};S.loc.vis[S.loc.fl+':'+S.loc.x+','+S.loc.y]=1;$('coords').textContent=`Piętro ${S.loc.fl+1} z ${S.loc.fls}`}
   $('poi').onclick=S.loc?null:SET[fo.poi]?()=>{TCUR=fo;TSEC=null;openTown()}:fo.poi?()=>enterLoc(fo):null;$('poi').innerHTML=S.loc?'':fo.poi?icon('',`assets/world/p_${fo.poi}.png`,POI[fo.poi][1])+(SET[fo.poi]?fo.nm+' <small>('+POI[fo.poi][0].toLowerCase()+')</small>':POI[fo.poi][0])+(SET[fo.poi]?' · tap, aby wejść':(S.cleared&&S.cleared[ckey(fo)]?' (wyczyszczone)':' · tap, aby wejść')):'';
   $('foes').innerHTML=f.foes.map((o,i)=>isDead(f,i)?'':`<button class="foe${o.ag?' ag':''}${POP?' pop':''}" data-i="${i}" style="--i:${i};left:${slot(i)[0]}%;top:${slot(i)[1]}%;z-index:${slot(i)[1]};transform:translate(-50%,-85%) scale(${(.8+slot(i)[1]/100*.4).toFixed(2)})">${icon('',`assets/enemies/e_${o.key}.png`,E[o.key][1])}<b>×${o.n}</b><small>${E[o.key][0]}${o.ag?' · atakuje!':''}</small></button>`).join('')+objs()+(S.loc?roomHtml()+walls():'');
-  if(S.loc)v.style.background='linear-gradient(160deg,#4a463f,#17161a)';
+  if(S.loc)v.style.background='linear-gradient(160deg,#4a463f,#17161a)';v.classList.toggle('dg',!!(S.loc&&HIMG[`assets/world/d_${S.loc.k}_wall.png`]));
   $('hint').innerHTML=(S.loc?'Przesuń palcem, żeby chodzić po lochu':'Przesuń palcem, żeby przejść na sąsiednie pole')+potBtns();
   // minimapa 5x5
   let m='';
@@ -499,7 +521,11 @@ function render(dx=0,dy=0,pp=0){
 }
 let tt;function toast(s,ms){const e=$('toast');e.textContent=s;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),ms||2600)}
 
-function hudUi(){const p=S.p;if(!p||!$('hud'))return;const pc=(a,b)=>Math.max(0,Math.min(100,a/b*100)).toFixed(1),xn=xpn(p.lvl);
+let ORBK='';
+function orbUi(){const p=S.p;if(!p||!p.cls||!$('orbL'))return;document.body.classList.add('play');const a=Math.max(0,Math.min(1,p.hp/mh())),m=Math.max(0,Math.min(1,p.mana/mm())),q=Math.max(0,Math.min(1,p.sta/sm())),k=[Math.round(a*300),Math.round(m*300),Math.round(q*300),Math.ceil(p.hp),Math.floor(p.mana),Math.floor(p.sta),mh()].join();if(k===ORBK)return;ORBK=k;
+  const L=$('orbL'),R=$('orbR');L.querySelector('u').style.height=(a*100)+'%';L.querySelector('.ot').innerHTML=`<b>${Math.ceil(p.hp)}</b><small>/${mh()}</small>`;
+  const us=R.querySelectorAll('u');us[0].style.height=(m*100)+'%';us[1].style.height=(q*100)+'%';R.querySelector('.ot').innerHTML=`<span><i>✦</i>${Math.floor(p.mana)}</span><span><i>⚡</i>${Math.floor(p.sta)}</span>`}
+function hudUi(){const p=S.p;if(!p||!$('hud'))return;orbUi();const pc=(a,b)=>Math.max(0,Math.min(100,a/b*100)).toFixed(1),xn=xpn(p.lvl);
   $('hud').innerHTML=`<div class="r"><div class="b hp"><u style="width:${pc(p.hp,mh())}%"></u><span>❤ ${Math.ceil(p.hp)}/${mh()}</span></div><div class="b mp"><u style="width:${pc(p.mana,mm())}%"></u><span>✦ ${Math.floor(p.mana)}/${mm()}</span></div><div class="b sp"><u style="width:${pc(p.sta,sm())}%"></u><span>⚡ ${Math.floor(p.sta)}/${sm()}</span></div></div>
   <div class="r"><div class="b xp"><u style="width:${pc(p.xp,xn)}%"></u><span>Poz. ${p.lvl} · ${p.xp}/${xn} XP</span></div><div class="g">Poz. ${p.lvl} · ${ui('zloto','🪙')} ${p.gold}</div></div>`}
 setInterval(()=>{if(!F&&S.p)hudUi()},800);
@@ -1090,22 +1116,23 @@ function lmove(dx,dy){const L=S.loc,nx=L.x+dx,ny=L.y+dy;if(!LC(L,nx,ny)){toast('
 function lback(){const L=S.loc;if(L.px!==undefined){L.x=L.px;L.y=L.py}}
 function objs(){const f=cur(),o=[],mk=(a,fi,em,tx,x,y,pth,cl)=>`<button class="obj${cl?' '+cl:''}${POP?' pop':''}" data-o="${a}" style="--i:2;left:${x}%;top:${y}%">${icon('',pth||`assets/world/p_${fi}.png`,em)}<small>${tx}</small></button>`;
   if(S.ground[gkey()]&&S.ground[gkey()].length)o.push(mk('ground','torba','🎒','Rzeczy na ziemi',27,80));
-  if(S.loc){const c=f.lc;const sx=h(S.loc.x,S.loc.y,S.loc.fl*7+3)<.5?15:85,dp=n=>`assets/world/d_${S.loc.k}_${n}.png|assets/world/p_${({stairs_up:'gora',stairs_down:'dol',exit:'wyjscie'})[n]}.png`;if(c.exit)o.push(mk('exit','wyjscie','🚪','Wyjście',sx,37,dp('exit'),'big'));if(c.up)o.push(mk('up','gora','🪜','Schody w górę',sx,37,dp('stairs_up'),'big'));if(c.down)o.push(mk('down','dol','🕳️','Schody w dół',sx,37,dp('stairs_down'),'big'));
+  if(S.loc){const c=f.lc;const sx=h(S.loc.x,S.loc.y,S.loc.fl*7+3)<.5?28:72,dp=n=>`assets/world/d_${S.loc.k}_${n}.png|assets/world/p_${({stairs_up:'gora',stairs_down:'dol',exit:'wyjscie'})[n]}.png`;if(c.exit)o.push(mk('exit','wyjscie','🚪','Wyjście',sx,31,dp('exit'),'big'));if(c.up)o.push(mk('up','gora','🪜','Schody w górę',sx,31,dp('stairs_up'),'big'));if(c.down)o.push(mk('down','dol','🕳️','Schody w dół',sx,31,dp('stairs_down'),'big'));
     if(c.chest&&!S.chs[chk(S.loc,S.loc.x,S.loc.y)])o.push(mk('chest',c.big?'skrzynia_wielka':'skrzynia',c.big?'🎁':'📦',c.big?'Wielka skrzynia':'Skrzynia',82,70))}
   else if(f.ch&&!S.chs[ckey(f)])o.push(mk('chest','skrzynia','📦','Skrzynia',82,70));
   if(!S.loc&&f.ev&&!(S.evs[ckey(f)]&&S.evs[ckey(f)].done))o.push(mk('event',f.ev,EVI[f.ev][0],EVI[f.ev][1],20,52));return o.join('')}
 let RMT=0;const RMP={};
 function roomHtml(){const L=S.loc,k=L.k,have=n=>{const u=`assets/world/d_${k}_${n}.png`;if(HIMG[u]===undefined&&!RMP[u]){RMP[u]=1;hLoad([u]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}return !!HIMG[u]},
-  u=n=>`background-image:url(assets/world/d_${k}_${n}.png)`,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),r=[];
-  const P=(st,n,x)=>r.push(`<i class="rp" style="${st};${u(n)}${x||''}"></i>`);
-  if(have('wall_top'))P('left:0;right:0;top:15%;height:23%','wall_top');
-  if(have('wall_side')){P('left:0;top:15%;bottom:9%;width:11%','wall_side');P('right:0;top:15%;bottom:9%;width:11%','wall_side',';transform:scaleX(-1)')}
-  if(op(0,-1)&&have('door_top'))P('left:32%;width:36%;top:11%;height:29%','door_top');
-  if(op(-1,0)&&have('door_side'))P('left:0;width:12%;top:40%;height:26%','door_side');
-  if(op(1,0)&&have('door_side'))P('right:0;width:12%;top:40%;height:26%','door_side',';transform:scaleX(-1)');
-  if(op(0,1)&&have('door_bottom'))P('left:34%;width:32%;bottom:5%;height:9%','door_bottom');
+  u=n=>`url(assets/world/d_${k}_${n}.png)`,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),r=[];
+  if(!have('wall'))return '';have('door');
+  const v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.125),RT=64,RB=104,RH=H-RT-RB,DW=Math.round(T*3.8),mid=RT+RH/2-T/2,
+  P=(st,bg)=>r.push(`<i class="rp" style="${st};${bg}"></i>`),rp=n=>`background-image:${u(n)};background-repeat:repeat-x;background-size:auto 100%`,one=n=>`background-image:${u(n)};background-size:100% 100%`;
+  P(`left:0;right:0;top:0;height:${RT}px;z-index:1`,'background:#09090b');P(`left:0;right:0;top:${RT+RH}px;bottom:0;z-index:1`,'background:#09090b');
+  [[1,-90,op(-1,0)],[0,90,op(1,0)]].forEach(([lf,rot,dr])=>{const cx=lf?T/2:W-T/2;P(`left:${cx-RH/2}px;top:${mid}px;width:${RH}px;height:${T}px;transform:rotate(${rot}deg);z-index:2`,rp('wall'));if(dr&&have('door'))P(`left:${cx-DW/2}px;top:${mid}px;width:${DW}px;height:${T}px;transform:rotate(${rot}deg);z-index:3`,one('door'))});
+  P(`left:0;right:0;top:${RT}px;height:${T}px;z-index:4`,rp('wall'));P(`left:0;right:0;top:${RT+RH-T}px;height:${T}px;transform:scaleY(-1);z-index:4`,rp('wall'));
+  if(op(0,-1)&&have('door'))P(`left:${(W-DW)/2}px;top:${RT}px;width:${DW}px;height:${T}px;z-index:5`,one('door'));
+  if(op(0,1)&&have('door'))P(`left:${(W-DW)/2}px;top:${RT+RH-T}px;width:${DW}px;height:${T}px;transform:scaleY(-1);z-index:5`,one('door'));
   return r.join('')}
-function walls(){const L=S.loc,r=[];if(HIMG[`assets/world/d_${L.k}_wall_top.png`])return '';
+function walls(){const L=S.loc,r=[];if(HIMG[`assets/world/d_${L.k}_wall.png`])return '';
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{const open=!!LC(L,L.x+dx,L.y+dy),H=dx===0,sd=dy<0?'top':dy>0?'bottom':dx<0?'left':'right',gr=dy<0?'180deg':dy>0?'0deg':dx<0?'90deg':'270deg';
     (open?[[0,32],[68,32]]:[[0,100]]).forEach(([a,z])=>r.push(`<i class="wl" style="${sd}:0;${H?`left:${a}%;width:${z}%;height:13%`:`top:${a}%;height:${z}%;width:10%`};background:linear-gradient(${gr},#000f,#0000)"></i>`))});
   return r.join('')}
@@ -1183,7 +1210,7 @@ function fxUi(){const a=EF.map(e=>`${pI(e.k)} ${POT[e.k][2]} ${Math.ceil(e.t)}s`
   const e=$('fx');e.style.top=F?'calc(env(safe-area-inset-top,0px) + 42px)':'';e.textContent=a.join('  ·  ');e.style.display=a.length?'block':'none'}
 setInterval(()=>{const p=S.p;if(!p.cls)return;let end=false;
   for(let i=EF.length-1;i>=0;i--){const e=EF[i],a=e.tot*.1/e.d;if(e.type==='hp')p.hp=Math.min(mh(),p.hp+a);else if(e.type==='mana')p.mana=Math.min(mm(),p.mana+a);else p.sta=Math.min(sm(),p.sta+a);e.t-=.1;if(e.t<=0){EF.splice(i,1);end=true}}
-  fxUi();if(F){upd()}else if(end||(EF.length&&++fxn%10===0))render()},100);
+  fxUi();orbUi();if(F){upd()}else if(end||(EF.length&&++fxn%10===0))render()},100);
 function renderPots(){const p=S.p.pot||{};$('pots').innerHTML=Object.keys(POT).filter(k=>p[k]>0).map(k=>`<button data-p="${k}">${pI(k)}<small>×${p[k]}</small></button>`).join('')}
 $('pots').onclick=e=>{const b=e.target.closest('button');if(b&&F)usePot(b.dataset.p)};
 function spawnWd(f){ // wędrujące potwory pojawiają się na pustych polach
