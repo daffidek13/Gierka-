@@ -228,6 +228,7 @@ header #mini{pointer-events:auto}
 #town .ban small{position:absolute;left:12px;top:36px;color:#ffe9a8;text-shadow:0 1px 3px #000;font-size:13px}
 #town .b-zamek{background:linear-gradient(#8a93a8,#c9cfdc 55%,#5d6b55 55%)}#town .b-obozowisko{background:linear-gradient(#e8a96b,#f6d9a8 55%,#a58b52 55%)}#town .b-klasztor{background:linear-gradient(#9fb0d6,#e0e6f5 55%,#6f8f5a 55%)}#town .b-miasteczko{background:linear-gradient(#86b7e6,#d8ecf8 55%,#7a9a4c 55%)}.gx{position:relative;display:inline-block}.gx i{position:absolute;right:-4px;bottom:-5px;font:bold 9px/11px sans-serif;font-style:normal;color:#fff;background:#000b;border-radius:4px;padding:0 3px}.gx.t2{filter:drop-shadow(0 0 3px #7fd0ff)}.gx.t3{filter:drop-shadow(0 0 4px #ffd66b)}.gx.t4{filter:drop-shadow(0 0 5px #ff6bd6)}
 .rg{font-size:11px;opacity:.7}.fch{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.fch button{padding:4px 10px;border-radius:14px;font-size:12px;background:#1e1913;border:1px solid #5a4630;color:#e8dcb8;width:auto;margin:0}.fch button.on{background:#6a5230;color:#fff;border-color:#e0a63a}.sl{display:inline-block;margin:2px 3px 2px 0;padding:2px 8px;border-radius:10px;font-size:12px;border:1px solid #4a3f2e;opacity:.6}.sl.eq{opacity:1;border-color:#7fd37f;color:#bff0bf}.sl.bg{opacity:1;border-color:#e0a63a;color:#ffe3a0}
+#skb{z-index:11}.bsr{display:flex;gap:10px;justify-content:center;margin:8px 0}.bs{width:74px;padding:0!important;background:none!important;border:0!important;display:flex;flex-direction:column;align-items:center}.bs .ik{display:block;width:62px;height:62px;border-radius:50%;border:3px solid #c9a24a;background:radial-gradient(#3a2e18,#120d06);overflow:hidden;line-height:56px;font-size:24px;text-align:center}#skb .ic{display:block;position:relative;width:100%;height:100%;text-align:center}#skb .ej{display:block;font-size:24px;line-height:56px}#skb .ik.s .ej{font-size:20px;line-height:40px}.bs.on .ik{border-color:#7fd8ff;box-shadow:0 0 14px #7fd8ff}.bs.emp .ik{border-style:dashed;border-color:#6a5a34;color:#8a7440}.bs em{font-style:normal;font-size:11px;margin-top:3px;line-height:1.1;height:25px;overflow:hidden}.bs small{font-size:10px;opacity:.7}.bsa{justify-content:center;min-height:42px;align-items:center}.pst{flex:1;border:1px solid #4a3f2e;border-radius:10px;padding:6px;text-align:center}.pst small{display:block;font-size:10px;opacity:.7;min-height:26px}.pst button{margin:2px!important;padding:4px 8px!important;font-size:12px!important}.sk{display:flex!important;gap:10px;align-items:center}.sk.in{border-color:#7fd8ff}.ik.s{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid #c9a24a;background:#1a1409;overflow:hidden;display:block}.bdg{font-size:11px;background:#1d4d6a;border-radius:8px;padding:1px 6px;margin-left:4px}
 #town .tn{text-align:center;opacity:.8}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .tcard{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px!important;text-align:center;border-radius:14px!important;border:2px solid #6a5a34!important;background:linear-gradient(160deg,#2b2115,#14100a)!important;box-shadow:inset 0 0 14px #0009}
@@ -294,7 +295,7 @@ body.night .foe::before,body.night .obj::before{opacity:.8}
 <div id="fight"><div id="fcnt"></div><div class="bar e"><u id="ebar"></u><span id="etxt"></span></div><div id="fe"><span id="fico"></span><div id="fhero"></div></div><div id="flog"></div>
 <div class="bar h"><u id="hbar"></u><span id="htxt"></span></div><div class="bar m"><u id="mbar"></u><span id="mtxt"></span></div><div class="bar s"><u id="sbar"></u><span id="stxt"></span></div>
 <div id="pots"></div><div id="skills"></div><button id="fauto">Autoclick</button><button id="flee">Uciekaj</button></div>
-<div id="chr" class="pg"></div><div id="ench" class="pg"></div><div id="shop" class="pg"></div><div id="stash" class="pg"></div><div id="town" class="pg"></div><div id="cls" class="pg"></div><div id="tree" class="pg"></div>
+<div id="chr" class="pg"></div><div id="ench" class="pg"></div><div id="shop" class="pg"></div><div id="stash" class="pg"></div><div id="town" class="pg"></div><div id="cls" class="pg"></div><div id="tree" class="pg"></div><div id="skb" class="pg"></div>
 <div id="loot" class="pg"></div><div id="ev" class="pg"></div><div id="smith" class="pg"></div><div id="codex" class="pg"></div><div id="opt" class="pg"></div><div id="fade"></div><div id="fx"></div><div id="toast"></div>
 <div id="ov">
   <canvas id="mapc"></canvas>
@@ -659,7 +660,7 @@ const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
 function showOpt(){const o=S.opt=S.opt||{snd:1,vib:1},t=S.pt||0;
   $('opt').innerHTML=`<button data-a="ox">✕ Zamknij</button><h3>Opcje</h3>
   <p>Czas gry: ${Math.floor(t/3600)} h ${Math.floor(t%3600/60)} min · poziom ${S.p.lvl}/100 · pokonani wrogowie: ${S.kills||0}</p>
-  <button class="it" data-a="odf">Trudność wrogów: ${['łatwa (−25% HP, −20% obrażeń)','normalna','trudna (+40% HP, +40% obrażeń, +25% XP)'][o.df!=null?o.df:1]}</button><button class="it" data-a="osnd">Dźwięk: ${o.snd===0?'wyłączony':'włączony'}</button><button class="it" data-a="oani">Animacje: ${o.an===0?'wyłączone':'włączone'}</button><button class="it" data-a="ovib">Wibracje: ${o.vib===0?'wyłączone':'włączone'}</button>
+  <button class="it" data-a="odf">Trudność wrogów: ${['łatwa (−25% HP, −20% obrażeń)','normalna','trudna (+40% HP, +40% obrażeń, +25% XP)'][o.df!=null?o.df:1]}</button><button class="it" data-a="ofl">Długość walk: ${FLN[o.fl!=null?o.fl:2]}<br><small>Dłuższe walki: wrogowie mają więcej HP i słabiej biją, a za wygraną dostajesz więcej XP i złota.</small></button><button class="it" data-a="osnd">Dźwięk: ${o.snd===0?'wyłączony':'włączony'}</button><button class="it" data-a="oani">Animacje: ${o.an===0?'wyłączone':'włączone'}</button><button class="it" data-a="ovib">Wibracje: ${o.vib===0?'wyłączone':'włączone'}</button>
   <h3>Zapis gry</h3><p><small>Skopiuj zapis i schowaj go (np. w notatkach). Po wyczyszczeniu danych przeglądarki albo zmianie adresu wklejasz go tutaj i wczytujesz.</small></p>
   <textarea id="osv" rows="5" style="width:100%;background:#1d2027;color:var(--ink);border:1px solid #4a4e59;border-radius:8px;user-select:text;-webkit-user-select:text" placeholder="Tu pojawi się zapis albo wklej go tutaj"></textarea>
   <button data-a="oexp">Pokaż i skopiuj zapis</button> <button data-a="oimp">Wczytaj zapis z pola</button>
@@ -668,6 +669,7 @@ $('opb').onclick=()=>showOpt();
 $('opt').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,o=S.opt=S.opt||{snd:1,vib:1};
   if(a==='ox'){$('opt').classList.remove('on');return}
   if(a==='odf'){o.df=((o.df!=null?o.df:1)+1)%3;save();showOpt();return}
+  if(a==='ofl'){o.fl=((o.fl!=null?o.fl:2)+1)%4;save();showOpt();return}
   if(a==='osnd'){o.snd=o.snd===0?1:0;save();showOpt();sfx.loot();return}
   if(a==='oani'){o.an=o.an===0?1:0;save();showOpt();render();return}
   if(a==='ovib'){o.vib=o.vib===0?1:0;save();showOpt();vib(60);return}
@@ -955,7 +957,7 @@ function showChar(){
     ${it.set?`<div style="color:${SETS[it.set].c}">Komplet ${SETS[it.set].n}: założone ${setCnt()[it.set]||0} szt. (bonusy za 2/4/6)</div>`:''}
     ${old?`<small>Porównanie z założonym: ${old.n}</small>`:''}<div class="row"><button data-a="do">${SEL[0]==='e'?'Zdejmij':'Załóż'}</button>${SEL[0]==='b'?`<button data-a="drop">Wyrzuć</button>`:''}<button data-a="sc">Zamknij</button></div></div>`}
   const order=['amulet','helm','naramienniki','bron0','klata','bron1','pierscien0','spodnie','pierscien1','rekawice','buty',null];
-  $('chr').innerHTML=`<div class="hd"><button id="cx">✕ Zamknij</button><button data-a="tree">Drzewko umiejętności (${p.ps} pkt)</button></div>
+  $('chr').innerHTML=`<div class="hd"><button id="cx">✕ Zamknij</button><button data-a="tree">Drzewko (${p.ps} pkt)</button><button data-a="bar">Pasek skilli</button></div>
   <h2 class="ttl">${CL[p.cls][4]} · poziom ${p.lvl}</h2>
   <div class="doll"><div class="dcol">${['helm','naramienniki','klata','rekawice','spodnie'].map(k=>tile(p.eq[k],'e:'+k,SLN[k])).join('')}</div>
     <div class="dmid"><div class="dh"><div class="hv">${heroHtml()}</div></div>${tile(p.eq.buty,'e:buty',SLN.buty)}</div>
@@ -981,6 +983,7 @@ $('chr').onclick=e=>{const ci=e.target.closest('[data-info]');if(ci){toast(ci.da
   else if(a==='sort'){const m=S.sm=((S.sm||0)+1)%3;p.bag.sort((x,y)=>m===0?(y.r-x.r)||(y.tier-x.tier):m===1?(x.t<y.t?-1:x.t>y.t?1:y.r-x.r):(y.tier-x.tier)||(y.r-x.r))}
   else if(a&&a.startsWith('pu:')){usePot(a.slice(3))}
   else if(a==='tree'){showTree();return}
+  else if(a==='bar'){showBar();return}
   else if(a==='scroll'&&p.scrolls){p.scrolls--;S.x=0;S.y=0;S.visited['0,0']=1;S.loc=null;SEL=null;$('chr').classList.remove('on');save();render();return}
   else if(a==='sm'){MSEL=MSEL?null:new Set();SEL=null}
   else if(a==='mx'){MSEL=null}
@@ -1166,10 +1169,11 @@ const alive=()=>Math.ceil(F.hp/F.hpu);
 function bar(id,v,max,t){$(id+'bar').style.width=Math.max(0,Math.min(100,v/max*100))+'%';$(id+'txt').textContent=t}
 function upd(){const p=S.p;bar('e',F.hp,F.hpu*F.g.n,Math.ceil(F.hp)+' HP');bar('h',p.hp,mh(),`HP ${Math.ceil(p.hp)}/${mh()}`);bar('m',p.mana,mm(),`Mana ${Math.floor(p.mana)}/${mm()}`);bar('s',p.sta,sm(),`Stamina ${Math.floor(p.sta)}/${sm()}`);
   $('fcnt').textContent=`${E[F.g.key][0]} ×${alive()}`;document.querySelectorAll('#skills button').forEach((b,j)=>{const i=b.querySelector('i');if(i&&F.sl[j])i.style.height=F.cd[j]/F.sl[j].e.cd*100+'%'})}
+const FLV=[2,4,6,9],FLN=['krótkie (×2 HP wrogów)','średnie (×4)','długie (×6)','epickie (×9)'];
 function startFight(i,amb){
   if(F||!S.p.cls)return;const f=cur(),g=f.foes[i];if(!g||isDead(f,i))return;
-  const DF=[.75,1,1.4][(S.opt&&S.opt.df!=null)?S.opt.df:1],lv=Math.max(0,S.p.lvl-1),m=1+Math.hypot(S.x,S.y)/25+(S.map||0)*.8,st0=ST[g.key],hpu=Math.round(st0[0]*m*(1+lv*.22)*DF),dm=m*(1+lv*.11)*(DF>1?1.2:DF<1?.8:1);
-  F={f,i,g,hpu,hp:hpu*g.n,dmg:st0[1]*dm*(!S.loc&&tod()==='noc'?1.15:1),xp:st0[2]*(1+lv*.18)*(DF>1?1.25:DF<1?.8:1)*(!S.loc&&tod()==='noc'?1.2:1),t0:Date.now(),t:0,hits:0,cd:SKL().map(()=>0),sl:SKL(),amb};if(has('tarcza'))F.sh=Math.round(mh()*.15);F.pk=new Set((S.p.tr||[]).map(id=>TN[id]&&TN[id].x&&TN[id].x.f).filter(Boolean));F.w0=wkNow();F.cdr=(F.pk.has('kostur_cd')&&F.w0==='kostur')?1.1:1;
+  const FL=FLV[(S.opt&&S.opt.fl!=null)?S.opt.fl:2],LH=ST[g.key][0]>=200?FL*.6:FL,DF=[.75,1,1.4][(S.opt&&S.opt.df!=null)?S.opt.df:1],lv=Math.max(0,S.p.lvl-1),m=1+Math.hypot(S.x,S.y)/25+(S.map||0)*.8,st0=ST[g.key],hpu=Math.round(st0[0]*m*(1+lv*.22)*DF*LH),dm=m*(1+lv*.11)*(DF>1?1.2:DF<1?.8:1)*Math.pow(FL,-.55);
+  F={f,i,g,hpu,hp:hpu*g.n,dmg:st0[1]*dm*(!S.loc&&tod()==='noc'?1.15:1),xp:st0[2]*(1+lv*.18)*Math.pow(LH,.75)*(DF>1?1.25:DF<1?.8:1)*(!S.loc&&tod()==='noc'?1.2:1),t0:Date.now(),t:0,hits:0,cd:SKL().map(()=>0),sl:SKL(),amb};if(has('tarcza'))F.sh=Math.round(mh()*.15);F.pk=new Set((S.p.tr||[]).map(id=>TN[id]&&TN[id].x&&TN[id].x.f).filter(Boolean));F.w0=wkNow();F.cdr=(F.pk.has('kostur_cd')&&F.w0==='kostur')?1.1:1;
   $('fe').style.background=`url(assets/world/t_${S.loc?S.loc.k:f.t}.jpg) center/cover,linear-gradient(160deg,${T[f.t].c},${T[f.t].c2})`;
   $('fico').innerHTML=icon('',`assets/enemies/e_${g.key}.png`,E[g.key][1]);
   $('skills').innerHTML=[0,1,2,3].map(j=>{const k=F.sl[j];return k?`<button data-j="${j}"><span class="ik">${icon('',`assets/skills/s_${k.id}.png`,SKI[k.e.t]||'✨')}<i></i></span><em>${k.n}</em><small>${k.e.c}${k.e.r==='mana'?'✦':'⚡'}${skNum(k.e)?' · '+skNum(k.e):''}</small></button>`:`<button data-j="${j}" class="emp"><span class="ik">＋</span><em>Wolny slot</em><small>&nbsp;</small></button>`}).join('');
@@ -1215,7 +1219,7 @@ function hit(d){if(!F)return;const t=st();let cr=false;
   if(AN()){const dir=Math.random()<.5?-1:1;$('fico').animate([{transform:`translateX(${dir*(cr?18:8)}px) scale(${cr?1.14:1.05})`,filter:'brightness(2.2)'},{transform:'none',filter:'none'}],{duration:cr?240:150});if(cr){shake($('fight'),7,260);const[bx,by]=ctr($('fico'));burst(bx,by,['✨','💥'],6,70)}}F.hp-=d;if(F.hp<=0)win();else upd()}
 $('fe').addEventListener('pointerdown',()=>{if(!F)return;heroAnim('atk');$('fico').animate([{transform:'scale(.9)'},{transform:'none'}],{duration:90});hit(Math.round(atk()*(F.buff>0?F.bm:1)))});
 $('skills').addEventListener('click',e=>{
-  const b=e.target.closest('button');if(!b||!F)return;const j=+b.dataset.j;if(!F.sl[j]){toast('Wolny slot: przypisz umiejętność w drzewku');return}const k=F.sl[j].e,p=S.p,r=k.r;
+  const b=e.target.closest('button');if(!b||!F)return;const j=+b.dataset.j;if(!F.sl[j]){toast('Wolny slot: ułóż pasek w Postać → Pasek skilli');return}const k=F.sl[j].e,p=S.p,r=k.r;
   const sk=k.t==='m'&&F.pk.has('skupienie'),cost=sk?Math.round(k.c*.75):k.c;if(F.cd[j]>0)return;if(p[r]<cost){toast('Za mało '+(r==='mana'?'many':'staminy'));return}
   p[r]-=cost;F.cd[j]=k.cd*(sk?1.2:1);if(k.t==='m'&&F.pk.has('przeplyw'))F.cd=F.cd.map((c,q)=>q===j?c:Math.max(0,c-1));const prev=F.lc&&Date.now()-F.lc.at<8000?F.lc.t:'';F.lc={t:k.t,at:Date.now()};sfx.skill();skillFx(F.sl[j],k);
   if(k.t==='h'){const hv=Math.round(mh()*k.m/100)+sp();p.hp=Math.min(mh(),p.hp+hv);if(F.pk.has('blogo'))F.sh=(F.sh||0)+Math.round(hv*.5);if(F.pk.has('pochl'))hit(Math.round(hv*.8))}
@@ -1348,6 +1352,34 @@ let TSEL=null;
 const PSI={sil:'💪',zre:'🌀',int:'🧠',wit:'❤️',def:'🛡️',atkp:'⚔️',hpp:'💖',crit:'🎯',ls:'🩸',dod:'💨',stap:'🔋',manap:'🔷',spp:'✨'};
 const tIc=id=>{const n=TN[id];return icon('',`assets/skills/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):((n.x&&n.x.ic)||PSI[Object.keys(n.e||{})[0]]||'⭐'))};
 const cflOf=id=>{const x=TN[id].x;return x&&x.ex?Object.values(TN).find(q=>q.id!==id&&q.x&&q.x.ex===x.ex&&S.p.tr.includes(q.id)):null};
+let SBSEL=-1,SBF='';
+const SBG={'':'Wszystkie',a:'Ataki',o:'Obrażenia w czasie',w:'Wsparcie',k:'Kontrola',u:'Przywołańce'},SBM={p:'a',m:'a',r:'o',d:'o',h:'w',s:'w',b:'w',w:'k',u:'u'};
+function showBar(){const p=S.p,lo=p.lo,own=p.tr.filter(id=>TN[id]&&TN[id].t==='a'),pr=p.bars=p.bars||[null,null,null];
+  const slot=j=>{const id=lo[j],n=id&&TN[id];return `<button class="bs${SBSEL===j?' on':''}${n?'':' emp'}" data-a="sl${j}"><span class="ik">${n?tIc(id):'＋'}</span><em>${n?n.n:'Wolny'}</em><small>${j+1}</small></button>`};
+  const list=own.filter(id=>!SBF||SBM[TN[id].e.t]===SBF);
+  $('skb').innerHTML=`<button data-a="bx">✕ Gotowe</button><h3>Pasek umiejętności</h3>
+  <p><small>Tak wygląda pasek w walce, od lewej. Dotknij slot, aby go zaznaczyć, potem przesuń ◀ ▶, zdejmij ✕ albo dotknij inny slot, aby przenieść. Dotknij umiejętność z listy, aby dodać ją na pasek (przy pełnym pasku zastąpi zaznaczony slot).</small></p>
+  <div class="bsr">${[0,1,2,3].map(slot).join('')}</div>
+  <div class="row bsa">${SBSEL>=0&&lo[SBSEL]?`<button data-a="mvl"${SBSEL>0?'':' disabled'}>◀ w lewo</button><button data-a="mvr"${SBSEL<lo.length-1?'':' disabled'}>w prawo ▶</button><button data-a="rm">✕ zdejmij</button>`:'<small>Zaznacz slot, aby go przesunąć lub zdjąć</small>'}</div>
+  <h3>Zapisane układy</h3><div class="row">${[0,1,2].map(i=>`<div class="pst"><b>${i+1}</b>${pr[i]?`<small>${pr[i].map(id=>TN[id]?TN[id].n:'?').join(' · ')}</small>`:'<small>pusty</small>'}<div><button data-a="sv${i}">Zapisz</button><button data-a="ld${i}"${pr[i]?'':' disabled'}>Wczytaj</button></div></div>`).join('')}</div>
+  <h3>Twoje umiejętności (${own.length})</h3><div class="fch">${Object.keys(SBG).map(k=>`<button data-a="gf:${k}" class="${SBF===k?'on':''}">${SBG[k]}</button>`).join('')}</div>
+  ${list.map(id=>{const n=TN[id],e=n.e,ix=lo.indexOf(id);return `<button class="it sk${ix>=0?' in':''}" data-a="ad:${id}"><span class="ik s">${tIc(id)}</span><span><b>${n.n}</b> ${ix>=0?`<span class="bdg">slot ${ix+1}</span>`:''}<br><small>${skDesc(e)}<br>Koszt ${e.c} ${e.r==='mana'?'many':'staminy'} · odnowienie ${e.cd} s</small></span></button>`}).join('')||'<p><small>Brak umiejętności tego typu. Odblokuj je w drzewku.</small></p>'}
+  <p><small>Kombinacje (w ciągu 8 s): osłabienie → atak ×1,5 · tarcza → cios ×1,3 · krwawienie/trucizna → czar ×1,4. Pomyśl o pasku jako o rotacji: najpierw osłabienie lub dot, potem mocne uderzenie.</small></p><div style="height:20px"></div>`;
+  $('skb').classList.add('on')}
+$('skb').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.p,a=b.dataset.a,lo=p.lo;
+  if(a==='bx'){$('skb').classList.remove('on');SBSEL=-1;if($('tree').classList.contains('on'))showTree();if($('chr').classList.contains('on'))showChar();return}
+  if(a.startsWith('sl')){const j=+a.slice(2);if(SBSEL===-1){if(lo[j])SBSEL=j}else if(SBSEL===j)SBSEL=-1;else{const x=lo.splice(SBSEL,1)[0];lo.splice(Math.min(j,lo.length),0,x);SBSEL=-1}}
+  else if(a==='mvl'&&SBSEL>0){[lo[SBSEL-1],lo[SBSEL]]=[lo[SBSEL],lo[SBSEL-1]];SBSEL--}
+  else if(a==='mvr'&&SBSEL>=0&&SBSEL<lo.length-1){[lo[SBSEL+1],lo[SBSEL]]=[lo[SBSEL],lo[SBSEL+1]];SBSEL++}
+  else if(a==='rm'&&SBSEL>=0){lo.splice(SBSEL,1);SBSEL=-1}
+  else if(a.startsWith('gf:')){SBF=a.slice(3)}
+  else if(a.startsWith('ad:')){const id=a.slice(3),ix=lo.indexOf(id);
+    if(ix>=0){if(SBSEL>=0&&SBSEL!==ix){[lo[SBSEL],lo[ix]]=[lo[ix],lo[SBSEL]];SBSEL=-1}else{lo.splice(ix,1);if(SBSEL>=lo.length)SBSEL=-1}}
+    else if(lo.length<4){if(SBSEL>=0&&SBSEL<lo.length){lo.splice(SBSEL,0,id)}else lo.push(id);SBSEL=-1}
+    else if(SBSEL>=0&&SBSEL<4){lo[SBSEL]=id;SBSEL=-1}else toast('Pasek pełny — zaznacz slot do zastąpienia')}
+  else if(a.startsWith('sv')){p.bars=p.bars||[null,null,null];p.bars[+a.slice(2)]=lo.slice();toast('Układ zapisany')}
+  else if(a.startsWith('ld')){const q=(p.bars||[])[+a.slice(2)];if(q){p.lo=q.filter(id=>p.tr.includes(id)&&TN[id]).slice(0,4);SBSEL=-1;toast('Układ wczytany')}}
+  save();showBar()};
 function showTree(){
   const p=S.p,old=$('tv'),sl=old?[old.scrollLeft,old.scrollTop]:[Math.max(0,TP.o.cx*TZ-innerWidth/2),Math.max(0,TP.o.cy*TZ-(innerHeight-230)/2)],own=id=>p.tr.includes(id),av=id=>!own(id)&&TN[id].par.some(own);
   let ln='',nd='';const BC={s:'#d2573d',z:'#4fb36e',i:'#4f8fe6',w:'#e0709f',n:'#9a5ad0',p:'#8fbf3a',h:'#e0b04a',o:'#e0b04a'};
@@ -1362,13 +1394,14 @@ function showTree(){
     nd+=`<button class="nd${n.t==='a'?' a':''}${n.x&&(n.x.f||n.x.ar||n.x.wp||n.x.ex)?' kx':''}${!own(id)&&cflOf(id)?' bl':''}${own(id)?' own':av(id)?' av':''}${TSEL===id?' sel':''}${TSEL&&!anc.has(id)&&!kids.has(id)&&TSEL!==id?' dm':''}" data-n="${id}" style="left:${a.x-40}px;top:${a.y}px;--bc:${BC[id[0]]||'#aaa'}"><b class="ndc">${id==='o'?'<em>★</em>':tIc(id)}</b><span>${n.n}</span></button>`});
   let cf='';if(TSEL&&TN[TSEL]&&TN[TSEL].x&&TN[TSEL].x.ex){Object.values(TN).forEach(q=>{if(q.id!==TSEL&&q.x&&q.x.ex===TN[TSEL].x.ex){const A=TP[TSEL],B=TP[q.id];cf+=`<line x1="${A.cx}" y1="${A.cy}" x2="${B.cx}" y2="${B.cy}" stroke="#ff5a4a" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round"/>`}})}
   const n=TSEL&&TN[TSEL],lo=p.lo.includes(TSEL);
-  $('tree').innerHTML=`<button data-a="tx">Zamknij</button> <button data-a="rs">Reset drzewka (${20*p.lvl} zł)</button> <button data-a="zm">−</button><button data-a="zp">+</button><button data-a="ct">◎</button><p>Wolne punkty: <b>${p.ps}</b> · pasek walki: ${p.lo.map(i=>TN[i].n).join(', ')||'—'}</p>
+  $('tree').innerHTML=`<button data-a="tx">Zamknij</button> <button data-a="bar">Pasek skilli</button> <button data-a="rs">Reset drzewka (${20*p.lvl} zł)</button> <button data-a="zm">−</button><button data-a="zp">+</button><button data-a="ct">◎</button><p>Wolne punkty: <b>${p.ps}</b> · pasek walki: ${p.lo.map(i=>TN[i].n).join(', ')||'—'}</p>
   <div id="ti">${n?`<span class="tbig">${tIc(TSEL)}</span><b>${n.n}</b> — ${effTx(n)}<br>${own(TSEL)?(n.t==='a'?`<button data-a="lo">${lo?'Zdejmij z paska':'Dodaj do paska (max 4)'}</button>`:'Odblokowane'):av(TSEL)?(cflOf(TSEL)?`Zablokowane: wybrałeś „${cflOf(TSEL).n}” (zmiana tylko przez reset drzewka)`:`<button data-a="un"${p.ps?'':' disabled'}>Odblokuj (1 pkt)</button>`):'Najpierw odblokuj sąsiedni węzeł'}`:'Tap w węzeł po opis. Ozdobne węzły to talenty od zbroi, broni i wyborów (niektóre się wykluczają).<br><small>COMBO w 8 s: osłabienie→atak ×1.5 · tarcza→cios ×1.3 · krwawienie/trucizna→czar ×1.4</small>'}</div>
   <div id="tv"><div style="position:relative;zoom:${TZ};width:${TW}px;height:${TH}px"><svg width="${TW}" height="${TH}" style="position:absolute;inset:0">${bg}${ln}${cf}</svg>${nd}</div></div>`;
   $('tree').classList.add('on');const t=$('tv');t.scrollLeft=sl[0];t.scrollTop=sl[1];
 }
 $('tree').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.p,a=b.dataset.a;
   if(a==='tx'){$('tree').classList.remove('on');showChar();return}
+  if(a==='bar'){showBar();return}
   if(b.dataset.n)TSEL=b.dataset.n;
   else if(a==='zp')TZ=Math.min(1.4,TZ+.15);else if(a==='zm')TZ=Math.max(.3,TZ-.12);else if(a==='ct'){showTree();const t=$('tv');t.scrollLeft=TP.o.cx*TZ-t.clientWidth/2;t.scrollTop=TP.o.cy*TZ-t.clientHeight/2;return}
   else if(a==='un'&&p.ps&&TSEL){const n=TN[TSEL];if(cflOf(TSEL)){toast('Wykluczone przez: '+cflOf(TSEL).n);return}if(!p.tr.includes(TSEL)&&n.par.some(q=>p.tr.includes(q))){p.ps--;p.tr.push(TSEL);if(n.t==='a'&&p.lo.length<4)p.lo.push(TSEL)}}
