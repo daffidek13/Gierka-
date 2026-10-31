@@ -1129,14 +1129,14 @@ function roomVar(){const L=S.loc;if(!L)return null;const op=(dx,dy)=>!!LC(L,L.x+
   const src=HIMG[s1]?s1:HIMG[s2]?s2:null;return src?{src,flip}:null}
 function roomHtml(){const L=S.loc,k=L.k,have=n=>{const u=`assets/world/d_${k}_${n}.png`;if(HIMG[u]===undefined&&!RMP[u]){RMP[u]=1;hLoad([u]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}return !!HIMG[u]},
   u=n=>`url(assets/world/d_${k}_${n}.png)`,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),r=[];
-  if(roomVar())return '';if(!have('wall'))return '';have('door');
+  return '';
   const v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.15),RT=64,RB=104,RH=H-RT-RB,DW=Math.round(T*3.8),mid=RT+RH/2-T/2,
   P=(st,bg)=>r.push(`<i class="rp" style="${st};${bg}"></i>`),one=n=>`background-image:${u(n)};background-size:100% 100%`;
   const pc=n=>have(n)?n:'wall';
   [[-1,0,1,-90],[1,0,0,90]].forEach(([dx,dy,lf,rot])=>{if(op(dx,dy))return;const cx=lf?T/2:W-T/2,n='wall';P(`left:${cx-DW/2}px;top:${mid}px;width:${DW}px;height:${T}px;transform:rotate(${rot}deg);z-index:3`,one(pc(n)))});
   [[0,-1,RT,''],[0,1,RT+RH-T,'transform:scaleY(-1);']].forEach(([dx,dy,y,tf])=>{if(op(dx,dy))return;const n='wall';P(`left:${(W-DW)/2}px;top:${y}px;width:${DW}px;height:${T}px;${tf}z-index:3`,one(pc(n)))});
   return r.join('')}
-function walls(){const L=S.loc,r=[];if(roomVar()||HIMG[`assets/world/d_${L.k}_wall.png`])return '';
+function walls(){const L=S.loc,r=[];return '';
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{const open=!!LC(L,L.x+dx,L.y+dy),H=dx===0,sd=dy<0?'top':dy>0?'bottom':dx<0?'left':'right',gr=dy<0?'180deg':dy>0?'0deg':dx<0?'90deg':'270deg';
     (open?[[0,32],[68,32]]:[[0,100]]).forEach(([a,z])=>r.push(`<i class="wl" style="${sd}:0;${H?`left:${a}%;width:${z}%;height:13%`:`top:${a}%;height:${z}%;width:10%`};background:linear-gradient(${gr},#000f,#0000)"></i>`))});
   return r.join('')}
