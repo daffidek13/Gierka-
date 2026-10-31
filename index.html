@@ -319,7 +319,7 @@ body.play .orb{display:block}#orbL{left:-12px}#orbR{right:-12px}
 #skills em{font-size:9px;max-width:54px;height:20px}#skills small{font-size:9px}
 #dock{gap:4px;padding:5px 8px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}#dock button{width:37px;height:37px;font-size:18px}#dock .ui{width:25px;height:25px;font-size:18px}
 @media(max-width:380px){#dock,#skills{transform-origin:50% 100%}#dock{transform:translateX(-50%) scale(.86)}#skills{transform:scale(.86)}}
-#view.dg #hero{bottom:calc(env(safe-area-inset-bottom,0px) + 138px)}
+#view.dg #hero{bottom:calc(env(safe-area-inset-bottom,0px) + 160px)}
 </style>
 </head>
 <body>
@@ -1114,7 +1114,7 @@ function LC(L,x,y){const m=LM(L.id,L.fl,L.k);if(!m.c[x+','+y])return null;
 function lmove(dx,dy){const L=S.loc,nx=L.x+dx,ny=L.y+dy;if(!LC(L,nx,ny)){toast('Ściana');return}
   L.px=L.x;L.py=L.y;L.x=nx;L.y=ny;const p=S.p;p.hp=Math.min(mh(),p.hp+1);p.mana=Math.min(mm(),p.mana+3);p.sta=Math.min(sm(),p.sta+3);S.steps++;const cc=LC(L,nx,ny),tk='t'+chk(L,nx,ny);if(cc.trap&&!S.chs[tk]){S.chs[tk]=1;const dm=Math.max(1,Math.min(Math.round(mh()*.1),Math.round(p.hp)-1));p.hp-=dm;toast(`Pułapka! −${dm} HP`);sfx.hurt()}save();render(dx,dy);ambush()}
 function lback(){const L=S.loc;if(L.px!==undefined){L.x=L.px;L.y=L.py}}
-function wallPos(){const L=S.loc,v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.125),RT=64,RB=104,RH=H-RT-RB,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),fr=[[0,-1,[W/2,RT+T/2+10]],[-1,0,[36,RT+RH/2]],[1,0,[W-36,RT+RH/2]],[0,1,[W/2,RT+RH-T/2-6]]].filter(q=>!op(q[0],q[1]));const q=fr.length?fr[Math.floor(h(L.x,L.y,L.fl*7+3)*fr.length)]:[0,0,[W/2,RT+T/2+10]];return[(q[2][0]/W*100).toFixed(2),(q[2][1]/H*100).toFixed(2)]}
+function wallPos(){const L=S.loc,v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.15),RT=64,RB=104,RH=H-RT-RB,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),fr=[[0,-1,[W/2,RT+T/2+10]],[-1,0,[36,RT+RH/2]],[1,0,[W-36,RT+RH/2]],[0,1,[W/2,RT+RH-T/2+14]]].filter(q=>!op(q[0],q[1]));const q=fr.length?fr[Math.floor(h(L.x,L.y,L.fl*7+3)*fr.length)]:[0,0,[W/2,RT+T/2+10]];return[(q[2][0]/W*100).toFixed(2),(q[2][1]/H*100).toFixed(2)]}
 function objs(){const f=cur(),o=[],mk=(a,fi,em,tx,x,y,pth,cl)=>`<button class="obj${cl?' '+cl:''}${POP?' pop':''}" data-o="${a}" style="--i:2;left:${x}%;top:${y}%">${icon('',pth||`assets/world/p_${fi}.png`,em)}<small>${tx}</small></button>`;
   if(S.ground[gkey()]&&S.ground[gkey()].length)o.push(mk('ground','torba','🎒','Rzeczy na ziemi',27,80));
   if(S.loc){const c=f.lc;const wp=wallPos(),dp=n=>`assets/world/d_${S.loc.k}_${n}.png|assets/world/p_${({stairs_up:'gora',stairs_down:'dol',exit:'wyjscie'})[n]}.png`;if(c.exit)o.push(mk('exit','wyjscie','🚪','Wyjście',wp[0],wp[1],dp('exit'),'wl'));if(c.up)o.push(mk('up','gora','🪜','Schody w górę',wp[0],wp[1],dp('stairs_up'),'wl'));if(c.down)o.push(mk('down','dol','🕳️','Schody w dół',wp[0],wp[1],dp('stairs_down'),'wl'));
@@ -1125,13 +1125,11 @@ let RMT=0;const RMP={};
 function roomHtml(){const L=S.loc,k=L.k,have=n=>{const u=`assets/world/d_${k}_${n}.png`;if(HIMG[u]===undefined&&!RMP[u]){RMP[u]=1;hLoad([u]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}return !!HIMG[u]},
   u=n=>`url(assets/world/d_${k}_${n}.png)`,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),r=[];
   if(!have('wall'))return '';have('door');
-  const v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.125),RT=64,RB=104,RH=H-RT-RB,DW=Math.round(T*3.8),mid=RT+RH/2-T/2,
-  P=(st,bg)=>r.push(`<i class="rp" style="${st};${bg}"></i>`),rp=n=>`background-image:${u(n)};background-repeat:repeat-x;background-size:auto 100%`,one=n=>`background-image:${u(n)};background-size:100% 100%`;
-  P(`left:0;right:0;top:0;height:${RT}px;z-index:1`,'background:#09090b');P(`left:0;right:0;top:${RT+RH}px;bottom:0;z-index:1`,'background:#09090b');
-  [[1,-90,op(-1,0)],[0,90,op(1,0)]].forEach(([lf,rot,dr])=>{const cx=lf?T/2:W-T/2;P(`left:${cx-RH/2}px;top:${mid}px;width:${RH}px;height:${T}px;transform:rotate(${rot}deg);z-index:2`,rp('wall'));if(dr&&have('door'))P(`left:${cx-DW/2}px;top:${mid}px;width:${DW}px;height:${T}px;transform:rotate(${rot}deg);z-index:3`,one('door'))});
-  P(`left:0;right:0;top:${RT}px;height:${T}px;z-index:4`,rp('wall'));P(`left:0;right:0;top:${RT+RH-T}px;height:${T}px;transform:scaleY(-1);z-index:4`,rp('wall'));
-  if(op(0,-1)&&have('door'))P(`left:${(W-DW)/2}px;top:${RT}px;width:${DW}px;height:${T}px;z-index:5`,one('door'));
-  if(op(0,1)&&have('door'))P(`left:${(W-DW)/2}px;top:${RT+RH-T}px;width:${DW}px;height:${T}px;transform:scaleY(-1);z-index:5`,one('door'));
+  const v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.15),RT=64,RB=104,RH=H-RT-RB,DW=Math.round(T*3.8),mid=RT+RH/2-T/2,
+  P=(st,bg)=>r.push(`<i class="rp" style="${st};${bg}"></i>`),one=n=>`background-image:${u(n)};background-size:100% 100%`;
+  const pc=n=>have(n)?n:'wall';
+  [[-1,0,1,-90],[1,0,0,90]].forEach(([dx,dy,lf,rot])=>{if(op(dx,dy))return;const cx=lf?T/2:W-T/2,n='wall';P(`left:${cx-DW/2}px;top:${mid}px;width:${DW}px;height:${T}px;transform:rotate(${rot}deg);z-index:3`,one(pc(n)))});
+  [[0,-1,RT,''],[0,1,RT+RH-T,'transform:scaleY(-1);']].forEach(([dx,dy,y,tf])=>{if(op(dx,dy))return;const n='wall';P(`left:${(W-DW)/2}px;top:${y}px;width:${DW}px;height:${T}px;${tf}z-index:3`,one(pc(n)))});
   return r.join('')}
 function walls(){const L=S.loc,r=[];if(HIMG[`assets/world/d_${L.k}_wall.png`])return '';
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{const open=!!LC(L,L.x+dx,L.y+dy),H=dx===0,sd=dy<0?'top':dy>0?'bottom':dx<0?'left':'right',gr=dy<0?'180deg':dy>0?'0deg':dx<0?'90deg':'270deg';
