@@ -494,8 +494,8 @@ function render(dx=0,dy=0,pp=0){
   if(S.p.cls)chkAch();
   const fo=field(S.x,S.y),f=cur(),t=T[f.t],v=$('view');
   v.style.background=`linear-gradient(160deg,${t.c},${t.c2})`;
-  const tsrc=`assets/world/t_${S.loc?S.loc.k:f.t}.jpg`,old=v.querySelector('img.tile');
-  if(!old||old.dataset.s!==tsrc){if(old)old.remove();const im=new Image();im.className='tile';im.alt='';im.decoding='async';im.dataset.s=tsrc;im.onerror=()=>im.remove();im.src=tsrc;v.prepend(im)}
+  let tsrc=`assets/world/t_${S.loc?S.loc.k:f.t}.jpg`,fl2=false;if(S.loc){const rv=roomVar();if(rv){tsrc=rv.src;fl2=rv.flip}}const tkey=tsrc+(fl2?'F':''),old=v.querySelector('img.tile');
+  if(!old||old.dataset.s!==tkey){if(old)old.remove();const im=new Image();im.className='tile';im.alt='';im.decoding='async';im.dataset.s=tkey;if(fl2)im.style.transform='scaleX(-1)';im.onerror=()=>im.remove();im.src=tsrc;v.prepend(im)}
   {const hs=heroSig()+'|'+auraKey(),he=$('hero');if(he.dataset.s!==hs||!he.firstChild){he.innerHTML=heroHtml();he.dataset.s=hs}}wxSet(S.loc?'':tod(),S.loc?'':wth());$('tname').textContent=S.loc?POI[S.loc.k][0]:f.poi&&SET[f.poi]?f.nm:t.n;
   $('coords').textContent=`Pole ${S.x}, ${S.y} · mapa ${(S.map||0)+1} · ${TODE[tod()]}${wth()?WX[wth()].e:''}${bossHint()}`;
   if(S.loc){S.loc.vis=S.loc.vis||{};S.loc.vis[S.loc.fl+':'+S.loc.x+','+S.loc.y]=1;$('coords').textContent=`Piętro ${S.loc.fl+1} z ${S.loc.fls}`}
@@ -1122,16 +1122,21 @@ function objs(){const f=cur(),o=[],mk=(a,fi,em,tx,x,y,pth,cl)=>`<button class="o
   else if(f.ch&&!S.chs[ckey(f)])o.push(mk('chest','skrzynia','📦','Skrzynia',82,70));
   if(!S.loc&&f.ev&&!(S.evs[ckey(f)]&&S.evs[ckey(f)].done))o.push(mk('event',f.ev,EVI[f.ev][0],EVI[f.ev][1],20,52));return o.join('')}
 let RMT=0;const RMP={};
+const RVS=['n','s','e','ns','ew','ne','se','nse','new','sew','nsew'];
+function roomVar(){const L=S.loc;if(!L)return null;const op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy);let n=op(0,-1),sd=op(0,1),e=op(1,0),w=op(-1,0),flip=false;if(w&&!e){e=true;w=false;flip=true}
+  const key=(n?'n':'')+(sd?'s':'')+(e?'e':'')+(w?'w':'');if(!RVS.includes(key))return null;const s1=`assets/world/d_${L.k}_r_${key}.jpg`,s2=`assets/d_${L.k}_r_${key}.jpg`;
+  if(HIMG[s1]===undefined&&!RMP[s1]){RMP[s1]=1;hLoad([s1,s2]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}
+  const src=HIMG[s1]?s1:HIMG[s2]?s2:null;return src?{src,flip}:null}
 function roomHtml(){const L=S.loc,k=L.k,have=n=>{const u=`assets/world/d_${k}_${n}.png`;if(HIMG[u]===undefined&&!RMP[u]){RMP[u]=1;hLoad([u]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}return !!HIMG[u]},
   u=n=>`url(assets/world/d_${k}_${n}.png)`,op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy),r=[];
-  if(!have('wall'))return '';have('door');
+  if(roomVar())return '';if(!have('wall'))return '';have('door');
   const v=$('view'),W=v.clientWidth||390,H=v.clientHeight||780,T=Math.round(W*.15),RT=64,RB=104,RH=H-RT-RB,DW=Math.round(T*3.8),mid=RT+RH/2-T/2,
   P=(st,bg)=>r.push(`<i class="rp" style="${st};${bg}"></i>`),one=n=>`background-image:${u(n)};background-size:100% 100%`;
   const pc=n=>have(n)?n:'wall';
   [[-1,0,1,-90],[1,0,0,90]].forEach(([dx,dy,lf,rot])=>{if(op(dx,dy))return;const cx=lf?T/2:W-T/2,n='wall';P(`left:${cx-DW/2}px;top:${mid}px;width:${DW}px;height:${T}px;transform:rotate(${rot}deg);z-index:3`,one(pc(n)))});
   [[0,-1,RT,''],[0,1,RT+RH-T,'transform:scaleY(-1);']].forEach(([dx,dy,y,tf])=>{if(op(dx,dy))return;const n='wall';P(`left:${(W-DW)/2}px;top:${y}px;width:${DW}px;height:${T}px;${tf}z-index:3`,one(pc(n)))});
   return r.join('')}
-function walls(){const L=S.loc,r=[];if(HIMG[`assets/world/d_${L.k}_wall.png`])return '';
+function walls(){const L=S.loc,r=[];if(roomVar()||HIMG[`assets/world/d_${L.k}_wall.png`])return '';
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{const open=!!LC(L,L.x+dx,L.y+dy),H=dx===0,sd=dy<0?'top':dy>0?'bottom':dx<0?'left':'right',gr=dy<0?'180deg':dy>0?'0deg':dx<0?'90deg':'270deg';
     (open?[[0,32],[68,32]]:[[0,100]]).forEach(([a,z])=>r.push(`<i class="wl" style="${sd}:0;${H?`left:${a}%;width:${z}%;height:13%`:`top:${a}%;height:${z}%;width:10%`};background:linear-gradient(${gr},#000f,#0000)"></i>`))});
   return r.join('')}
