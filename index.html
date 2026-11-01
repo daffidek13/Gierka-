@@ -255,6 +255,7 @@ header #mini{pointer-events:auto}
 @keyframes enp{50%{filter:drop-shadow(0 0 calc(var(--g)*1.6) var(--ec)) drop-shadow(0 0 calc(var(--g)*3) var(--ec)) brightness(1.18)}}
 @keyframes ens{from{background-position:160% 0}to{background-position:-110% 0}}
 @media (prefers-reduced-motion:reduce){.enfx img,.enfx::after{animation:none}}
+.npcb{height:150px;border-radius:14px;overflow:hidden;margin:6px 0 8px;border:2px solid #6a5a34;box-shadow:inset 0 0 30px #0008;background:#120e08}.npcb img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block}
 #town .tn{text-align:center;opacity:.8}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .tcard{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px!important;text-align:center;border-radius:14px!important;border:2px solid #6a5a34!important;background:linear-gradient(160deg,#2b2115,#14100a)!important;box-shadow:inset 0 0 14px #0009}
@@ -391,6 +392,7 @@ const POI={miasto:['Miasto','🏰'],wioska:['Wioska','🏘️'],miasteczko:['Mia
 const SET={miasto:1,wioska:1,miasteczko:1,zamek:1,obozowisko:1,klasztor:1};
 const SVD={wioska:[['karczma'],[['shop',.7],['stash',.4],['zad',.5],['smith',.3]]],miasteczko:[['shop','karczma'],[['smith',.8],['zad',.8],['stash',.6],['ench',.25]]],zamek:[['smith','zad'],[['shop',.5],['ench',.4],['karczma',.6],['stash',.5]]],obozowisko:[['shop'],[['karczma',.5],['smith',.3],['zad',.4]]],klasztor:[['karczma'],[['ench',.7],['shop',.25],['stash',.5],['zad',.2]]]};
 const SORD=['smith','ench','shop','stash','karczma','zad','port'];
+const VRS={wioska:[['karczma','shop'],['karczma','stash','zad'],['karczma','shop','smith']],miasteczko:[['shop','karczma','smith','zad'],['shop','karczma','stash','ench'],['shop','karczma','smith','stash','zad']],zamek:[['smith','zad','shop','karczma'],['smith','zad','ench','stash','karczma']],obozowisko:[['shop','karczma'],['karczma','smith','zad']],klasztor:[['karczma','ench'],['karczma','ench','stash','zad']]};
 const TKN={wioska:'Karczma',miasteczko:'Karczma',zamek:'Kantyna',obozowisko:'Namiot lecznicy',klasztor:'Przytułek',miasto:'Karczma'};
 const NP=['Dęb','Kar','Wło','Bia','Zło','Lip','Gro','Ost','Sta','Brzo','Kam','Sok','Wil','Jas','Cze','Mro','Rud','Gni','Tur','Kra'],NS=['wice','gród','bork','owo','ice','sko','dół','pole','ów','ryn','lin','sk'];
 const NPF={wioska:['',''],miasteczko:['',''],zamek:['Zamek ','Twierdza '],obozowisko:['Obóz ','Obóz '],klasztor:['Klasztor ','Opactwo ']};
@@ -403,8 +405,7 @@ function pickSet(x,y,s,t){const d=Math.abs(x)+Math.abs(y),r=h(x,y,s+17);let k;
   if(k==='zamek'&&d<10)k='miasteczko';return k}
 function setInfo(f,x,y,s){
   if(f.poi==='miasto'){f.nm='Stolica';f.sv=['smith','ench','shop','stash','karczma','zad','port'];return}
-  const D=SVD[f.poi],sv=[...D[0]];D[1].forEach(([k,p],i)=>{if(h(x,y,s+70+i)<p&&!sv.includes(k))sv.push(k)});
-  f.sv=SORD.filter(k=>sv.includes(k));
+  const V=VRS[f.poi],vi=Math.floor(h(x,y,s+71)*V.length);f.vr=vi;f.sv=SORD.filter(k=>V[vi].includes(k));
   const b=NP[Math.floor(h(x,y,s+18)*NP.length)]+NS[Math.floor(h(x,y,s+19)*NS.length)],pf=NPF[f.poi][Math.floor(h(x,y,s+20)*2)];
   f.nm=pf+b}
 const LS={jaskinia:['pajak','goblin','wilk','ork','troll'],ruiny:['szkielet','goblin','ork','troll']}; // wrogowie w lochach (głębiej = groźniejsi)
@@ -591,7 +592,7 @@ function move(dx,dy){if(F)return;heroAnim('walk',dx);if(S.loc){lmove(dx,dy);retu
   if(T[f.t].ok===false){toast('Woda blokuje drogę');return}
   S.px=S.x;S.py=S.y;S.x=nx;S.y=ny;{const p=S.p;p.hp=Math.min(mh(),p.hp+3);p.mana=mm();p.sta=sm()}S.visited[nx+','+ny]=1;S.steps++;S.rec.dist=Math.max(S.rec.dist||0,Math.round(Math.hypot(nx,ny)));spawnWd(f);save();render(dx,dy);
   (S.p.q||[]).forEach(q=>{if(q.t==='reach')q.have=Math.min(q.need,Math.max(q.have,Math.round(Math.hypot(S.x,S.y))))});S.ms=(S.ms||0)+1;if(!S.boss&&S.ms>=1000&&Math.random()<.015)spawnBoss();
-  const fc=cur(),a=fc.foes.findIndex((o,i)=>o.ag&&!isDead(fc,i));if(a>=0)startFight(a,true);
+  const fc=cur(),a=fc.foes.findIndex((o,i)=>o.ag&&!isDead(fc,i));if(a>=0)startFight(a,true);else if(SET[fc.poi]){TCUR=fc;TSEC=null;openTown()}
 }
 
 // ---------- sterowanie: swipe ----------
@@ -686,7 +687,7 @@ function gemTab(p,it){const gr=enG(it),sn=it.sn||0,so=it.so||[],K=gKeys(p);
   return h}
 function showSmith(){const p=S.p;p.gem=p.gem||{};const it=ESEL&&getIt(ESEL);if(ESEL&&!it)ESEL=null;
   const tabs=[['up','⬆ Ulepsz'],['gem','💎 Klejnoty'],['fu','♻ Przetop'],['fg','⚒ Komplety']];
-  let h=`<div class="thd"><button data-a="x">✕ Zamknij</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('stal','🔩')} ${p.mat.stal}</span></div><h3>${ui('kowal','🔨')} Kowal</h3>`+wsSlot(it);
+  let h=`<div class="thd"><button data-a="x">✕ Zamknij</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('stal','🔩')} ${p.mat.stal}</span></div>${npcBan('smith')}<h3>${ui('kowal','🔨')} Kowal</h3>`+wsSlot(it);
   if(WPICK||!it)h+=igrid(ESEL,1);
   else{h+=`<div class="wtb">${tabs.map(([k,n])=>`<button class="${WTAB===k?'on':''}" data-a="wt:${k}">${n}</button>`).join('')}</div>`;
     if(WTAB==='up'){h+=`<p><small>Każde + zwiększa statystyki przedmiotu o 12%. Przy porażce tracisz materiały. Maksimum +10.</small></p>`+((it.up||0)<10?(()=>{const[g,st]=upCost(it);return `<button class="it" data-a="up:${ESEL}">⬆ ${it.n} +${it.up||0} → +${(it.up||0)+1}<br><small>${g} zł + ${st} stali · szansa ${upCh(it)}%</small></button>`})():'<p>Ten przedmiot ma już maksimum (+10).</p>')}
@@ -724,7 +725,7 @@ function showEnch(){const p=S.p;p.mat.esn=p.mat.esn||0;const it=ESEL&&getIt(ESEL
       const r=enRe(it);act+=`<button class="it" data-a="er">🎲 Przekuj zaklęcie na inne: ${r.g} zł + ${r.e} ✨<br><small>Poziom zostaje, rodzaj się zmienia.</small></button>`}
     if((it.sn||0)<3){const k=enSock(it);act+=`<button class="it" data-a="es">◇ Dodaj gniazdo (${it.sn||0} → ${(it.sn||0)+1}): ${k.g} zł + ${k.e} ✨ · szansa ${k.c}%</button>`}
     if(!eq)act+=`<button class="it" data-a="ed">💥 Rozbij na esencję: +${deVal(it)} ✨</button>`}
-  $('ench').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('esencja','✨')} ${p.mat.esn}</span></div><h3>${ui('zaklinacz','✨')} Zaklinacz</h3><p><small>Rozbijaj niepotrzebne przedmioty z plecaka na esencję, a potem zaklinaj lepszy sprzęt. Esencję znajdziesz też w skrzyniach i u bossów.</small></p>${wsSlot(it)}${(WPICK||!it)?igrid(ESEL,1):act}<div style="height:30px"></div>`;
+  $('ench').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('esencja','✨')} ${p.mat.esn}</span></div>${npcBan('ench')}<h3>${ui('zaklinacz','✨')} Zaklinacz</h3><p><small>Rozbijaj niepotrzebne przedmioty z plecaka na esencję, a potem zaklinaj lepszy sprzęt. Esencję znajdziesz też w skrzyniach i u bossów.</small></p>${wsSlot(it)}${(WPICK||!it)?igrid(ESEL,1):act}<div style="height:30px"></div>`;
   $('ench').classList.add('on')}
 $('ench').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p;
   if(a==='x'){$('ench').classList.remove('on');openTown();return}
@@ -742,7 +743,7 @@ const bulkL=m=>S.p.bag.filter(o=>o.r<=m&&o.r<3&&!(o.en||(o.so&&o.so.length))&&!(
 function showShop(){const p=S.p,sc=40+p.lvl*10,it=SSEL&&getIt(SSEL);if(SSEL&&!it)SSEL=null;
   const bk=[[0,sc,'Losowy przedmiot'],[1,sc*3,'Przedmiot magiczny'],[2,sc*9,'Przedmiot rzadki']];
   const bl=[[0,'zwykłe'],[1,'zwykłe i magiczne'],[2,'zwykłe, magiczne i rzadkie (bez kompletów i ✦)']];
-  $('shop').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>Plecak ${p.bag.length}/30</span></div><h3>${ui('sklep','🛒')} Sklep</h3>
+  $('shop').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>Plecak ${p.bag.length}/30</span></div>${npcBan('shop')}<h3>${ui('sklep','🛒')} Sklep</h3>
   <h3>Kupno</h3>${bk.map(([r,c,n])=>`<button class="it" data-a="bk${r}"${p.gold>=c&&p.bag.length<30?'':' disabled'}>${n} · ${c} zł</button>`).join('')}
   <h3>Sprzedaż hurtowa</h3>${bl.map(([m,n])=>{const l=bulkL(m);return `<button class="it" data-a="bs${m}"${l.length?'':' disabled'}>Sprzedaj ${n}: ${l.length} szt. → ${l.reduce((a,o)=>a+sellPrice(o),0)} zł</button>`}).join('')}<p><small>Legendarne, zaklęte i z klejnotami sprzedajesz tylko pojedynczo.</small></p>
   <h3>Sprzedaż pojedyncza</h3>${it?`<div class="at" style="display:block">${iinfo(it)}</div><button class="it" data-a="sl">💰 Sprzedaj za ${sellPrice(it)} zł</button>`:'<p>Wybierz przedmiot z plecaka.</p>'}${igrid(SSEL,0)}<div style="height:30px"></div>`;
@@ -766,7 +767,7 @@ function showStash(){const p=S.p,st=S.stash=S.stash||[],find=d=>d&&(d[0]==='s'?s
   const it=find(STF),ns=[...STM].filter(d=>d[0]==='s').length,nb=STM.size-ns;
   const g=(l,pre)=>l.length?`<div class="bg">${l.map(i=>{const d=pre+':'+i.id;const h=tile(i,d);return h.replace('data-a="s:'+d+'"','data-a="st:'+d+'"').replace(/class="tl([^"]*)"/,(m,c)=>`class="tl${c.replace(' on','')}${STM.has(d)?' on sel':''}${STF===d?' foc':''}"`)}).join('')}</div>`:'<p><small>Pusto</small></p>';
   $('stash').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span><button data-a="cm" style="margin:0">Porównanie: ${CMPON()?'wł.':'wył.'}</button></div>
-  <h3>📦 Skrzynia ${st.length}/60 <span style="float:right"><button data-a="sqs" style="margin:0">Zaznacz wszystko</button></span></h3>
+  ${npcBan('stash')}<h3>📦 Skrzynia ${st.length}/60 <span style="float:right"><button data-a="sqs" style="margin:0">Zaznacz wszystko</button></span></h3>
   ${bfHtml([...st,...p.bag])}${g(st.filter(bfOk),'s')}
   <h3>🎒 Plecak ${p.bag.length}/30</h3>
   <div class="row"><button data-a="sq0">Zaznacz zwykłe</button><button data-a="sq1">+ magiczne</button><button data-a="sq2">+ rzadkie</button></div>
@@ -1141,6 +1142,8 @@ function fastGo(x,y){const p=S.p,d=Math.abs(x-S.x)+Math.abs(y-S.y),c=ftc(d);if(p
   p.gold-=c;$('town').classList.remove('on');TSEC=null;
   transit('Podróż…',()=>{S.x=x;S.y=y;S.px=undefined;S.loc=null;S.visited[x+','+y]=1;S.steps+=Math.ceil(d/3);save();render()});return true}
 const thd=p=>`<div class="thd"><button data-a="${TSEC?'back':'tx'}">${TSEC?'← Wróć':'✕ Wyjdź'}</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('szmaty','🧵')} ${p.mat.szmaty}</span><span>${ui('stal','🔩')} ${p.mat.stal}</span><span>${ui('esencja','✨')} ${p.mat.esn||0}</span></div>`;
+const VIMG={};function vimgOk(n){if(n in VIMG)return VIMG[n];if(!VIMG['_'+n]){VIMG['_'+n]=1;const im=new Image();im.onload=()=>{VIMG[n]=true;if($('town').classList.contains('on')&&!TSEC)openTown()};im.onerror=()=>{VIMG[n]=false};im.src='assets/world/'+n+'.jpg'}return false}
+const npcBan=sv=>{const T=TCUR||{poi:'miasto',x:0,y:0},t=['wioska','obozowisko','klasztor'].includes(T.poi)?'w':'m',g=(Math.abs((T.x||0)*7+(T.y||0)*13))%2?'f':'m';return `<div class="npcb"><img src="assets/world/n_${sv}_${t}${g}.jpg" alt="" onerror="this.parentNode.remove()"></div>`};
 function openTown(){
   const p=S.p,c=rcost();p.q=p.q||[];p.offers=p.offers||genOffers();p.scrolls=p.scrolls||0;S.portals=S.portals||[0];p.mat.esn=p.mat.esn||0;
   let h=thd(p);
@@ -1153,16 +1156,18 @@ function openTown(){
       stolica:{port:[50,5],smith:[23,17],ench:[79,17],shop:[20,44],karczma:[80,44],stash:[23,68],zad:[79,68],gate:[50,87]}}[MI],SCL={wioska:.92,miasteczko:.88,zamek:.8,stolica:.78}[MI];
     const HN={smith:['🔨','Kowal'],ench:['✨','Zaklinacz'],shop:['🛒','Sklep'],stash:['📦','Skrzynia'],karczma:['🍺',TKN[T.poi]||'Karczma'],zad:['📜','Zadania'],port:['🌀','Portal'],gate:['🚪','Wyjście']};
     const SPW={"wioska_smith": [439, 364], "wioska_ench": [354, 426], "wioska_shop": [438, 366], "wioska_karczma": [444, 414], "wioska_stash": [483, 394], "wioska_zad": [354, 285], "miasteczko_smith": [447, 432], "miasteczko_ench": [350, 477], "miasteczko_shop": [459, 448], "miasteczko_karczma": [421, 469], "miasteczko_stash": [478, 427], "miasteczko_zad": [476, 346], "zamek_smith": [419, 452], "zamek_ench": [400, 474], "zamek_shop": [467, 443], "zamek_karczma": [438, 465], "zamek_stash": [486, 424], "zamek_zad": [471, 343], "stolica_smith": [449, 475], "stolica_ench": [396, 488], "stolica_shop": [456, 482], "stolica_karczma": [454, 500], "stolica_stash": [446, 415], "stolica_zad": [423, 350]};
+    const VN='w_'+(T.poi==='miasto'?'stolica':T.poi)+'_'+((T.vr||0)+1),VOK=vimgOk(VN),SZV={port:[30,8],gate:[34,9],zad:[30,10],smith:[40,13],ench:[34,14],shop:[38,13],karczma:[38,14],stash:[40,13]};
     const hs=['port','smith','ench','shop','karczma','stash','zad','gate'].filter(k=>k==='gate'||HS(k)).map(k=>{const [x,y]=HP[k];
+      if(VOK&&k!=='gate'){const z=SZV[k];return `<button class="hs on" data-a="sec:${k}" style="left:${x}%;top:${y}%;width:${z[0]}%;height:${z[1]}%"><i>${HN[k][0]} ${HN[k][1]}</i></button>`}
       if(k==='gate')return `<button class="hs" data-a="tx" style="left:${x}%;top:${y}%;width:34%;height:9%"><i>🚪 Wyjście</i></button>`;
       if(k==='port')return `<button class="hs on" data-a="sec:port" style="left:${x}%;top:${y}%;width:30%;height:8%"><i>${HN.port[0]} ${HN.port[1]}</i></button>`;
       const sz=SPW[MI+'_'+k]||[420,420],w=sz[0]/1024*100*SCL;
       return `<button class="hs on sp" data-a="sec:${k}" style="left:${x}%;top:${y}%;width:${w.toFixed(1)}%;aspect-ratio:${sz[0]}/${sz[1]}"><img src="assets/world/w_${MI}_${k}.png" alt=""><i>${HN[k][0]} ${HN[k][1]}</i></button>`}).join('');
     const nw=wps().length;
-    h+=`<div class="tmap"><img class="bg" src="assets/world/w_${MI}.jpg" alt=""><span class="tname">${T.nm} · ${POI[T.poi][0]}</span>${hs}<div class="tbt">${HS('smith')?`<button data-a="rep"${c?'':' disabled'}>🔧 Napraw sprzęt${c?` (${c} zł)`:''}</button>`:''}<button data-a="sec:fast">🧭 Szybka podróż (${nw})</button></div></div>`;
+    h+=`<div class="tmap"><img class="bg" src="assets/world/${VOK?VN:'w_'+MI}.jpg" alt=""><span class="tname">${T.nm} · ${POI[T.poi][0]}</span>${hs}<div class="tbt">${HS('smith')?`<button data-a="rep"${c?'':' disabled'}>🔧 Napraw sprzęt${c?` (${c} zł)`:''}</button>`:''}<button data-a="sec:fast">🧭 Szybka podróż (${nw})</button></div></div>`;
     $('town').classList.add('tm')}
-  else if(TSEC==='karczma')h+=`<h3>${ui('karczma','🍺')} Karczma</h3><button class="it" data-a="rest">${ui('odpoczynek','🛏️')} Odpocznij (pełne HP, mana i stamina)</button>${p.lvl>=10?`<button class="it" data-a="scr">📜 Zwój powrotu do miasta (120 zł) · masz ${p.scrolls}</button>`:'<p><small>Zwoje teleportacji od poziomu 10.</small></p>'}<h3>Mikstury</h3>${Object.keys(POT).map(k=>`<button class="it" data-a="pt:${k}">${pI(k)} ${POT[k][0]} (${potPrice(k)} zł) · masz ${(p.pot||{})[k]||0}<br><small>${POT[k][3]}</small></button>`).join('')}`;
-  else if(TSEC==='zad')h+=`<h3>${ui('zadania','📜')} Tablica zadań</h3>${p.q.map((q,i)=>`<p>${q.tx}: ${q.have}/${q.need} (${q.gold} zł, ${q.xp} XP) ${q.have>=q.need?`<button data-a="done${i}">Oddaj</button>`:''}</p>`).join('')||'<p>Brak przyjętych zadań</p>'}${p.offers.map((q,i)=>`<button class="it" data-a="acc${i}"${p.q.length>=3?' disabled':''}>Przyjmij: ${q.tx} (${q.gold} zł, ${q.xp} XP)</button>`).join('')}`;
+  else if(TSEC==='karczma')h+=`${npcBan('karczma')}<h3>${ui('karczma','🍺')} Karczma</h3><button class="it" data-a="rest">${ui('odpoczynek','🛏️')} Odpocznij (pełne HP, mana i stamina)</button>${p.lvl>=10?`<button class="it" data-a="scr">📜 Zwój powrotu do miasta (120 zł) · masz ${p.scrolls}</button>`:'<p><small>Zwoje teleportacji od poziomu 10.</small></p>'}<h3>Mikstury</h3>${Object.keys(POT).map(k=>`<button class="it" data-a="pt:${k}">${pI(k)} ${POT[k][0]} (${potPrice(k)} zł) · masz ${(p.pot||{})[k]||0}<br><small>${POT[k][3]}</small></button>`).join('')}`;
+  else if(TSEC==='zad')h+=`${npcBan('zad')}<h3>${ui('zadania','📜')} Tablica zadań</h3>${p.q.map((q,i)=>`<p>${q.tx}: ${q.have}/${q.need} (${q.gold} zł, ${q.xp} XP) ${q.have>=q.need?`<button data-a="done${i}">Oddaj</button>`:''}</p>`).join('')||'<p>Brak przyjętych zadań</p>'}${p.offers.map((q,i)=>`<button class="it" data-a="acc${i}"${p.q.length>=3?' disabled':''}>Przyjmij: ${q.tx} (${q.gold} zł, ${q.xp} XP)</button>`).join('')}`;
   else if(TSEC==='fast'){const L=wps();h+=`<h3>${ui('portale','🧭')} Szybka podróż</h3><p><small>Podróżuj między odwiedzonymi osadami. Koszt zależy od odległości.</small></p>`+L.map(w=>`<button class="it" data-a="ft:${w.x},${w.y}"${w.d===0?' disabled':''}>${POI[w.f.poi][1]} <b>${w.f.nm}</b> <small>(${POI[w.f.poi][0].toLowerCase()})</small> · ${w.d===0?'tu jesteś':w.d+' pól · '+ftc(w.d)+' zł'}<br><small>${w.f.sv.map(k=>({smith:'Kowal',ench:'Zaklinacz',shop:'Sklep',stash:'Schowek',karczma:TKN[w.f.poi]||'Karczma',zad:'Zadania',port:'Portale'})[k]).join(' · ')}</small></button>`).join('')}
   else if(TSEC==='port')h+=`<h3>${ui('portale','🌀')} Portale</h3>${S.portals.map(m=>`<button class="it" data-a="go${m}"${m===(S.map||0)?' disabled':''}>Mapa ${m+1}${m===(S.map||0)?' (tu jesteś)':''}</button>`).join('')}`;
   if(TSEC)$('town').classList.remove('tm');$('town').innerHTML=h;$('town').classList.add('on')}
