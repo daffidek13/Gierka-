@@ -121,7 +121,7 @@ header{align-items:flex-start;gap:10px}
 .obj{position:absolute;pointer-events:auto;width:90px;transform:translate(-50%,-85%);padding:0;border:0;background:none;color:inherit;font:inherit;text-align:center;z-index:50}
 .obj .ic{font-size:44px;display:block;position:relative;height:56px}
 .obj small{display:block;font-size:12px;margin-top:4px;text-shadow:0 1px 2px #000}
-#fx{position:fixed;top:calc(env(safe-area-inset-top,0px) + 84px);left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;background:#000c;border-radius:10px;padding:3px 10px;font-size:12px;white-space:nowrap;display:none}
+#fx{position:fixed;top:calc(env(safe-area-inset-top,0px) + 84px);left:50%;transform:translateX(-50%);z-index:10;pointer-events:none;background:#000c;border-radius:10px;padding:3px 10px;font-size:12px;white-space:normal;max-width:94vw;text-align:center;display:none}
 #pots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 #pots button{font:inherit;font-size:13px;padding:6px 8px;border-radius:10px;border:1px solid #4a4e59;background:#1d2027;color:var(--ink)}
 #hint .pb{margin-top:6px}
@@ -221,6 +221,7 @@ header #mini{pointer-events:auto}
 #dock .ui{width:30px;height:30px;font-size:21px;vertical-align:middle}
 #dock button{display:flex;align-items:center;justify-content:center}
 #ench,#shop,#stash{z-index:8}
+.sti{width:18px;height:18px;vertical-align:-4px;object-fit:contain}
 .thd{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .thd>span{background:#1e1913;border:1px solid #5a4630;border-radius:14px;padding:3px 9px;font-size:13px;white-space:nowrap}
 .thd button{margin:0!important}
@@ -1305,9 +1306,9 @@ function usePot(k){const p=S.p;p.pot=p.pot||{};if(!(p.pot[k]>0))return;
 const EF=[];let fxn=0;
 function addFx(k,type,tot,d){const e=EF.find(x=>x.k===k);if(e){e.t=d;e.tot=tot;e.d=d}else EF.push({k,type,tot,d,t:d})}
 function fxUi(){const a=EF.map(e=>`${pI(e.k)} ${POT[e.k][2]} ${Math.ceil(e.t)}s`);
-  if(F){if(F.buff>0)a.push(`⚔️ Wzmocnienie ${Math.ceil(F.buff)}s`);if(F.cr>0)a.push(`🎯 Krytyk ${Math.ceil(F.cr)}s`);if(F.sh>0)a.push(`🛡️ Tarcza ${Math.ceil(F.sh)}`);if(F.dots&&F.dots.length)a.push(`${F.dots.some(d=>d.k==='d')?'☠️ Trucizna':'🩸 Krwawienie'}`);if(F.pet)a.push(`🐺 Przywołaniec ${Math.ceil(F.pet.t)}s`);if(F.wk>0)a.push(`😱 Wróg osłabiony ${Math.ceil(F.wk)}s`);if(F.stun>0)a.push(`💫 Wróg ogłuszony ${Math.ceil(F.stun)}s`);if(F.S)for(const q of['burn','frost','shock','bleed','poison','gang'])if(F.S[q]>0)a.push(`${STN[q][0]} Wróg ${STN[q][1].toLowerCase()} ${Math.ceil(F.S[q])}s`)}
+  if(F){if(F.buff>0)a.push(`⚔️ Wzmocnienie ${Math.ceil(F.buff)}s`);if(F.cr>0)a.push(`🎯 Krytyk ${Math.ceil(F.cr)}s`);if(F.sh>0)a.push(`🛡️ Tarcza ${Math.ceil(F.sh)}`);if(F.dots&&F.dots.length)a.push(`${F.dots.some(d=>d.k==='d')?'☠️ Trucizna':'🩸 Krwawienie'}`);if(F.pet)a.push(`🐺 Przywołaniec ${Math.ceil(F.pet.t)}s`);if(F.wk>0)a.push(`😱 Wróg osłabiony ${Math.ceil(F.wk)}s`);const si=(q,e)=>`<img class="sti" src="assets/skills/s_st_${q}.png" alt="" onerror="this.outerHTML='${e}'">`;if(F.stun>0)a.push(`${si('stun','💫')}${Math.ceil(F.stun)}s`);if(F.S)for(const q of['burn','frost','shock','bleed','poison','gang'])if(F.S[q]>0)a.push(`${si(q,STN[q][0])}${Math.ceil(F.S[q])}s`)}
   if(S.p.bl&&S.p.bl.n>0)a.push(`✨ ${S.p.bl.t} (${S.p.bl.n} walk)`)
-  const e=$('fx');e.style.top=F?'calc(env(safe-area-inset-top,0px) + 42px)':'';e.textContent=a.join('  ·  ');e.style.display=a.length?'block':'none'}
+  const e=$('fx');e.style.top=F?'calc(env(safe-area-inset-top,0px) + 42px)':'';e.innerHTML=a.join('  ·  ');e.style.display=a.length?'block':'none'}
 setInterval(()=>{const p=S.p;if(!p.cls)return;let end=false;
   for(let i=EF.length-1;i>=0;i--){const e=EF[i],a=e.tot*.1/e.d;if(e.type==='hp')p.hp=Math.min(mh(),p.hp+a);else if(e.type==='mana')p.mana=Math.min(mm(),p.mana+a);else p.sta=Math.min(sm(),p.sta+a);e.t-=.1;if(e.t<=0){EF.splice(i,1);end=true}}
   fxUi();orbUi();if(F){upd()}else if(end||(EF.length&&++fxn%10===0))render()},100);
