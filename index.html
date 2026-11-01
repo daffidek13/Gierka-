@@ -211,7 +211,7 @@ header #mini{pointer-events:auto}
 #skills .emp{opacity:.5}#skills .emp .ik{border-style:dashed;border-color:#6a5a34;color:#8a7440}
 #fauto,#flee{position:absolute;z-index:7;right:10px;font-size:12px;padding:5px 10px;border-radius:14px;background:#000a;border:1px solid #6a5a34;color:var(--ink)}
 #flee{top:calc(env(safe-area-inset-top,0px) + 62px)}#fauto{top:calc(env(safe-area-inset-top,0px) + 94px)}
-#poi{position:absolute;left:0;right:0;top:19%}
+#poi{position:absolute;left:0;right:0;top:19%}#poi.hzp{top:7%}.hz{position:relative;width:82%;margin:0 auto}.hz img{display:block;width:100%;pointer-events:none;-webkit-user-drag:none;-webkit-mask-image:linear-gradient(#000 76%,transparent);mask-image:linear-gradient(#000 76%,transparent);filter:saturate(.88) brightness(.98) drop-shadow(0 4px 6px #0005)}.hz img.fb{width:96px;margin:0 auto;-webkit-mask:none;mask:none}.hz::after{content:'';position:absolute;left:-6%;right:-6%;bottom:22%;height:24%;background:linear-gradient(#0000,var(--hzc) 80%,#0000);opacity:.5;filter:blur(7px);pointer-events:none}.hz b{display:block;position:relative;z-index:1;margin-top:-16%;font-size:16px;text-shadow:0 2px 4px #000,0 0 8px #000}.hz b small{font-weight:normal}.hz u{display:block;text-decoration:none;position:relative;z-index:1;font-size:11px;opacity:.85;text-shadow:0 1px 3px #000}
 .nd.kx .ndc{border-radius:20px 8px 20px 8px;width:60px;height:60px;border-color:#9a7bd0}.nd.kx.own .ndc{border-color:#f0b84a}.nd.bl .ndc{border-color:#a33;opacity:.5}.nd.bl span{color:#c66}
 
 /* ===== ikony UI, miasto, mapa ===== */
@@ -389,6 +389,7 @@ const E={szkielet:['Szkielet','💀'],ork:['Ork','👹'],wilk:['Wilk','🐺'],go
 const SP={laka:['wilk','goblin'],las:['pajak','ork','wilk'],gory:['ork','troll'],bagno:['topielec','szkielet'],pustynia:['szkielet','skorpion']};
 const SLOT=[[24,47],[76,47],[50,40],[13,62],[87,62]],SLOTD=[[32,46],[68,46],[50,38],[26,58],[74,58]],slot=i=>($('view').classList.contains('dg')?SLOTD:SLOT)[i%5];
 const POI={miasto:['Miasto','🏰'],wioska:['Wioska','🏘️'],miasteczko:['Miasteczko','🏙️'],zamek:['Zamek','🏯'],obozowisko:['Obóz','⛺'],klasztor:['Klasztor','⛪'],jaskinia:['Jaskinia','🕳️'],ruiny:['Ruiny','🏚️']};
+const HZC={laka:'#d4eab4',las:'#a3bd92',gory:'#c3c6d0',bagno:'#93a28c',pustynia:'#ecd3a0'};
 const SET={miasto:1,wioska:1,miasteczko:1,zamek:1,obozowisko:1,klasztor:1};
 const SVD={wioska:[['karczma'],[['shop',.7],['stash',.4],['zad',.5],['smith',.3]]],miasteczko:[['shop','karczma'],[['smith',.8],['zad',.8],['stash',.6],['ench',.25]]],zamek:[['smith','zad'],[['shop',.5],['ench',.4],['karczma',.6],['stash',.5]]],obozowisko:[['shop'],[['karczma',.5],['smith',.3],['zad',.4]]],klasztor:[['karczma'],[['ench',.7],['shop',.25],['stash',.5],['zad',.2]]]};
 const SORD=['smith','ench','shop','stash','karczma','zad','port'];
@@ -535,7 +536,7 @@ function render(dx=0,dy=0,pp=0){
   {const hs=heroSig()+'|'+auraKey(),he=$('hero');if(he.dataset.s!==hs||!he.firstChild){he.innerHTML=heroHtml();he.dataset.s=hs}}wxSet(S.loc?'':tod(),S.loc?'':wth());$('tname').textContent=S.loc?POI[S.loc.k][0]:f.poi&&SET[f.poi]?f.nm:t.n;
   $('coords').textContent=`Pole ${S.x}, ${S.y} · mapa ${(S.map||0)+1} · ${TODE[tod()]}${wth()?WX[wth()].e:''}${bossHint()}`;
   if(S.loc){S.loc.vis=S.loc.vis||{};S.loc.vis[S.loc.fl+':'+S.loc.x+','+S.loc.y]=1;$('coords').textContent=`Piętro ${S.loc.fl+1} z ${S.loc.fls}`}
-  $('poi').onclick=S.loc?null:SET[fo.poi]?()=>{TCUR=fo;TSEC=null;openTown()}:fo.poi?()=>enterLoc(fo):null;$('poi').innerHTML=S.loc?'':fo.poi?icon('',`assets/world/p_${fo.poi}.png`,POI[fo.poi][1])+(SET[fo.poi]?fo.nm+' <small>('+POI[fo.poi][0].toLowerCase()+')</small>':POI[fo.poi][0])+(SET[fo.poi]?' · tap, aby wejść':(S.cleared&&S.cleared[ckey(fo)]?' (wyczyszczone)':' · tap, aby wejść')):'';
+  $('poi').onclick=S.loc?null:SET[fo.poi]?()=>{TCUR=fo;TSEC=null;openTown()}:fo.poi?()=>enterLoc(fo):null;$('poi').className=!S.loc&&fo.poi&&SET[fo.poi]?'hzp':'';$('poi').innerHTML=S.loc?'':fo.poi&&SET[fo.poi]?`<div class="hz" style="--hzc:${HZC[fo.t]||'#cfe6b0'}"><img src="assets/world/h_${fo.poi==='miasto'?'stolica':fo.poi}.png" onerror="this.onerror=null;this.src='assets/world/p_${fo.poi}.png';this.classList.add('fb')" alt="" draggable="false"><b>${fo.nm} <small>(${POI[fo.poi][0].toLowerCase()})</small></b><u>tap, aby wejść</u></div>`:fo.poi?icon('',`assets/world/p_${fo.poi}.png`,POI[fo.poi][1])+(SET[fo.poi]?fo.nm+' <small>('+POI[fo.poi][0].toLowerCase()+')</small>':POI[fo.poi][0])+(SET[fo.poi]?' · tap, aby wejść':(S.cleared&&S.cleared[ckey(fo)]?' (wyczyszczone)':' · tap, aby wejść')):'';
   $('foes').innerHTML=f.foes.map((o,i)=>isDead(f,i)?'':`<button class="foe${o.ag?' ag':''}${POP?' pop':''}" data-i="${i}" style="--i:${i};left:${slot(i)[0]}%;top:${slot(i)[1]}%;z-index:${slot(i)[1]};transform:translate(-50%,-85%) scale(${(.8+slot(i)[1]/100*.4).toFixed(2)})">${icon('',`assets/enemies/e_${o.key}.png`,E[o.key][1])}<b>×${o.n}</b><small>${E[o.key][0]}${o.ag?' · atakuje!':''}</small></button>`).join('')+objs()+(S.loc?roomHtml()+walls():'');
   if(S.loc)v.style.background='linear-gradient(160deg,#4a463f,#17161a)';v.classList.toggle('dg',!!(S.loc&&HIMG[`assets/world/d_${S.loc.k}_wall.png`]));
   $('hint').innerHTML=(S.loc?'Przesuń palcem, żeby chodzić po lochu':'Przesuń palcem, żeby przejść na sąsiednie pole')+potBtns();
@@ -597,7 +598,7 @@ function move(dx,dy){if(F)return;heroAnim('walk',dx);if(S.loc){lmove(dx,dy);retu
   if(T[f.t].ok===false){toast('Woda blokuje drogę');return}
   S.px=S.x;S.py=S.y;S.x=nx;S.y=ny;{const p=S.p;p.hp=Math.min(mh(),p.hp+3);p.mana=mm();p.sta=sm()}S.visited[nx+','+ny]=1;S.steps++;S.rec.dist=Math.max(S.rec.dist||0,Math.round(Math.hypot(nx,ny)));spawnWd(f);save();render(dx,dy);
   (S.p.q||[]).forEach(q=>{if(q.t==='reach')q.have=Math.min(q.need,Math.max(q.have,Math.round(Math.hypot(S.x,S.y))))});S.ms=(S.ms||0)+1;if(!S.boss&&S.ms>=1000&&Math.random()<.015)spawnBoss();
-  const fc=cur(),a=fc.foes.findIndex((o,i)=>o.ag&&!isDead(fc,i));if(a>=0)startFight(a,true);else if(SET[fc.poi]){TCUR=fc;TSEC=null;openTown()}
+  const fc=cur(),a=fc.foes.findIndex((o,i)=>o.ag&&!isDead(fc,i));if(a>=0)startFight(a,true)
 }
 
 // ---------- sterowanie: swipe ----------
@@ -1364,7 +1365,7 @@ function renderPots(){const p=S.p.pot||{};$('pots').innerHTML=Object.keys(POT).f
 $('pots').onclick=e=>{const b=e.target.closest('button');if(b&&F)usePot(b.dataset.p)};
 function spawnWd(f){ // wędrujące potwory pojawiają się na pustych polach
   const k=f.x+','+f.y;S.wd=S.wd||{};const w=S.wd[k];
-  if(f.t==='woda'||SET[f.poi]||f.foes.length||(w&&S.steps-w.s<RESP*2)||Math.random()>.3)return;
+  if(f.t==='woda'||f.foes.length||(w&&S.steps-w.s<RESP*2)||Math.random()>.3)return;
   const l=SP[f.t]||SP.laka;
   S.wd[k]={s:S.steps,g:{key:l[Math.floor(Math.random()*l.length)],ag:Math.random()<.4,n:1+Math.floor(Math.random()*4),px:25+Math.random()*50,py:50+Math.random()*28,wd:1}};
 }
