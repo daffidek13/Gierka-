@@ -116,7 +116,7 @@ header{align-items:flex-start;gap:10px}
 #hero{position:absolute;left:50%;transform:translateX(-50%);bottom:2px;width:150px;height:240px;z-index:90;pointer-events:none}
 #fe{position:relative;flex-direction:column;justify-content:space-around}#fhero{width:120px;height:192px}
 .hrow{display:flex;gap:12px;align-items:center;margin:6px 0}.hv{width:100px;height:162px;flex:none}.hb{flex:1}
-.tl .sb{position:absolute;top:0;left:4px;font-size:13px}
+.tl .sb{position:absolute;top:0;left:4px;font-size:13px}.tl .stb{position:absolute;inset:2px;border:2px solid var(--sc);border-radius:8px;pointer-events:none;box-shadow:0 0 6px var(--sc)}.tl .tgd{position:absolute;left:3px;bottom:5px;font-size:8px;line-height:8px;letter-spacing:1px;color:#8fd6ff;text-shadow:0 0 2px #000;pointer-events:none}.tl.brk .enfx,.tl.brk .ic{filter:grayscale(.8) brightness(.55)}
 .wl{position:absolute;pointer-events:none;z-index:1}
 .obj{position:absolute;pointer-events:auto;width:90px;transform:translate(-50%,-85%);padding:0;border:0;background:none;color:inherit;font:inherit;text-align:center;z-index:50}
 .obj .ic{font-size:44px;display:block;position:relative;height:56px}
@@ -1086,7 +1086,7 @@ function bfHtml(list){const cn=t=>list.filter(i=>i.t===t).length,sets=[...new Se
   return `<div class="fch">${b('t:','Wszystko',!BF.t&&!BF.s)}${TYL.filter(([t])=>cn(t)).map(([t,n])=>b('t:'+t,n+' '+cn(t),BF.t===t)).join('')}${sets.length?b('s:*','★ Komplety',BF.s==='*'):''}</div>${sets.length&&BF.s?`<div class="fch">${sets.map(id=>`<button data-a="bf:s:${id}" class="${BF.s===id?'on':''}" style="border-color:${SETS[id].c}">${SETS[id].n}</button>`).join('')}</div>`:''}`}
 function bfClick(a){const q=a.split(':'),v=q[2]||'';if(q[1]==='t'){if(!v)BF={t:'',s:''};else BF.t=BF.t===v?'':v}else{if(v==='*')BF.s=BF.s?'':'*';else BF.s=BF.s===v?'*':v}}
 let MSEL=null;
-function tile(it,d,lab){return `<button class="tl${it?' fi':''}${SEL===d||(MSEL&&MSEL.has(d))?' on':''}" data-a="s:${d}" style="--c:${it?RC[it.r]:'#4a3f2e'}${it&&it.col?`;box-shadow:inset 0 0 14px ${it.col}88`:''}">${it?`${enWrap(it,icon('',iip(it),ico(it)))}<b class="tb">${(it.tier||0)+1}</b>${it.d<=0?'<em>!</em>':''}${it.set?`<b class="sb" style="color:${SETS[it.set].c}">★</b>`:''}${it.fx?'<b class="sb" style="top:auto;bottom:4px;color:#e0a63a">✦</b>':''}${it.en?'<b class="sb" style="top:auto;bottom:4px;left:auto;right:4px;color:#b98cff">✧</b>':''}${it.sn?`<span class="tgm">${Array.from({length:it.sn},(_,x)=>it.so&&it.so[x]?gI(it.so[x]):'<u>◇</u>').join('')}</span>`:''}<i style="width:${it.d/it.md*100}%"></i>`:`<span class="ph">${lab||''}</span>`}</button>`}
+function tile(it,d,lab){return `<button class="tl${it?' fi':''}${it&&it.d<=0?' brk':''}${SEL===d||(MSEL&&MSEL.has(d))?' on':''}" data-a="s:${d}" style="--c:${it?RC[it.r]:'#4a3f2e'}${it&&it.col?`;box-shadow:inset 0 0 14px ${it.col}88`:''}">${it?`${enWrap(it,icon('',iip(it),ico(it)))}<b class="tb">${(it.tier||0)+1}</b>${it.set?`<b class="stb" style="--sc:${SETS[it.set].c}"></b>`:''}${it.sn?`<span class="tgd">${Array.from({length:Math.min(it.sn,4)},(_,x)=>it.so&&it.so[x]?'●':'○').join('')}</span>`:''}<i style="width:${it.d/it.md*100}%"></i>`:`<span class="ph">${lab||''}</span>`}</button>`}
 function showChar(){
   const p=S.p,t=st(),bar=(c,v,mx,tx)=>`<div class="bar ${c}"><u style="width:${Math.max(0,Math.min(100,v/mx*100))}%"></u><span>${tx}</span></div>`;
   let it=null;if(SEL){it=SEL[0]==='e'?p.eq[SEL.slice(2)]:p.bag.find(o=>o.id===SEL.slice(2));if(!it)SEL=null}
