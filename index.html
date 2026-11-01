@@ -249,6 +249,12 @@ header #mini{pointer-events:auto}
 .wsl{display:flex;gap:10px;align-items:flex-start;margin:6px 0}.wsl .wst{width:78px;flex:none}.wsl .wsi{font-size:13px;line-height:1.35}
 .wtb{display:flex;gap:6px;margin:10px 0}.wtb button{flex:1;margin:0;padding:8px 2px;font-size:13px;background:#1e1913;border:1px solid #5a4630;color:#e8dcb8;border-radius:10px}.wtb button.on{background:#6a5230;border-color:#e0a63a;color:#fff}
 .gsk{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}.gs{width:84px;min-height:78px;padding:6px 4px;background:#1b150d;border:2px solid #4a3f2e;border-radius:10px;color:#e8dcb8;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;margin:0}.gs small{font-size:11px;opacity:.85;line-height:1.15;text-align:center}.gs.f{border-color:#6fe08a}.gs.on{border-color:#ffd34a;box-shadow:0 0 10px #ffd34a88}.gs .gx{width:34px;height:34px;display:block}
+.enfx{position:relative;display:inline-block;vertical-align:middle}.tl .enfx,.lci .enfx{display:block;width:100%;height:100%}
+.enfx img{filter:drop-shadow(0 0 var(--g) var(--ec)) drop-shadow(0 0 calc(var(--g)*2) var(--ec));animation:enp calc(var(--sp)*1.5) ease-in-out infinite}
+.enfx::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 38%,var(--ec2) 50%,transparent 62%);background-size:260% 100%;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat;mix-blend-mode:screen;opacity:.85;animation:ens calc(var(--sp)*1.6) linear infinite}
+@keyframes enp{50%{filter:drop-shadow(0 0 calc(var(--g)*1.6) var(--ec)) drop-shadow(0 0 calc(var(--g)*3) var(--ec)) brightness(1.18)}}
+@keyframes ens{from{background-position:160% 0}to{background-position:-110% 0}}
+@media (prefers-reduced-motion:reduce){.enfx img,.enfx::after{animation:none}}
 #town .tn{text-align:center;opacity:.8}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .tcard{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px!important;text-align:center;border-radius:14px!important;border:2px solid #6a5a34!important;background:linear-gradient(160deg,#2b2115,#14100a)!important;box-shadow:inset 0 0 14px #0009}
@@ -506,7 +512,7 @@ const gemSvg=k=>{const c=GCOL[k]||GCOL.onyks;return `<svg viewBox="0 0 32 32" st
 const wkey=it=>/Kostur/.test(it.n)?'kostur':/Młot/.test(it.n)?'mlot':/Maczuga/.test(it.n)?'maczuga':/Topór/.test(it.n)?'topor':/Sztylet/.test(it.n)?'sztylet':'miecz';
 const iip0=it=>it.t==='bron'?`assets/items/i_${wkey(it)}.png`:(it.t==='amulet'||it.t==='pierscien')?`assets/items/i_${it.t}.png`:`assets/items/i_${it.t}_${it.ac||'plyta'}.png`;
 const iip=it=>it.set?`assets/items/i_${it.set}_${it.t==='bron'?wkey(it):it.t}.png|${iip0(it)}`:iip0(it);
-const iic=it=>pic(iip(it),ico(it));
+const iic=it=>enWrap(it,pic(iip(it),ico(it)));
 // ---------- widok ----------
 const $=id=>document.getElementById(id);
 const ui=(n,e)=>`<span class="ui">${icon('',n.startsWith('m_')?`assets/ui/${n}.png`:`assets/ui/u_${n}.png`,e)}</span>`;
@@ -884,6 +890,8 @@ const enRe=it=>({g:Math.round(enAdd(it).g*.6),e:2+it.en.l+it.r});
 const enSock=it=>({g:200*((it.sn||0)+1),e:5+(it.sn||0)*4,c:[80,55,35][it.sn||0]});
 const deVal=it=>[1,3,7,16][it.r]+Math.floor((it.tier||0)/2)+(it.up||0)+(it.en?it.en.l*2:0);
 const sellPrice=it=>Math.round((3+it.r*it.r*10+(it.tier||0)*(2+it.r*2))*(1+.2*(it.up||0)))+(it.so||[]).reduce((q,g)=>q+20*gP(g)[1],0)+(it.en?15*it.en.l:0)+(it.set?25:0)+(it.fx?15:0);
+const ENV={ogien:['#ff7a1a','#ffe08a',.8],wamp:['#d6203a','#ff9aa8',2.2],precyzja:['#ffe27a','#ffffff',1.6],moc:['#a06bff','#e3d0ff',2],twierdza:['#6aa8ff','#dfeaff',3],wigor:['#5fd36a','#d9ffd9',2.6],zwinn:['#3fe0d0','#d0fffa',1.4],zycie:['#9be05a','#fff7b0',2.4],madr:['#4f9bff','#cfe6ff',2.4],sila:['#ff5a3a','#ffd0c0',2],traf:['#ffd34a','#fff5c0',1.5],zrodlo:['#38b6ff','#d5f1ff',2.2],wir:['#ff6adf','#ffe0f8',1.2],pospiech:['#2fd6a8','#d0fff0',1.3],tempo:['#18c8d8','#d0faff',1.2]};
+const enWrap=(it,h)=>{if(!it||!it.en||!ENV[it.en.k])return h;const c=ENV[it.en.k],src=String(iip(it)).split('|')[0];return `<span class="enfx" style="--ec:${c[0]};--ec2:${c[1]};--sp:${c[2]}s;--g:${2+it.en.l*1.2}px;--src:url('${src}')">${h}</span>`};
 const enTxt=it=>it.en&&ENS[it.en.k]?`<div style="color:#b98cff">✧ ${ENS[it.en.k][0]} ${it.en.l}/5: +${enV(it)} ${LB[ENS[it.en.k][1]]}</div>`:'';
 const ARS=['helm','klata','spodnie','buty','rekawice','naramienniki'],acN=ac=>{const e=S.p.eq||{};return ARS.filter(k=>e[k]&&e[k].d>0&&(e[k].ac||'plyta')===ac).length},wkNow=()=>{const w=(S.p.eq||{}).bron0;return w&&w.d>0?wkey(w):''};
 const st=()=>{const p=S.p,b=p.b||{sil:0,zre:0,int:0},r=ZERO();r.sil=b.sil;r.zre=b.zre;r.int=b.int;r.wit=p.wit||0;
@@ -1068,7 +1076,7 @@ function bfHtml(list){const cn=t=>list.filter(i=>i.t===t).length,sets=[...new Se
   return `<div class="fch">${b('t:','Wszystko',!BF.t&&!BF.s)}${TYL.filter(([t])=>cn(t)).map(([t,n])=>b('t:'+t,n+' '+cn(t),BF.t===t)).join('')}${sets.length?b('s:*','★ Komplety',BF.s==='*'):''}</div>${sets.length&&BF.s?`<div class="fch">${sets.map(id=>`<button data-a="bf:s:${id}" class="${BF.s===id?'on':''}" style="border-color:${SETS[id].c}">${SETS[id].n}</button>`).join('')}</div>`:''}`}
 function bfClick(a){const q=a.split(':'),v=q[2]||'';if(q[1]==='t'){if(!v)BF={t:'',s:''};else BF.t=BF.t===v?'':v}else{if(v==='*')BF.s=BF.s?'':'*';else BF.s=BF.s===v?'*':v}}
 let MSEL=null;
-function tile(it,d,lab){return `<button class="tl${it?' fi':''}${SEL===d||(MSEL&&MSEL.has(d))?' on':''}" data-a="s:${d}" style="--c:${it?RC[it.r]:'#4a3f2e'}${it&&it.col?`;box-shadow:inset 0 0 14px ${it.col}88`:''}">${it?`${icon('',iip(it),ico(it))}<b class="tb">${(it.tier||0)+1}</b>${it.d<=0?'<em>!</em>':''}${it.set?`<b class="sb" style="color:${SETS[it.set].c}">★</b>`:''}${it.fx?'<b class="sb" style="top:auto;bottom:4px;color:#e0a63a">✦</b>':''}${it.en?'<b class="sb" style="top:auto;bottom:4px;left:auto;right:4px;color:#b98cff">✧</b>':''}${it.sn?`<span class="tgm">${Array.from({length:it.sn},(_,x)=>it.so&&it.so[x]?gI(it.so[x]):'<u>◇</u>').join('')}</span>`:''}<i style="width:${it.d/it.md*100}%"></i>`:`<span class="ph">${lab||''}</span>`}</button>`}
+function tile(it,d,lab){return `<button class="tl${it?' fi':''}${SEL===d||(MSEL&&MSEL.has(d))?' on':''}" data-a="s:${d}" style="--c:${it?RC[it.r]:'#4a3f2e'}${it&&it.col?`;box-shadow:inset 0 0 14px ${it.col}88`:''}">${it?`${enWrap(it,icon('',iip(it),ico(it)))}<b class="tb">${(it.tier||0)+1}</b>${it.d<=0?'<em>!</em>':''}${it.set?`<b class="sb" style="color:${SETS[it.set].c}">★</b>`:''}${it.fx?'<b class="sb" style="top:auto;bottom:4px;color:#e0a63a">✦</b>':''}${it.en?'<b class="sb" style="top:auto;bottom:4px;left:auto;right:4px;color:#b98cff">✧</b>':''}${it.sn?`<span class="tgm">${Array.from({length:it.sn},(_,x)=>it.so&&it.so[x]?gI(it.so[x]):'<u>◇</u>').join('')}</span>`:''}<i style="width:${it.d/it.md*100}%"></i>`:`<span class="ph">${lab||''}</span>`}</button>`}
 function showChar(){
   const p=S.p,t=st(),bar=(c,v,mx,tx)=>`<div class="bar ${c}"><u style="width:${Math.max(0,Math.min(100,v/mx*100))}%"></u><span>${tx}</span></div>`;
   let it=null;if(SEL){it=SEL[0]==='e'?p.eq[SEL.slice(2)]:p.bag.find(o=>o.id===SEL.slice(2));if(!it)SEL=null}
