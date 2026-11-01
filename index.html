@@ -240,7 +240,7 @@ header #mini{pointer-events:auto}
 .tmap .hs{position:absolute;transform:translate(-50%,-50%);padding:0;margin:0;background:transparent;border:0;border-radius:14px;-webkit-tap-highlight-color:transparent}
 .tmap .hs:active{background:#ffffff33}
 .tmap .hs i{position:absolute;left:50%;bottom:-2px;transform:translate(-50%,100%);font-style:normal;white-space:nowrap;background:#000a;border:1px solid #e0b860;color:#ffe9a8;border-radius:12px;padding:2px 8px;font-size:12px;line-height:1.3;pointer-events:none}
-.tmap .hs.on i{border-color:#6fe08a}.tmap .hs.na i{display:none}
+.tmap .hs.sp img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;filter:drop-shadow(0 4px 3px #0007)}.tmap .hs.on i{border-color:#6fe08a}.tmap .hs.na i{display:none}
 .tmap .tname{position:absolute;left:8px;top:6px;background:#000a;color:#fff;border-radius:12px;padding:3px 10px;font-size:14px;font-weight:bold;z-index:2}
 .tmap .tbt{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:8px;z-index:2}
 .tmap .tbt button{flex:1;margin:0;padding:8px 6px;font-size:13px;background:#000b;border:1px solid #e0b860;color:#ffe9a8;border-radius:12px}
@@ -1118,13 +1118,17 @@ function openTown(){
   if(!TSEC){
     const T=TCUR&&SET[TCUR.poi]?TCUR:{poi:'miasto',nm:'Stolica',sv:SORD},HS=k=>T.sv.includes(k);
     const MI={miasto:'stolica',zamek:'zamek',miasteczko:'miasteczko',wioska:'wioska',obozowisko:'wioska',klasztor:'miasteczko'}[T.poi]||'wioska';
-    const HP={wioska:{port:[50,8],smith:[26,26],ench:[76,26],shop:[22,47],karczma:[76,48],stash:[24,66],zad:[77,67],gate:[50,85]},
-      miasteczko:{port:[51,6],smith:[22,16],ench:[80,16],shop:[18,42],karczma:[81,42],stash:[23,63],zad:[79,66],gate:[50,84]},
-      zamek:{port:[50,9],smith:[20,20],ench:[80,22],shop:[17,43],karczma:[83,43],stash:[22,65],zad:[79,66],gate:[50,86]},
-      stolica:{port:[50,5],smith:[22,21],ench:[81,20],shop:[17,47],karczma:[81,48],stash:[21,68],zad:[80,71],gate:[50,87]}}[MI];
+    const HP={wioska:{port:[50,8],smith:[24,25],ench:[78,26],shop:[22,47],karczma:[77,48],stash:[26,68],zad:[76,69],gate:[50,85]},
+      miasteczko:{port:[51,6],smith:[23,18],ench:[79,18],shop:[21,43],karczma:[79,43],stash:[23,64],zad:[79,65],gate:[50,84]},
+      zamek:{port:[50,9],smith:[22,25],ench:[79,25],shop:[22,44],karczma:[79,44],stash:[22,65],zad:[79,65],gate:[50,86]},
+      stolica:{port:[50,5],smith:[23,17],ench:[79,17],shop:[20,44],karczma:[80,44],stash:[23,68],zad:[79,68],gate:[50,87]}}[MI],SCL={wioska:.92,miasteczko:.88,zamek:.8,stolica:.78}[MI];
     const HN={smith:['🔨','Kowal'],ench:['✨','Zaklinacz'],shop:['🛒','Sklep'],stash:['📦','Skrzynia'],karczma:['🍺',TKN[T.poi]||'Karczma'],zad:['📜','Zadania'],port:['🌀','Portal'],gate:['🚪','Wyjście']};
-    const SZ={port:[30,8],gate:[34,9],zad:[30,10],smith:[40,13],ench:[34,14],shop:[38,13],karczma:[38,14],stash:[40,13]};
-    const hs=Object.keys(HP).map(k=>{const [x,y]=HP[k],[w,hh]=SZ[k],ok=k==='gate'||HS(k);return `<button class="hs${ok&&k!=='gate'?' on':' na'}" data-a="${k==='gate'?'tx':'sec:'+k+(ok?'':':no')}" style="left:${x}%;top:${y}%;width:${w}%;height:${hh}%"><i>${HN[k][0]} ${HN[k][1]}</i></button>`}).join('');
+    const SPW={"wioska_smith": [439, 364], "wioska_ench": [354, 426], "wioska_shop": [438, 366], "wioska_karczma": [444, 414], "wioska_stash": [483, 394], "wioska_zad": [354, 285], "miasteczko_smith": [447, 432], "miasteczko_ench": [350, 477], "miasteczko_shop": [459, 448], "miasteczko_karczma": [421, 469], "miasteczko_stash": [478, 427], "miasteczko_zad": [476, 346], "zamek_smith": [419, 452], "zamek_ench": [400, 474], "zamek_shop": [467, 443], "zamek_karczma": [438, 465], "zamek_stash": [486, 424], "zamek_zad": [471, 343], "stolica_smith": [449, 475], "stolica_ench": [396, 488], "stolica_shop": [456, 482], "stolica_karczma": [454, 500], "stolica_stash": [446, 415], "stolica_zad": [423, 350]};
+    const hs=['port','smith','ench','shop','karczma','stash','zad','gate'].filter(k=>k==='gate'||HS(k)).map(k=>{const [x,y]=HP[k];
+      if(k==='gate')return `<button class="hs" data-a="tx" style="left:${x}%;top:${y}%;width:34%;height:9%"><i>🚪 Wyjście</i></button>`;
+      if(k==='port')return `<button class="hs on" data-a="sec:port" style="left:${x}%;top:${y}%;width:30%;height:8%"><i>${HN.port[0]} ${HN.port[1]}</i></button>`;
+      const sz=SPW[MI+'_'+k]||[420,420],w=sz[0]/1024*100*SCL;
+      return `<button class="hs on sp" data-a="sec:${k}" style="left:${x}%;top:${y}%;width:${w.toFixed(1)}%;aspect-ratio:${sz[0]}/${sz[1]}"><img src="assets/world/w_${MI}_${k}.png" alt=""><i>${HN[k][0]} ${HN[k][1]}</i></button>`}).join('');
     const nw=wps().length;
     h+=`<div class="tmap"><img class="bg" src="assets/world/w_${MI}.jpg" alt=""><span class="tname">${T.nm} · ${POI[T.poi][0]}</span>${hs}<div class="tbt">${HS('smith')?`<button data-a="rep"${c?'':' disabled'}>🔧 Napraw sprzęt${c?` (${c} zł)`:''}</button>`:''}<button data-a="sec:fast">🧭 Szybka podróż (${nw})</button></div></div>`;
     $('town').classList.add('tm')}
