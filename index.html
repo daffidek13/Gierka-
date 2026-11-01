@@ -615,7 +615,7 @@ function setCodex(){const c=setCnt(),p=S.p,L=o=>Object.entries(o).map(([k,v])=>'
       sl=TYL.map(([t,n])=>{const e=eqs.filter(i=>i.t===t).length,b=bgs.filter(i=>i.t===t).length;return `<span class="sl ${e?'eq':b?'bg':''}">${e?'✔':b?'🎒':'○'} ${n}${e+b>1?' ×'+(e+b):''}</span>`}).join(''),
       lack=TYL.filter(([t])=>!all.some(i=>i.t===t)).map(x=>x[1]),can=Math.floor((p.mat[mk]||0)/12);
     return `<div class="at" style="display:block"><b style="color:${T.c}">${T.n}</b>${c[id]?` · założone: ${c[id]}`:''} · <b>${own}/6</b>${miss?`, brakuje ${miss}`:' · komplet do założenia!'}<br><small>📍 ${setWhere(id)}<br>${ui('m_'+mk,MR[mk][1])} ${MR[mk][0]}: ${p.mat[mk]||0}${can?` · starczy na ${can} wykuć (12 szt. za element)`:' · element do wykucia: 12 szt.'}</small><div style="margin:4px 0">${sl}</div><small style="opacity:.8">✔ założone · 🎒 w plecaku/schowku · ○ nie masz${miss&&lack.length?'<br>Brakujące typy: '+lack.join(', '):''}</small>${Object.entries(T.b).map(([th,b])=>`<div style="opacity:${(c[id]||0)>=+th?1:.65}"><small>${th} szt.: ${L(b)}</small></div>`).join('')}</div>`}).join('')+
-  rangeCodex()+'<h3>Materiały</h3>'+[['szmaty','Szmaty','wszędzie, z walk i skrzyń'],['stal','Stal','skrzynie, lochy, jaskinie'],['esn','Esencja','skrzynie, bossowie, rozbijanie przedmiotów']].map(([k,n,w])=>`<div class="at"><div><b>${ui(k==='esn'?'esencja':k,'')} ${n}: ${p.mat[k]||0}</b><br><small>${w}</small></div></div>`).join('')+Object.keys(MR).map(k=>{const rs=Object.keys(REGSET).filter(r=>REGSET[r].some(s=>SETM[s]===k)).map(r=>REGN[r]).join(', ');return `<div class="at"><div><b>${ui('m_'+k,MR[k][1])} ${MR[k][0]}: ${p.mat[k]||0}</b><br><small>${rs}</small></div></div>`}).join('')}
+  comboCodex()+rangeCodex()+'<h3>Materiały</h3>'+[['szmaty','Szmaty','wszędzie, z walk i skrzyń'],['stal','Stal','skrzynie, lochy, jaskinie'],['esn','Esencja','skrzynie, bossowie, rozbijanie przedmiotów']].map(([k,n,w])=>`<div class="at"><div><b>${ui(k==='esn'?'esencja':k,'')} ${n}: ${p.mat[k]||0}</b><br><small>${w}</small></div></div>`).join('')+Object.keys(MR).map(k=>{const rs=Object.keys(REGSET).filter(r=>REGSET[r].some(s=>SETM[s]===k)).map(r=>REGN[r]).join(', ');return `<div class="at"><div><b>${ui('m_'+k,MR[k][1])} ${MR[k][0]}: ${p.mat[k]||0}</b><br><small>${rs}</small></div></div>`}).join('')}
 function showCodex(){const n=ACH.filter(a=>S.ach[a[0]]).length,t=S.pt||0,w=wth(),
   where=k=>Object.entries(SP).filter(([,l])=>l.includes(k)).map(([x])=>T[x].n).join(', ')||({krolowa:'boss jaskiń',licz:'boss ruin',boss:'Władca Zła',smok:'rzadko w górach'}[k]||'?');
   $('codex').innerHTML=`<button data-a="x">✕ Zamknij</button>
@@ -1305,7 +1305,7 @@ function usePot(k){const p=S.p;p.pot=p.pot||{};if(!(p.pot[k]>0))return;
 const EF=[];let fxn=0;
 function addFx(k,type,tot,d){const e=EF.find(x=>x.k===k);if(e){e.t=d;e.tot=tot;e.d=d}else EF.push({k,type,tot,d,t:d})}
 function fxUi(){const a=EF.map(e=>`${pI(e.k)} ${POT[e.k][2]} ${Math.ceil(e.t)}s`);
-  if(F){if(F.buff>0)a.push(`⚔️ Wzmocnienie ${Math.ceil(F.buff)}s`);if(F.cr>0)a.push(`🎯 Krytyk ${Math.ceil(F.cr)}s`);if(F.sh>0)a.push(`🛡️ Tarcza ${Math.ceil(F.sh)}`);if(F.dots&&F.dots.length)a.push(`${F.dots.some(d=>d.k==='d')?'☠️ Trucizna':'🩸 Krwawienie'}`);if(F.pet)a.push(`🐺 Przywołaniec ${Math.ceil(F.pet.t)}s`);if(F.wk>0)a.push(`😱 Wróg osłabiony ${Math.ceil(F.wk)}s`)}
+  if(F){if(F.buff>0)a.push(`⚔️ Wzmocnienie ${Math.ceil(F.buff)}s`);if(F.cr>0)a.push(`🎯 Krytyk ${Math.ceil(F.cr)}s`);if(F.sh>0)a.push(`🛡️ Tarcza ${Math.ceil(F.sh)}`);if(F.dots&&F.dots.length)a.push(`${F.dots.some(d=>d.k==='d')?'☠️ Trucizna':'🩸 Krwawienie'}`);if(F.pet)a.push(`🐺 Przywołaniec ${Math.ceil(F.pet.t)}s`);if(F.wk>0)a.push(`😱 Wróg osłabiony ${Math.ceil(F.wk)}s`);if(F.stun>0)a.push(`💫 Wróg ogłuszony ${Math.ceil(F.stun)}s`);if(F.S)for(const q of['burn','frost','shock','bleed','poison','gang'])if(F.S[q]>0)a.push(`${STN[q][0]} Wróg ${STN[q][1].toLowerCase()} ${Math.ceil(F.S[q])}s`)}
   if(S.p.bl&&S.p.bl.n>0)a.push(`✨ ${S.p.bl.t} (${S.p.bl.n} walk)`)
   const e=$('fx');e.style.top=F?'calc(env(safe-area-inset-top,0px) + 42px)':'';e.textContent=a.join('  ·  ');e.style.display=a.length?'block':'none'}
 setInterval(()=>{const p=S.p;if(!p.cls)return;let end=false;
@@ -1325,7 +1325,7 @@ function enterLoc(f){if(F||!S.p.cls)return;S.cleared=S.cleared||{};if(S.cleared[
 $('hint').onclick=e=>{const b=e.target.closest('button');if(!b||F)return;if(b.dataset.p==='_s'){if(S.p.scrolls&&confirm('Użyć zwoju i wrócić do miasta?')){S.p.scrolls--;S.x=0;S.y=0;S.visited['0,0']=1;S.loc=null;save();render()}return}if(b.dataset.p)usePot(b.dataset.p)};
 let F=null;
 const alive=()=>F.u.filter(u=>u.hp>0).length,uel=i=>$('fico').children[i];
-const AOE=new Set(['s6','s8','z8','z12','i4','i9','i12','i14','p9','p16','n16','i19','n9']);
+const AOE=new Set(['i22','h9','p20','s6','s8','z8','z12','i4','i9','i12','i14','p9','p16','n16','i19','n9']);
 function tgt(){let b=-1;if(F.tg!=null&&F.u[F.tg]&&F.u[F.tg].hp>0)return F.tg;F.u.forEach((u,i)=>{if(u.hp>0&&(b<0||u.hp<F.u[b].hp))b=i});return b}
 function killU(i){if(F.tg===i)F.tg=null;const el=uel(i);if(!el)return;el.classList.add('dead');if(!AN())return;const[x,y]=ctr(el);el.animate([{transform:'scale(1)',opacity:1},{transform:'scale(1.3) rotate(8deg)',opacity:.85,offset:.3},{transform:'scale(.2) rotate(-40deg)',opacity:0}],{duration:420,fill:'forwards'});burst(x,y,['💥','✨','⭐','🪙'],10,110)}
 function dealU(i,d){const u=F.u[i],a=Math.min(u.hp,d);u.hp-=a;if(u.hp<=1e-6){u.hp=0;killU(i)}F.hp=F.u.reduce((q,w)=>q+w.hp,0);return d-a}
@@ -1340,7 +1340,7 @@ const FLV=[2,4,6,9],FLN=['krótkie (×2 HP wrogów)','średnie (×4)','długie (
 function startFight(i,amb){
   if(F||!S.p.cls)return;const f=cur(),g=f.foes[i];if(!g||isDead(f,i))return;
   const FL=FLV[(S.opt&&S.opt.fl!=null)?S.opt.fl:2],LH=ST[g.key][0]>=200?FL*.6:FL,DF=[.75,1,1.4][(S.opt&&S.opt.df!=null)?S.opt.df:1],lv=Math.max(0,S.p.lvl-1),m=1+Math.hypot(S.x,S.y)/25+(S.map||0)*.8,st0=ST[g.key],hpu=Math.round(st0[0]*m*(1+lv*.22)*DF*LH),dm=m*(1+lv*.11)*(DF>1?1.2:DF<1?.8:1)*Math.pow(FL,-.55);
-  F={f,i,g,hpu,hp:hpu*g.n,dmg:st0[1]*dm*(!S.loc&&tod()==='noc'?1.15:1),xp:st0[2]*(1+lv*.18)*Math.pow(LH,.75)*(DF>1?1.25:DF<1?.8:1)*(!S.loc&&tod()==='noc'?1.2:1),t0:Date.now(),t:0,hits:0,cd:SKL().map(()=>0),sl:SKL(),amb};F.u=Array.from({length:g.n},()=>({hp:hpu,m:hpu}));F.tg=null;if(has('tarcza'))F.sh=Math.round(mh()*.15);F.pk=new Set((S.p.tr||[]).map(id=>TN[id]&&TN[id].x&&TN[id].x.f).filter(Boolean));F.w0=wkNow();F.cdr=((F.pk.has('kostur_cd')&&F.w0==='kostur')?1.1:1)*(1+Math.min(40,st().cdr||0)/100);
+  F={f,i,g,hpu,hp:hpu*g.n,dmg:st0[1]*dm*(!S.loc&&tod()==='noc'?1.15:1),xp:st0[2]*(1+lv*.18)*Math.pow(LH,.75)*(DF>1?1.25:DF<1?.8:1)*(!S.loc&&tod()==='noc'?1.2:1),t0:Date.now(),t:0,hits:0,cd:SKL().map(()=>0),sl:SKL(),amb};F.u=Array.from({length:g.n},()=>({hp:hpu,m:hpu}));F.tg=null;F.S={};if(has('tarcza'))F.sh=Math.round(mh()*.15);F.pk=new Set((S.p.tr||[]).map(id=>TN[id]&&TN[id].x&&TN[id].x.f).filter(Boolean));F.w0=wkNow();F.cdr=((F.pk.has('kostur_cd')&&F.w0==='kostur')?1.1:1)*(1+Math.min(40,st().cdr||0)/100);
   $('fe').style.background=`url(assets/world/t_${S.loc?S.loc.k:f.t}.jpg) center/cover,linear-gradient(160deg,${T[f.t].c},${T[f.t].c2})`;
   drawUnits();
   $('skills').innerHTML=[0,1,2,3].map(j=>{const k=F.sl[j];return k?`<button data-j="${j}"><span class="ik">${icon('',`assets/skills/s_${k.id}.png`,SKI[k.e.t]||'✨')}<i></i></span><em>${k.n}</em><small>${k.e.c}${k.e.r==='mana'?'✦':'⚡'}${skNum(k.e)?' · '+skNum(k.e):''}${AOE.has(k.id)?' ◎':''}</small>${gBadge(k.id)}</button>`:`<button data-j="${j}" class="emp"><span class="ik">＋</span><em>Wolny slot</em><small>&nbsp;</small></button>`}).join('');
@@ -1364,12 +1364,12 @@ function skillFx(sk,k,aoe){if(!AN()||!F)return;const te=aoe?$('fico'):(uel(tgt()
   const sky=SKY.includes(sk.id),sx=sky?ex+(sk.id==='i9'?90:0):hx,sy=sky?-40:hy,e=mk(sx,sy,sk.id==='i14'?150:96);
   e.animate([{transform:`translate(0,0) scale(.5) rotate(0)`,opacity:.2},{transform:`translate(${(ex-sx)*.5}px,${(ey-sy)*.5}px) scale(1.1) rotate(${sky?0:140}deg)`,opacity:1,offset:.5},{transform:`translate(${ex-sx}px,${ey-sy}px) scale(1.4) rotate(${sky?0:300}deg)`,opacity:.9}],{duration:sky?360:430,easing:'cubic-bezier(.4,0,.7,1)'}).onfinish=()=>{e.remove();impact()}}
 function tick(){
-  const p=S.p,t=st();p.mana=Math.min(mm(),p.mana+.15);p.sta=Math.min(sm(),p.sta+.3);F.cd=F.cd.map(c=>Math.max(0,c-.1*F.cdr));if(F.stun>0)F.stun-=.1;else F.t+=.1;if(F.buff>0)F.buff-=.1;if(F.cr>0)F.cr-=.1;if(F.pcd>0)F.pcd-=.1;if(F.rg>0){F.rg-=.1;p.hp=Math.min(mh(),p.hp+mh()*.003)}
+  const p=S.p,t=st();p.mana=Math.min(mm(),p.mana+.15);p.sta=Math.min(sm(),p.sta+.3);F.cd=F.cd.map(c=>Math.max(0,c-.1*F.cdr));if(F.stun>0)F.stun-=.1;else F.t+=.1*(F.S&&F.S.frost>0?(F.pk.has('zimno')?.5:.75):1);if(F.S)for(const q in F.S)if(F.S[q]>0)F.S[q]-=.1;if(F.buff>0)F.buff-=.1;if(F.cr>0)F.cr-=.1;if(F.pcd>0)F.pcd-=.1;if(F.rg>0){F.rg-=.1;p.hp=Math.min(mh(),p.hp+mh()*.003)}
   if(F.t>=2){F.t=0;F.hits++;const big=F.hits%3===0;if(AN())$('fico').animate([{transform:'none'},{transform:'translateY(46px) scale(1.12)'},{transform:'none'}],{duration:280,easing:'ease-in-out'});
     if(Math.random()<Math.min(35,t.zre+t.dod)/100){$('flog').textContent='Unik!';fl('Unik!','#8ad0ff',1);if(F.pk.has('unik'))F.cr=4;if(has('kontra')){hit(Math.round(atk()*1.5));if(!F)return}}
     else{let d=Math.max(1,Math.round(alive()*F.dmg*(F.wk>0?1-F.wm:1)*(big?2:1)*(1-rs()/100)*(F.pk.has('szal')&&p.hp<mh()*.5?1.15:1)));if(F.sh>0){const a=Math.min(F.sh,d);F.sh-=a;d-=a;if(a>0&&F.pk.has('bastion')){hit(Math.round(a*.5));if(!F)return}}if(d>0&&F.pk.has('manatarcza')&&p.mana>0){const a=Math.min(Math.floor(p.mana),Math.round(d*.5));p.mana-=a;d-=a}p.hp-=d;fl('−'+d,'#ff6b5a',1);sfx.hurt();heroAnim('hurt');shake($('fhero'),6,250);shake($('fight'),big?10:4,300);$('flog').textContent=big?`Silny atak! −${d} HP`:`Wróg bije: −${d} HP`;
       $('fight').animate([{boxShadow:'inset 0 0 60px #d9604c'},{boxShadow:'none'}],{duration:300});if(p.hp<=0){lose();return}}}
-  if((F.dots&&F.dots.length)||F.pet||F.wk>0){let d1=0,d2=0;F.dots=(F.dots||[]).filter(d=>{if(d.a)d2+=d.dps*.1;else d1+=d.dps*.1;d.t-=.1;return d.t>0});if(F.pet){d1+=F.pet.dps*.1;F.pet.t-=.1;if(F.pet.t<=0)F.pet=null}if(F.wk>0)F.wk-=.1;
+  if((F.dots&&F.dots.length)||F.pet||F.wk>0||(F.S&&F.S.burn>0)){let d1=F.S&&F.S.burn>0?sp()*.35*(F.pk.has('zar')?1.5:1)*.1:0,d2=0;F.dots=(F.dots||[]).filter(d=>{if(d.a)d2+=d.dps*.1;else d1+=d.dps*.1;d.t-=.1;return d.t>0});if(F.pet){d1+=F.pet.dps*.1;F.pet.t-=.1;if(F.pet.t<=0)F.pet=null}if(F.wk>0)F.wk-=.1;
     const al=alive(),dd=d1+d2*(al>1?.7:1)*al;
     if(dd>0){F.dac=(F.dac||0)+dd;if(F.dac>=1&&(F.dtk=(F.dtk||0)+1)%10===0){const te=uel(tgt());fl(Math.round(F.dac),F.pet?'#8ad0ff':'#9ad06a',0,0,te);F.dac=0}if(d1>0)dmgOne(d1);if(d2>0)dmgAll(d2*(al>1?.7:1));if(F.hp<=1e-6){win();return}}}
   upd();if(F&&F.auto&&(F.tk=(F.tk||0)+1)%5===0)hit(atk());
@@ -1413,6 +1413,30 @@ fe0.addEventListener('pointerup',e=>{if(!GP||e.pointerId!==GP.id)return;const g=
   if(g.mv&&(key||g.p.length>6)){const gl=S.p.gest||{};if(!key){$('flog').textContent='Gest nierozpoznany';return}const j=F.sl.findIndex(k=>k&&gl[k.id]===key);if(j<0){$('flog').textContent=`Gest ${GD[key][0]} nie ma przypisanej umiejętności`;return}$('flog').textContent=`Gest ${GD[key][0]} → ${F.sl[j].n}`;cast(j);return}
   if(g.eu){const i=+g.eu.dataset.i;if(F.u[i]&&F.u[i].hp>0&&alive()>1)F.tg=(F.tg===i?null:i)}
   heroAnim('atk');const te=uel(tgt());if(te)te.animate([{transform:'scale(.9)'},{transform:'none'}],{duration:90});hit(Math.round(atk()*(F.buff>0?F.bm:1)))});
+
+// ---------- statusy i reakcje (combosy) ----------
+const comboCodex=()=>'<h3>⚔️ Reakcje statusów (combosy)</h3><p><small>Skille nakładają statusy na wroga (podpalenie, mróz, porażenie, krwawienie, trucizna, ogłuszenie). Kolejny skill może je wykorzystać:</small></p>'+[['🔥+❄️','Szok termiczny','ogień na zamrożonym (lub lód na podpalonym): +50% i dodatkowy wybuch w całą grupę'],['⚡+💫','Paraliż','porażenie na ogłuszonym (lub ogłuszenie na porażonym): wróg traci 3,5 s i +40%'],['🩸+☠️','Gangrena','krwawienie na zatrutym (lub trucizna na krwawiącym): silne obrażenia w czasie, 8 s'],['🔥+☠️','Toksyczny wybuch','ogień na zatrutym: zużywa truciznę i rani całą grupę'],['⚔️+❄️','Rozbicie lodu','cios fizyczny na zamrożonym: +80%'],['🔮+⚡','Przeciążenie','zaklęcie na porażonym: +50%'],['⚔️+💫','Uderzenie w oszołomionego','cios fizyczny na ogłuszonym: +50%'],['⚔️+🩸','Dobicie krwawiącego','cios fizyczny na krwawiącym: +35%'],['💥','Detonacja','Eksplozja arkanów zużywa wszystkie statusy: +70% za każdy']].map(([i,n,d])=>`<div class="at"><div><b>${i} ${n}</b><br><small>${d}</small></div></div>`).join('')
+
+const STN={burn:['🔥','Podpalony'],frost:['❄️','Zamrożony'],shock:['⚡','Porażony'],bleed:['🩸','Krwawi'],poison:['☠️','Zatruty'],gang:['🦠','Gangrena'],weak:['😱','Osłabiony']};
+const SAP={i2:[['burn',6]],i4:[['burn',6]],i9:[['burn',7]],i14:[['burn',8]],h2:[['burn',6]],p17:[['burn',5]],w10:[['burn',6]],i7:[['frost',5]],i12:[['frost',6]],i21:[['frost',5]],p18:[['frost',4]],i6:[['shock',6]],i22:[['shock',6]],p19:[['shock',5]],h9:[['burn',6],['frost',5]],
+ s6:[['stun',2]],s12:[['stun',2.5]],s19:[['stun',2.5]],w11:[['stun',2]],z22:[['poison',10],['stun',1.5]]};
+const stTx=(id,k)=>{let l=SAP[id]?SAP[id].slice():[];if(!l.length){if(k.t==='r')l=[['bleed',k.d]];else if(k.t==='d')l=[['poison',k.d]];else if(k.t==='w')l=[['weak',k.d]]}
+  const n=Object.assign({stun:['💫','Ogłuszony']},STN);return l.length?` · Nakłada: ${l.map(([a,d])=>n[a][0]+' '+n[a][1].toLowerCase()+' '+d+'s').join(', ')}`:''};
+function stApply(id,k){if(!F)return;F.S=F.S||{};let l=SAP[id]?SAP[id].slice():[];if(!l.length){if(k.t==='r')l=[['bleed',k.d]];else if(k.t==='d')l=[['poison',k.d]];else if(k.t==='w')l=[['weak',k.d]]}
+  const x=F.pk.has('trwale')?1.4:1;l.forEach(([n,d])=>{if(n==='stun')F.stun=Math.max(F.stun||0,d);else F.S[n]=Math.max(F.S[n]||0,d*x)})}
+function reaction(id,k){F.S=F.S||{};const S0=F.S,a=(SAP[id]||[]).map(x=>x[0]),on=n=>n==='stun'?F.stun>0:S0[n]>0,bo=F.pk.has('rozp')?1.35:1;
+  const fire=a.includes('burn'),ice=a.includes('frost'),sho=a.includes('shock'),stn=a.includes('stun');let m=1,n='',x=0;
+  if(id==='i23'){let c=0;['burn','frost','shock','bleed','poison'].forEach(q=>{if(on(q)){c++;S0[q]=0}});if(F.stun>0){c++;F.stun=0}if(c){m=1+c*.7;n='DETONACJA ×'+c}}
+  else if((fire&&on('frost'))||(ice&&on('burn'))){S0.frost=S0.burn=0;m=1.5;x=sp()*2;n='SZOK TERMICZNY'}
+  else if((sho&&on('stun'))||(stn&&on('shock'))){F.stun=Math.max(F.stun||0,3.5);S0.shock=0;m=1.4;n='PARALIŻ'}
+  else if(fire&&on('poison')){S0.poison=0;F.dots=(F.dots||[]).filter(d=>d.k!=='d');m=1.2;x=sp()*2.2;n='TOKSYCZNY WYBUCH'}
+  else if(k.t==='p'&&!fire&&!ice&&!sho&&on('frost')){S0.frost=0;m=1.8;n='ROZBICIE LODU'}
+  else if(k.t==='m'&&!sho&&on('shock')){S0.shock=0;m=1.5;n='PRZECIĄŻENIE'}
+  else if(k.t==='p'&&F.stun>0){m=1.5;n='UDERZENIE W OSZOŁOMIONEGO'}
+  else if(k.t==='p'&&on('bleed')){m=1.35;n='DOBICIE KRWAWIĄCEGO'}
+  if(n){m=1+(m-1)*bo;x*=bo;if(F.pk.has('kat')){const p=S.p;p.mana=Math.min(mm(),p.mana+mm()*.12);p.sta=Math.min(sm(),p.sta+sm()*.12)}fl(n+'!','#ffb347',0,1);$('flog').textContent='Reakcja: '+n}
+  return{m,x,n}}
+function gangCheck(k,ao){F.S=F.S||{};const S0=F.S;if((k.t==='r'&&S0.poison>0)||(k.t==='d'&&S0.bleed>0)){const bo=F.pk.has('rozp')?1.35:1;F.dots=F.dots||[];F.dots.push({dps:(atk()+sp())*.9*bo,t:8,k:'g',a:ao?1:0});S0.gang=8;S0.bleed=S0.poison=0;fl('GANGRENA!','#b8a04a',0,1);$('flog').textContent='Reakcja: GANGRENA';return true}return false}
 function cast(j){
   if(!F)return;if(!F.sl[j]){toast('Wolny slot: ułóż pasek w Postać → Pasek skilli');return}const k=F.sl[j].e,p=S.p,r=k.r;
   const sk=k.t==='m'&&F.pk.has('skupienie'),cost=sk?Math.round(k.c*.75):k.c;if(F.cd[j]>0)return;if(p[r]<cost){toast('Za mało '+(r==='mana'?'many':'staminy'));return}
@@ -1420,10 +1444,10 @@ function cast(j){
   if(k.t==='h'){const hv=Math.round(mh()*k.m/100)+sp();p.hp=Math.min(mh(),p.hp+hv);if(F.pk.has('blogo'))F.sh=(F.sh||0)+Math.round(hv*.5);if(F.pk.has('pochl'))hit(Math.round(hv*.8))}
   else if(k.t==='b'){F.buff=k.d;F.bm=k.m;toast('Wzmocnienie ataku ×'+k.m)}
   else if(k.t==='s'){F.sh=(F.sh||0)+Math.round(mh()*k.m/100);toast('Tarcza!')}
-  else if(k.t==='r'||k.t==='d'){const tot=(k.t==='r'?atk():Math.round((atk()+sp())*.6))*k.m*(F.buff>0?F.bm:1)*(k.t==='d'&&F.pk.has('jad')?1.4:1)*(F.pk.has('plaga')?1.3:1);F.dots=F.dots||[];F.dots.push({dps:tot/k.d,t:k.d,k:k.t,a:ao?1:0});toast(k.t==='r'?'Krwawienie!':'Trucizna!')}
-  else if(k.t==='w'){F.wk=k.d;F.wm=k.m;toast('Wróg osłabiony')}
+  else if(k.t==='r'||k.t==='d'){const tot=(k.t==='r'?atk():Math.round((atk()+sp())*.6))*k.m*(F.buff>0?F.bm:1)*(k.t==='d'&&F.pk.has('jad')?1.4:1)*(F.pk.has('plaga')?1.3:1);const gg=gangCheck(k,ao);F.dots=F.dots||[];F.dots.push({dps:tot/k.d,t:k.d,k:k.t,a:ao?1:0});if(!gg)stApply(F.sl[j].id,k);toast(k.t==='r'?'Krwawienie!':'Trucizna!')}
+  else if(k.t==='w'){F.wk=k.d;F.wm=k.m;stApply(F.sl[j].id,k);toast('Wróg osłabiony')}
   else if(k.t==='u'){F.pet={t:k.d,dps:(k.r==='mana'?sp():atk())*k.m*(F.pk.has('nieumarly')||F.pk.has('stado')?1.4:1)};toast('Przywołaniec walczy u Twojego boku')}
-  else{let cm=1,cn='';if(k.t==='p'||k.t==='m'){if(prev==='w'){cm=1.5;cn='Wykorzystanie słabości'}else if(prev==='s'&&k.t==='p'){cm=1.3;cn='Kontratak'}else if((prev==='r'||prev==='d')&&k.t==='m'){cm=1.4;cn='Zapłon'}if(cm>1){if(F.pk.has('combo'))cm+=.25;fl('COMBO: '+cn,'#ffb347',0,1);$('flog').textContent=`Combo: ${cn} ×${cm.toFixed(2)}`}}hit(Math.round((k.t==='m'?sp():atk())*k.m*(F.buff>0?F.bm:1)*cm),ao)}
+  else{let cm=1,cn='';if(k.t==='p'||k.t==='m'){if(prev==='w'){cm=1.5;cn='Wykorzystanie słabości'}else if(prev==='s'&&k.t==='p'){cm=1.3;cn='Kontratak'}else if((prev==='r'||prev==='d')&&k.t==='m'){cm=1.4;cn='Zapłon'}if(cm>1){if(F.pk.has('combo'))cm+=.25;fl('COMBO: '+cn,'#ffb347',0,1);$('flog').textContent=`Combo: ${cn} ×${cm.toFixed(2)}`}}const rc=reaction(F.sl[j].id,k);hit(Math.round((k.t==='m'?sp():atk())*k.m*(F.buff>0?F.bm:1)*cm*rc.m),ao);if(!F)return;if(rc.x>0){dmgAll(rc.x);if(F.hp<=1e-6){win();return}}stApply(F.sl[j].id,k)}
   if(F)upd();
 }
 $('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&F)cast(+b.dataset.j)});
@@ -1523,6 +1547,22 @@ const TR=[
 ['px3','Jad węża','p4','p',{},{f:'jad',ex:'pB',ic:'🐍',d:'Trucizny zadają o 40% więcej obrażeń.'}],
 ['px4','Siła stada','p14','p',{},{f:'stado',ex:'pB',ic:'🐺',d:'Przywołańcy zadają o 40% więcej obrażeń.'}],
 ['px5','Strój zwiadowcy','p11','p',{},{ar:['skora',{dod:1.5,zre:1}],ic:'🥋',d:'Za każdy element skórzanej zbroi: +1,5% uniku i +1 Zręczności.'}],
+['s19','Ogłuszający cios','s2','a',{t:'p',r:'sta',c:22,cd:9,m:4}],['s20','Rozłupanie','s12','a',{t:'p',r:'sta',c:45,cd:13,m:11}],['s22','Pęknięcie pancerza','s10','a',{t:'w',r:'sta',c:28,cd:16,m:.3,d:12}],
+['s23','Kamienny pancerz','s13','p',{def:10,hpp:6}],['s24','Pogrom','s16','p',{atkp:6,ls:2}],['sx7','Mistrz reakcji','s19','p',{atkp:4},{f:'rozp',ex:'sB',ic:'💥',d:'Reakcje (combosy statusów) zadają o 35% więcej obrażeń.'}],
+['z19','Rozcięcie','z2','a',{t:'r',r:'sta',c:18,cd:9,m:6,d:8}],['z20','Zatrute ostrza','z17','a',{t:'d',r:'sta',c:25,cd:11,m:9,d:10}],['z21','Dobicie','z11','a',{t:'p',r:'sta',c:40,cd:12,m:9}],
+['z22','Paraliżujący jad','z17','a',{t:'d',r:'sta',c:30,cd:14,m:6,d:10}],['z23','Refleks kota','z14','p',{dod:3,zre:3}],['z24','Mistrz trucizn','z20','p',{atkp:5,crit:4}],
+['zx6','Trwały jad','z20','p',{},{f:'trwale',ex:'zB',ic:'⏳',d:'Statusy na wrogu (podpalenie, mróz, krwawienie, trucizna...) trwają o 40% dłużej.'}],
+['i20','Żar','i4','p',{spp:6},{f:'zar',ex:'iC',ic:'🔥',d:'Podpalenie zadaje o 50% więcej obrażeń w czasie.'}],['i21','Mróz','i5','a',{t:'m',r:'mana',c:28,cd:6,m:3.2}],
+['i22','Łańcuch błyskawic','i6','a',{t:'m',r:'mana',c:45,cd:10,m:6}],['i23','Eksplozja arkanów','i11,i12','a',{t:'m',r:'mana',c:85,cd:20,m:9}],
+['i24','Zimna krew','i21','p',{int:2},{f:'zimno',ex:'iF',ic:'🧊',d:'Zamrożony wróg atakuje o połowę wolniej (zamiast o 25%).'}],
+['i25','Katalizator','i11','p',{manap:6},{f:'kat',ex:'iD',ic:'⚗️',d:'Każda reakcja zwraca 12% many i staminy.'}],['i26','Przewodnik','i22','p',{spp:10,int:3}],
+['n17','Zgnilizna','n2','a',{t:'d',r:'mana',c:25,cd:9,m:7,d:10}],['n18','Rozkład ciała','n9','a',{t:'r',r:'mana',c:30,cd:11,m:7,d:10}],['n19','Kostny pocisk','n4','a',{t:'m',r:'mana',c:26,cd:6,m:3.4}],
+['nx6','Mistrz rozkładu','n18','p',{ls:2},{f:'rozp',ex:'nC',ic:'🦠',d:'Reakcje (np. gangrena) zadają o 35% więcej obrażeń.'}],['n20','Kościany szpon','n3','p',{def:6,hpp:6}],
+['p17','Ognista strzała','p2','a',{t:'p',r:'sta',c:18,cd:5,m:3.2}],['p18','Lodowa strzała','p5','a',{t:'p',r:'sta',c:20,cd:6,m:3.2}],['p19','Strzała burzowa','p8','a',{t:'p',r:'sta',c:28,cd:8,m:4.5}],
+['p20','Krwawa pułapka','p10','a',{t:'r',r:'sta',c:32,cd:13,m:9,d:10}],['px6','Mistrz żywiołów','p19','p',{},{f:'kat',ex:'pC',ic:'🌀',d:'Każda reakcja zwraca 12% many i staminy.'}],['p21','Leśny pancerz','p11','p',{def:4,dod:3}],
+['w10','Święty płomień','w2','a',{t:'m',r:'mana',c:30,cd:8,m:3.4}],['w11','Błogosławiony młot','w6','a',{t:'p',r:'sta',c:30,cd:10,m:4.5}],['w12','Odnowa','w4','p',{hpp:6,wit:2}],
+['w13','Aura odnowy','w5','a',{t:'h',r:'mana',c:35,cd:14,m:25}],['wx4','Świetlista reakcja','w10','p',{},{f:'kat',ex:'wC',ic:'✨',d:'Każda reakcja zwraca 12% many i staminy.'}],
+['h9','Burza ognia i lodu','h2,i21','a',{t:'m',r:'mana',c:60,cd:16,m:9}],['hx3','Zapis statusów','h1','p',{},{f:'trwale',ex:'hA',ic:'📜',d:'Statusy na wrogu trwają o 40% dłużej.'}],['h10','Mistrz reakcji','h9','p',{spp:6,atkp:6}],
 ['h7','Mroczny wojownik','s7,n8','p',{atkp:6,ls:3}],['h8','Druidzka magia','p4,w4','p',{hpp:6,spp:6}]];
 const TN={};TR.forEach(r=>TN[r[0]]={id:r[0],n:r[1],par:r[2]?r[2].split(','):[],t:r[3],e:r[4],x:r[5]||null});
 const TD={},TP={};let TW=0,TH=0,TZ=.7;
@@ -1543,7 +1583,7 @@ const SKL=()=>(S.p.lo||[]).map(id=>TN[id]).filter(Boolean);
 const CLT={uczony:[['o','i1','i2','w1','w2'],['i2','w2']],silacz:[['o','s1','s2','w1','w2'],['s2','w2']],atleta:[['o','z1','z2','w1','w2'],['z2','w2']],łowca:[['o','p1','p2','z1','z2'],['p2','z2']],nekromanta:[['o','n1','n2','i1','i2'],['n2','i2']],paladyn:[['o','s1','s3','w1','w2','w4'],['w2']]};
 function initTree(p){const t=CLT[p.cls]||CLT.silacz;p.tr=t[0].slice();p.lo=t[1].slice();p.ps=p.lvl-1}
 const skDesc=e=>{const A=atk(),P=sp(),r=Math.round;switch(e.t){case 'p':return `Zadaje ~${r(A*e.m)} obrażeń (atak ×${e.m})`;case 'm':return `Zadaje ~${r(P*e.m)} obrażeń (moc zaklęć ×${e.m})`;case 'h':return `Leczy ~${r(mh()*e.m/100+P)} HP (${e.m}% maks. HP + moc zaklęć)`;case 'b':return `Twój atak ×${e.m} przez ${e.d} s`;case 's':return `Tarcza na ~${r(mh()*e.m/100)} HP (${e.m}% maks. HP)`;case 'r':return `Krwawienie: ~${r(A*e.m)} obrażeń w ${e.d} s (~${r(A*e.m/e.d)}/s)`;case 'd':return `Trucizna: ~${r((A+P)*.6*e.m)} obrażeń w ${e.d} s`;case 'w':return `Wróg zadaje ${r(e.m*100)}% mniej obrażeń przez ${e.d} s`;case 'u':return `Przywołaniec: ~${r((e.r==='mana'?P:A)*e.m)} obrażeń/s przez ${e.d} s`}return ''},skNum=e=>{const A=atk(),P=sp(),r=Math.round;return {p:()=>r(A*e.m),m:()=>r(P*e.m),h:()=>r(mh()*e.m/100+P),s:()=>r(mh()*e.m/100),r:()=>r(A*e.m),d:()=>r((A+P)*.6*e.m)}[e.t]?.()||''};
-function effTx(n){if(n.t==='p'){const b=Object.entries(n.e||{}).map(([k,v])=>(v>0?'+':'')+v+' '+LB[k]).join(', ');return [b,n.x&&n.x.d].filter(Boolean).join(' · ')||'Środek drzewka'}const e=n.e;return `${{p:'Atak fizyczny',m:'Zaklęcie',h:'Leczenie',b:'Wzmocnienie ataku',s:'Tarcza',r:'Krwawienie (obrażenia w czasie)',d:'Trucizna (obrażenia w czasie)',w:'Osłabienie wroga',u:'Przywołaniec'}[e.t]}: ${skDesc(e)}<br><small>Koszt ${e.c} ${e.r==='mana'?'many':'staminy'} · odnowienie ${e.cd} s</small>`}
+function effTx(n){if(n.t==='p'){const b=Object.entries(n.e||{}).map(([k,v])=>(v>0?'+':'')+v+' '+LB[k]).join(', ');return [b,n.x&&n.x.d].filter(Boolean).join(' · ')||'Środek drzewka'}const e=n.e;return `${{p:'Atak fizyczny',m:'Zaklęcie',h:'Leczenie',b:'Wzmocnienie ataku',s:'Tarcza',r:'Krwawienie (obrażenia w czasie)',d:'Trucizna (obrażenia w czasie)',w:'Osłabienie wroga',u:'Przywołaniec'}[e.t]}: ${skDesc(e)}${stTx(n.id,e)}<br><small>Koszt ${e.c} ${e.r==='mana'?'many':'staminy'} · odnowienie ${e.cd} s</small>`}
 let TSEL=null;
 const PSI={sil:'💪',zre:'🌀',int:'🧠',wit:'❤️',def:'🛡️',atkp:'⚔️',hpp:'💖',crit:'🎯',ls:'🩸',dod:'💨',stap:'🔋',manap:'🔷',spp:'✨'};
 const tIc=id=>{const n=TN[id];return icon('',`assets/skills/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):((n.x&&n.x.ic)||PSI[Object.keys(n.e||{})[0]]||'⭐'))};
@@ -1563,7 +1603,7 @@ function showBar(){const p=S.p,lo=p.lo,own=p.tr.filter(id=>TN[id]&&TN[id].t==='a
   <h3>Pole do ćwiczeń</h3><canvas id="gpad" width="300" height="190"></canvas><div id="gres"><small>Narysuj znak palcem, zobaczysz jak go odczytuje gra.</small></div>
   <h3>Zapisane układy</h3><div class="row">${[0,1,2].map(i=>`<div class="pst"><b>${i+1}</b>${pr[i]?`<small>${pr[i].map(id=>TN[id]?TN[id].n:'?').join(' · ')}</small>`:'<small>pusty</small>'}<div><button data-a="sv${i}">Zapisz</button><button data-a="ld${i}"${pr[i]?'':' disabled'}>Wczytaj</button></div></div>`).join('')}</div>
   <h3>Twoje umiejętności (${own.length})</h3><div class="fch">${Object.keys(SBG).map(k=>`<button data-a="gf:${k}" class="${SBF===k?'on':''}">${SBG[k]}</button>`).join('')}</div>
-  ${list.map(id=>{const n=TN[id],e=n.e,ix=lo.indexOf(id);return `<button class="it sk${ix>=0?' in':''}" data-a="ad:${id}"><span class="ik s">${tIc(id)}</span><span><b>${n.n}</b> ${ix>=0?`<span class="bdg">slot ${ix+1}</span>`:''}<br><small>${skDesc(e)}<br>Koszt ${e.c} ${e.r==='mana'?'many':'staminy'} · odnowienie ${e.cd} s${'pmrd'.includes(e.t)?(AOE.has(id)?' · ◎ obszar (70% każdemu)':' · cel: najsłabszy'):''}</small></span></button>`}).join('')||'<p><small>Brak umiejętności tego typu. Odblokuj je w drzewku.</small></p>'}
+  ${list.map(id=>{const n=TN[id],e=n.e,ix=lo.indexOf(id);return `<button class="it sk${ix>=0?' in':''}" data-a="ad:${id}"><span class="ik s">${tIc(id)}</span><span><b>${n.n}</b> ${ix>=0?`<span class="bdg">slot ${ix+1}</span>`:''}<br><small>${skDesc(e)}${stTx(id,e)}<br>Koszt ${e.c} ${e.r==='mana'?'many':'staminy'} · odnowienie ${e.cd} s${'pmrd'.includes(e.t)?(AOE.has(id)?' · ◎ obszar (70% każdemu)':' · cel: najsłabszy'):''}</small></span></button>`}).join('')||'<p><small>Brak umiejętności tego typu. Odblokuj je w drzewku.</small></p>'}
   <p><small>Kombinacje (w ciągu 8 s): osłabienie → atak ×1,5 · tarcza → cios ×1,3 · krwawienie/trucizna → czar ×1,4. Pomyśl o pasku jako o rotacji: najpierw osłabienie lub dot, potem mocne uderzenie.</small></p><div style="height:20px"></div>`;
   $('skb').classList.add('on');const pad=$('gpad');if(pad){const x=pad.getContext('2d');let pts=null;const pp=e=>{const r=pad.getBoundingClientRect();return[(e.clientX-r.left)*pad.width/r.width,(e.clientY-r.top)*pad.height/r.height]};
     const dr=()=>{x.clearRect(0,0,300,190);x.lineCap='round';x.lineJoin='round';x.lineWidth=6;x.strokeStyle='#ffd34a';x.shadowColor='#ff9a3c';x.shadowBlur=10;x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1]));x.stroke()};
