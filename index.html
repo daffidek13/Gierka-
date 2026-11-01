@@ -393,11 +393,11 @@ const SET={miasto:1,wioska:1,miasteczko:1,zamek:1,obozowisko:1,klasztor:1};
 const SVD={wioska:[['karczma'],[['shop',.7],['stash',.4],['zad',.5],['smith',.3]]],miasteczko:[['shop','karczma'],[['smith',.8],['zad',.8],['stash',.6],['ench',.25]]],zamek:[['smith','zad'],[['shop',.5],['ench',.4],['karczma',.6],['stash',.5]]],obozowisko:[['shop'],[['karczma',.5],['smith',.3],['zad',.4]]],klasztor:[['karczma'],[['ench',.7],['shop',.25],['stash',.5],['zad',.2]]]};
 const SORD=['smith','ench','shop','stash','karczma','zad','port'];
 const VAR={ // warianty obrazów osad: a=proporcje, p=usługa:[środek x%,środek y%,szer%,wys%], g=wyjście [x%,y%]
-wioska:[{a:864/1821,g:[50,88],p:{karczma:[38,32,34,13],shop:[45,48,24,11],smith:[79,54,30,12]}},{a:864/1821,g:[50,88],p:{karczma:[19,37,37,15],zad:[24,53,22,10],stash:[79,51,40,17]}},{a:864/1821,g:[51,87],p:{shop:[21,49,25,14],karczma:[75,52,39,16]}}],
-miasteczko:[{a:.75,g:[50,89],p:{smith:[23,35,29,18],shop:[85,39,24,17],karczma:[66,19,29,19],stash:[28,61,35,15],zad:[67,68,24,14]}},{a:.75,g:[50,88],p:{ench:[24,17,20,20],shop:[64,23,20,20],karczma:[83,35,24,20],smith:[32,62,20,15],stash:[76,59,35,21]}},{a:864/1820,g:[50,87],p:{smith:[28,21,29,12],karczma:[75,26,32,15],shop:[20,38,32,13],zad:[84,49,21,9]}}],
-zamek:[{a:1090/1443,g:[50,87],p:{smith:[24,47,28,16],ench:[48,39,16,16],karczma:[68,53,26,19],stash:[28,62,34,17],zad:[79,68,20,10]}},{a:.75,g:[50,87],p:{smith:[18,37,30,14],karczma:[77,41,34,16],shop:[40,48,34,16],zad:[86,58,17,12]}}],
-obozowisko:[{a:.75,g:[50,87],p:{shop:[34,34,34,16],karczma:[75,37,28,16]}},{a:968/1625,g:[49,88],p:{smith:[27,23,31,14],karczma:[67,18,25,11],zad:[86,30,15,10]}}],
-klasztor:[{a:969/1622,g:[49,86],p:{karczma:[21,37,36,16],ench:[88,35,22,20]}},{a:954/1649,g:[50,86],p:{karczma:[21,47,38,14],ench:[24,12,15,17],stash:[57,56,31,11],zad:[85,58,22,11]}}]};
+wioska:[{a:864/1821,g:[50,88],f:[90,41],p:{karczma:[38,32,34,13],shop:[45,48,24,11],smith:[79,54,30,12]}},{a:864/1821,g:[50,88],f:[56,41],p:{karczma:[19,37,37,15],zad:[24,53,22,10],stash:[79,51,40,17]}},{a:864/1821,g:[51,87],f:[54,12],p:{shop:[21,49,25,14],karczma:[75,52,39,16]}}],
+miasteczko:[{a:.75,g:[50,89],f:[86,16],p:{smith:[23,35,29,18],shop:[85,39,24,17],karczma:[66,19,29,19],stash:[28,61,35,15],zad:[67,68,24,14]}},{a:.75,g:[50,88],f:[9,75],p:{ench:[24,17,20,20],shop:[64,23,20,20],karczma:[83,35,24,20],smith:[32,62,20,15],stash:[76,59,35,21]}},{a:864/1820,g:[50,87],f:[27,60],p:{smith:[28,21,29,12],karczma:[75,26,32,15],shop:[20,38,32,13],zad:[84,49,21,9]}}],
+zamek:[{a:1090/1443,g:[50,87],f:[82,21],p:{smith:[24,47,28,16],ench:[48,39,16,16],karczma:[68,53,26,19],stash:[28,62,34,17],zad:[79,68,20,10]}},{a:.75,g:[50,87],f:[18,20],p:{smith:[18,37,30,14],karczma:[77,41,34,16],shop:[40,48,34,16],zad:[86,58,17,12]}}],
+obozowisko:[{a:.75,g:[50,87],f:[59,9],p:{shop:[34,34,34,16],karczma:[75,37,28,16]}},{a:968/1625,g:[49,88],f:[71,47],p:{smith:[27,23,31,14],karczma:[67,18,25,11],zad:[86,30,15,10]}}],
+klasztor:[{a:969/1622,g:[49,86],f:[51,72],p:{karczma:[21,37,36,16],ench:[88,35,22,20]}},{a:954/1649,g:[50,86],f:[41,61],p:{karczma:[21,47,38,14],ench:[24,12,15,17],stash:[57,56,31,11],zad:[85,58,22,11]}}]};
 const TKN={wioska:'Karczma',miasteczko:'Karczma',zamek:'Kantyna',obozowisko:'Namiot lecznicy',klasztor:'Przytułek',miasto:'Karczma'};
 const NP=['Dęb','Kar','Wło','Bia','Zło','Lip','Gro','Ost','Sta','Brzo','Kam','Sok','Wil','Jas','Cze','Mro','Rud','Gni','Tur','Kra'],NS=['wice','gród','bork','owo','ice','sko','dół','pole','ów','ryn','lin','sk'];
 const NPF={wioska:['',''],miasteczko:['',''],zamek:['Zamek ','Twierdza '],obozowisko:['Obóz ','Obóz '],klasztor:['Klasztor ','Opactwo ']};
@@ -692,7 +692,7 @@ function gemTab(p,it){const gr=enG(it),sn=it.sn||0,so=it.so||[],K=gKeys(p);
   return h}
 function showSmith(){const p=S.p;p.gem=p.gem||{};const it=ESEL&&getIt(ESEL);if(ESEL&&!it)ESEL=null;
   const tabs=[['up','⬆ Ulepsz'],['gem','💎 Klejnoty'],['fu','♻ Przetop'],['fg','⚒ Komplety']];
-  let h=`<div class="thd"><button data-a="x">✕ Zamknij</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('stal','🔩')} ${p.mat.stal}</span></div>${npcBan('smith')}<h3>${ui('kowal','🔨')} Kowal</h3>`+wsSlot(it);
+  let h=`<div class="thd"><button data-a="x">✕ Zamknij</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('stal','🔩')} ${p.mat.stal}</span></div>${npcBan('smith')}<h3>${ui('kowal','🔨')} Kowal</h3>`+(()=>{const c=rcost();return `<button class="it" data-a="rep"${c?'':' disabled'}>🔧 Napraw sprzęt${c?` (${c} zł)`:' – nic do naprawy'}</button>`})()+wsSlot(it);
   if(WPICK||!it)h+=igrid(ESEL,1);
   else{h+=`<div class="wtb">${tabs.map(([k,n])=>`<button class="${WTAB===k?'on':''}" data-a="wt:${k}">${n}</button>`).join('')}</div>`;
     if(WTAB==='up'){h+=`<p><small>Każde + zwiększa statystyki przedmiotu o 12%. Przy porażce tracisz materiały. Maksimum +10.</small></p>`+((it.up||0)<10?(()=>{const[g,st]=upCost(it);return `<button class="it" data-a="up:${ESEL}">⬆ ${it.n} +${it.up||0} → +${(it.up||0)+1}<br><small>${g} zł + ${st} stali · szansa ${upCh(it)}%</small></button>`})():'<p>Ten przedmiot ma już maksimum (+10).</p>')}
@@ -702,6 +702,10 @@ function showSmith(){const p=S.p;p.gem=p.gem||{};const it=ESEL&&getIt(ESEL);if(E
   $('smith').innerHTML=h+'<div style="height:30px"></div>';$('smith').classList.add('on')}
 $('smith').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p;
   if(a==='x'){$('smith').classList.remove('on');openTown();return}
+  if(a==='rep'){const c=rcost(),g=Math.min(p.gold,c),m=Math.ceil((c-g)/4);
+    if(m>p.mat.szmaty+p.mat.stal){toast('Za mało złota i materiałów');return}
+    p.gold-=g;let n=m;for(const k of['szmaty','stal']){const u=Math.min(n,p.mat[k]);p.mat[k]-=u;n-=u}
+    Object.values(p.eq).forEach(i=>i.d=i.md);toast('Sprzęt naprawiony');sfx.loot();save();showSmith();return}
   if(a==='wp'){WPICK=!WPICK;showSmith();return}
   if(a.startsWith('s:')){ESEL=a.slice(2);WPICK=false;WGEM=null;showSmith();return}
   if(a.startsWith('wt:')){WTAB=a.slice(3);showSmith();return}
@@ -1145,7 +1149,7 @@ function wps(){const o=[];for(const k in S.visited){const q=k.split(','),x=+q[0]
 const ftc=d=>d<=0?0:Math.max(10,Math.round(d*1.5));
 function fastGo(x,y){const p=S.p,d=Math.abs(x-S.x)+Math.abs(y-S.y),c=ftc(d);if(p.gold<c){toast('Za mało złota na podróż');return false}
   p.gold-=c;$('town').classList.remove('on');TSEC=null;
-  transit('Podróż…',()=>{S.x=x;S.y=y;S.px=undefined;S.loc=null;S.visited[x+','+y]=1;S.steps+=Math.ceil(d/3);save();render()});return true}
+  transit('Podróż…',()=>{S.x=x;S.y=y;S.px=undefined;S.loc=null;S.visited[x+','+y]=1;S.steps+=Math.ceil(d/3);save();render();const df=field(x,y);if(df.poi&&SET[df.poi]){TCUR=df;TSEC=null;openTown()}});return true}
 const thd=p=>`<div class="thd"><button data-a="${TSEC?'back':'tx'}">${TSEC?'← Wróć':'✕ Wyjdź'}</button><span>${ui('zloto','🪙')} ${p.gold}</span><span>${ui('szmaty','🧵')} ${p.mat.szmaty}</span><span>${ui('stal','🔩')} ${p.mat.stal}</span><span>${ui('esencja','✨')} ${p.mat.esn||0}</span></div>`;
 const VIMG={};function vimgOk(n){if(n in VIMG)return VIMG[n];if(!VIMG['_'+n]){VIMG['_'+n]=1;const im=new Image();im.onload=()=>{VIMG[n]=true;if($('town').classList.contains('on')&&!TSEC)openTown()};im.onerror=()=>{VIMG[n]=false};im.src='assets/world/'+n+'.jpg'}return false}
 const npcBan=sv=>{const T=TCUR||{poi:'miasto',x:0,y:0},t=['wioska','obozowisko','klasztor'].includes(T.poi)?'w':'m',g=(Math.abs((T.x||0)*7+(T.y||0)*13))%2?'f':'m';return `<div class="npcb"><img src="assets/world/n_${sv}_${t}${g}.jpg" alt="" onerror="this.parentNode.remove()"></div>`};
@@ -1161,7 +1165,7 @@ function openTown(){
       stolica:{port:[50,5],smith:[23,17],ench:[79,17],shop:[20,44],karczma:[80,44],stash:[23,68],zad:[79,68],gate:[50,87]}}[MI],SCL={wioska:.92,miasteczko:.88,zamek:.8,stolica:.78}[MI];
     const HN={smith:['🔨','Kowal'],ench:['✨','Zaklinacz'],shop:['🛒','Sklep'],stash:['📦','Skrzynia'],karczma:['🍺',TKN[T.poi]||'Karczma'],zad:['📜','Zadania'],port:['🌀','Portal'],gate:['🚪','Wyjście']};
     const SPW={"wioska_smith": [439, 364], "wioska_ench": [354, 426], "wioska_shop": [438, 366], "wioska_karczma": [444, 414], "wioska_stash": [483, 394], "wioska_zad": [354, 285], "miasteczko_smith": [447, 432], "miasteczko_ench": [350, 477], "miasteczko_shop": [459, 448], "miasteczko_karczma": [421, 469], "miasteczko_stash": [478, 427], "miasteczko_zad": [476, 346], "zamek_smith": [419, 452], "zamek_ench": [400, 474], "zamek_shop": [467, 443], "zamek_karczma": [438, 465], "zamek_stash": [486, 424], "zamek_zad": [471, 343], "stolica_smith": [449, 475], "stolica_ench": [396, 488], "stolica_shop": [456, 482], "stolica_karczma": [454, 500], "stolica_stash": [446, 415], "stolica_zad": [423, 350]};
-    const VN='w_'+(T.poi==='miasto'?'stolica':T.poi)+'_'+((T.vr||0)+1),VOK=vimgOk(VN),VV=VAR[T.poi]&&VAR[T.poi][T.vr||0],SZV={port:[30,8],gate:[34,9],zad:[30,10],smith:[40,13],ench:[34,14],shop:[38,13],karczma:[38,14],stash:[40,13]};
+    const VN='w_'+(T.poi==='miasto'?'stolica':T.poi)+'_'+((T.vr||0)+1),VOK=T.poi!=='miasto'&&vimgOk(VN),VV=VAR[T.poi]&&VAR[T.poi][T.vr||0],SZV={port:[30,8],gate:[34,9],zad:[30,10],smith:[40,13],ench:[34,14],shop:[38,13],karczma:[38,14],stash:[40,13]};
     const hs=['port','smith','ench','shop','karczma','stash','zad','gate'].filter(k=>k==='gate'||HS(k)).map(k=>{const [x,y]=HP[k];
       if(VOK&&VV){if(k==='gate')return `<button class="hs" data-a="tx" style="left:${VV.g[0]}%;top:${VV.g[1]}%;width:30%;height:8%"><i>🚪 Wyjście</i></button>`;const z=VV.p[k];if(!z)return '';return `<button class="hs on" data-a="sec:${k}" style="left:${z[0]}%;top:${z[1]}%;width:${z[2]}%;height:${z[3]}%"><i>${HN[k][0]} ${HN[k][1]}</i></button>`}
       if(VOK&&k!=='gate'){const z=SZV[k];return `<button class="hs on" data-a="sec:${k}" style="left:${x}%;top:${y}%;width:${z[0]}%;height:${z[1]}%"><i>${HN[k][0]} ${HN[k][1]}</i></button>`}
@@ -1169,13 +1173,13 @@ function openTown(){
       if(k==='port')return `<button class="hs on" data-a="sec:port" style="left:${x}%;top:${y}%;width:30%;height:8%"><i>${HN.port[0]} ${HN.port[1]}</i></button>`;
       const sz=SPW[MI+'_'+k]||[420,420],w=sz[0]/1024*100*SCL;
       return `<button class="hs on sp" data-a="sec:${k}" style="left:${x}%;top:${y}%;width:${w.toFixed(1)}%;aspect-ratio:${sz[0]}/${sz[1]}"><img src="assets/world/w_${MI}_${k}.png" alt=""><i>${HN[k][0]} ${HN[k][1]}</i></button>`}).join('');
-    const nw=wps().length;
-    h+=`<div class="tmap"${VOK&&VV?` style="aspect-ratio:${VV.a};width:min(100%,calc((100dvh - 96px)*${VV.a.toFixed(4)}))"`:''}><img class="bg" src="assets/world/${VOK?VN:'w_'+MI}.jpg" alt=""><span class="tname">${T.nm} · ${POI[T.poi][0]}</span>${hs}<div class="tbt">${HS('smith')?`<button data-a="rep"${c?'':' disabled'}>🔧 Napraw sprzęt${c?` (${c} zł)`:''}</button>`:''}<button data-a="sec:fast">🧭 Szybka podróż (${nw})</button></div></div>`;
+    const nw=wps().length,FP=VOK&&VV&&VV.f?VV.f:null,fst=FP?`<button class="hs on" data-a="sec:fast" style="left:${FP[0]}%;top:${FP[1]}%;width:24%;height:9%"><i>🧭 Podróż (${nw})</i></button>`:'';
+    h+=`<div class="tmap"${VOK&&VV?` style="aspect-ratio:${VV.a};width:min(100%,calc((100dvh - 96px)*${VV.a.toFixed(4)}))"`:''}><img class="bg" src="assets/world/${VOK?VN:'w_'+MI}.jpg" alt=""><span class="tname">${T.nm} · ${POI[T.poi][0]}</span>${hs}${fst}</div>`;
     $('town').classList.add('tm')}
   else if(TSEC==='karczma')h+=`${npcBan('karczma')}<h3>${ui('karczma','🍺')} Karczma</h3><button class="it" data-a="rest">${ui('odpoczynek','🛏️')} Odpocznij (pełne HP, mana i stamina)</button>${p.lvl>=10?`<button class="it" data-a="scr">📜 Zwój powrotu do miasta (120 zł) · masz ${p.scrolls}</button>`:'<p><small>Zwoje teleportacji od poziomu 10.</small></p>'}<h3>Mikstury</h3>${Object.keys(POT).map(k=>`<button class="it" data-a="pt:${k}">${pI(k)} ${POT[k][0]} (${potPrice(k)} zł) · masz ${(p.pot||{})[k]||0}<br><small>${POT[k][3]}</small></button>`).join('')}`;
   else if(TSEC==='zad')h+=`${npcBan('zad')}<h3>${ui('zadania','📜')} Tablica zadań</h3>${p.q.map((q,i)=>`<p>${q.tx}: ${q.have}/${q.need} (${q.gold} zł, ${q.xp} XP) ${q.have>=q.need?`<button data-a="done${i}">Oddaj</button>`:''}</p>`).join('')||'<p>Brak przyjętych zadań</p>'}${p.offers.map((q,i)=>`<button class="it" data-a="acc${i}"${p.q.length>=3?' disabled':''}>Przyjmij: ${q.tx} (${q.gold} zł, ${q.xp} XP)</button>`).join('')}`;
   else if(TSEC==='fast'){const L=wps();h+=`<h3>${ui('portale','🧭')} Szybka podróż</h3><p><small>Podróżuj między odwiedzonymi osadami. Koszt zależy od odległości.</small></p>`+L.map(w=>`<button class="it" data-a="ft:${w.x},${w.y}"${w.d===0?' disabled':''}>${POI[w.f.poi][1]} <b>${w.f.nm}</b> <small>(${POI[w.f.poi][0].toLowerCase()})</small> · ${w.d===0?'tu jesteś':w.d+' pól · '+ftc(w.d)+' zł'}<br><small>${w.f.sv.map(k=>({smith:'Kowal',ench:'Zaklinacz',shop:'Sklep',stash:'Schowek',karczma:TKN[w.f.poi]||'Karczma',zad:'Zadania',port:'Portale'})[k]).join(' · ')}</small></button>`).join('')}
-  else if(TSEC==='port')h+=`<h3>${ui('portale','🌀')} Portale</h3>${S.portals.map(m=>`<button class="it" data-a="go${m}"${m===(S.map||0)?' disabled':''}>Mapa ${m+1}${m===(S.map||0)?' (tu jesteś)':''}</button>`).join('')}`;
+  else if(TSEC==='port')h+=`<button class="it" data-a="sec:fast">🧭 Szybka podróż (${wps().length})</button><h3>${ui('portale','🌀')} Portale</h3>${S.portals.map(m=>`<button class="it" data-a="go${m}"${m===(S.map||0)?' disabled':''}>Mapa ${m+1}${m===(S.map||0)?' (tu jesteś)':''}</button>`).join('')}`;
   if(TSEC)$('town').classList.remove('tm');$('town').innerHTML=h;$('town').classList.add('on')}
 $('town').onclick=e=>{const b=e.target.closest('button'),p=S.p;if(!b)return;const a=b.dataset.a;
   if(a==='tx'){TSEC=null;$('town').classList.remove('on');return}
