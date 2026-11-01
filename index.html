@@ -109,6 +109,8 @@ header{align-items:flex-start;gap:10px}
 .tl .ph{font-size:10px;opacity:.45;display:block;padding:4px;line-height:1.15}
 .tl i{position:absolute;left:0;bottom:0;height:3px;background:#6ac46a}.tl em{position:absolute;top:1px;right:5px;color:#ff6b5a;font-style:normal;font-weight:bold}
 .em{aspect-ratio:1;border:1px dashed #3a3226;border-radius:10px}
+#idet .idi{max-height:34vh;overflow:auto;margin-bottom:8px;font-size:13px}.cmp{margin-top:6px;padding-top:4px;border-top:1px solid #ffffff22}.cmp .cd{display:inline-block;margin:2px 8px 0 0;font-size:13px}
+.pg .tl.foc{outline:2px solid #ffd34a;outline-offset:1px}.pg .tl.sel{box-shadow:0 0 0 2px #6fe08a,inset 0 0 14px #6fe08a88}
 #idet{position:fixed;left:0;right:0;bottom:0;z-index:7;background:#1b150d;border-top:2px solid #b58b3c;padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 12px);font-size:14px;box-shadow:0 -8px 20px #000a}
 #idet b{font-size:17px}#idet small{display:block;opacity:.7;margin:2px 0 6px}#idet .row{display:flex;gap:8px;margin-top:8px}#idet .row button{flex:1;padding:10px}
 #hero{position:absolute;left:50%;transform:translateX(-50%);bottom:2px;width:150px;height:240px;z-index:90;pointer-events:none}
@@ -715,20 +717,34 @@ $('shop').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.
   else if(a==='sl'){const it=SSEL&&getIt(SSEL);if(!it||SSEL[0]!=='b')return;const v=sellPrice(it);if((it.r>=2||it.en||(it.so&&it.so.length))&&!confirm(`Sprzedać „${it.n}” za ${v} zł?`))return;p.gold+=v;p.bag=p.bag.filter(o=>o!==it);SSEL=null;toast(`Sprzedano za ${v} zł`);sfx.loot()}
   save();showShop()};
 // ---------- schowek w mieście ----------
-let STSEL=null;
-function showStash(){const p=S.p,st=S.stash=S.stash||[],find=d=>d&&(d[0]==='s'?st.find(o=>o.id===d.slice(2)):p.bag.find(o=>o.id===d.slice(2))),it=find(STSEL);if(STSEL&&!it)STSEL=null;
-  const g=(l,pre)=>l.length?`<div class="bg">${l.map(i=>{const d=pre+':'+i.id;const h=tile(i,d);return h.replace('data-a="s:'+d+'"','data-a="st:'+d+'"').replace(/class="tl([^"]*)"/,(m,c)=>`class="tl${c.replace(' on','')}${STSEL===d?' on':''}"`)}).join('')}</div>`:'<p><small>Pusto</small></p>';
-  $('stash').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span></div><h3>📦 Schowek ${st.length}/60</h3><p><small>Tu zostawiasz przedmioty na później (np. części kompletów). Dotknij przedmiot, a potem przenieś go.</small></p>
-  ${it?`<div class="at" style="display:block">${iinfo(it)}</div><button class="it" data-a="mv">${STSEL[0]==='s'?'⬇ Zabierz do plecaka':'⬆ Włóż do schowka'}</button>`:''}
-  <div class="row"><button data-a="sa">⬆ Wszystkie zwykłe i magiczne z plecaka</button></div>
-  ${bfHtml([...st,...p.bag])}<h3>Schowek</h3>${g(st.filter(bfOk),'s')}<h3>Plecak ${p.bag.length}/30</h3>${g(p.bag.filter(bfOk),'b')}<div style="height:30px"></div>`;
+let STSEL=null,STM=new Set(),STF=null;
+const CMPON=()=>!(S.opt&&S.opt.cmp===0);
+function cmpHtml(it){const e=S.p.eq,sl=it.t==='pierscien'?['pierscien0','pierscien1']:it.t==='bron'?['bron0','bron1']:[it.t],cur=[...new Set(sl.map(k=>e[k]).filter(Boolean))],free=sl.some(k=>!e[k]);
+  const row=o=>{const ks=[...new Set([...Object.keys(it.s),...Object.keys(o.s)])],d=lootScore(it)-lootScore(o);
+    return `<div class="cmp"><small>${d>0?'<b style="color:#7fd37f">▲ lepszy</b>':d<0?'<b style="color:#ff7b6b">▼ gorszy</b>':'= taki sam'} niż założony: <span style="color:${RC[o.r]}">${o.n}${o.up?' +'+o.up:''}</span></small>${ks.map(k=>{const v=it.s[k]||0,dl=v-(o.s[k]||0);return dl?`<span class="cd" style="color:${dl>0?'#7fd37f':'#ff7b6b'}">${dl>0?'+':''}${dl} ${LB[k]}</span>`:''}).join('')||'<span class="cd">bez różnic w statystykach</span>'}</div>`};
+  return (cur.map(row).join('')||'')+(free?'<div class="cmp"><small><b style="color:#7fd37f">Wolny slot</b>, nic tu nie masz założone</small></div>':'')}
+function showStash(){const p=S.p,st=S.stash=S.stash||[],find=d=>d&&(d[0]==='s'?st.find(o=>o.id===d.slice(2)):p.bag.find(o=>o.id===d.slice(2)));
+  [...STM].forEach(d=>{if(!find(d))STM.delete(d)});if(STF&&!find(STF))STF=null;
+  const it=find(STF),ns=[...STM].filter(d=>d[0]==='s').length,nb=STM.size-ns;
+  const g=(l,pre)=>l.length?`<div class="bg">${l.map(i=>{const d=pre+':'+i.id;const h=tile(i,d);return h.replace('data-a="s:'+d+'"','data-a="st:'+d+'"').replace(/class="tl([^"]*)"/,(m,c)=>`class="tl${c.replace(' on','')}${STM.has(d)?' on sel':''}${STF===d?' foc':''}"`)}).join('')}</div>`:'<p><small>Pusto</small></p>';
+  $('stash').innerHTML=`<div class="thd"><button data-a="x">← Miasto</button><span>${ui('zloto','🪙')} ${p.gold}</span><button data-a="cm" style="margin:0">Porównanie: ${CMPON()?'wł.':'wył.'}</button></div>
+  <h3>📦 Skrzynia ${st.length}/60 <span style="float:right"><button data-a="sqs" style="margin:0">Zaznacz wszystko</button></span></h3>
+  ${bfHtml([...st,...p.bag])}${g(st.filter(bfOk),'s')}
+  <h3>🎒 Plecak ${p.bag.length}/30</h3>
+  <div class="row"><button data-a="sq0">Zaznacz zwykłe</button><button data-a="sq1">+ magiczne</button><button data-a="sq2">+ rzadkie</button></div>
+  ${g(p.bag.filter(bfOk),'b')}<p><small>Dotykaj kolejnych przedmiotów, żeby je zaznaczyć. Potem przenieś wszystkie naraz.</small></p><div style="height:${STM.size||it?300:20}px"></div>
+  ${STM.size||it?`<div id="idet">${it?`<div class="idi">${iinfo(it)}${CMPON()&&STF[0]==='b'?cmpHtml(it):CMPON()&&STF[0]==='s'?cmpHtml(it):''}</div>`:''}<b>Zaznaczono: ${STM.size}</b><div class="row"><button data-a="tb"${ns?'':' disabled'}>⬇ Wyjmij ze skrzyni (${ns})</button><button data-a="ts"${nb?'':' disabled'}>⬆ Schowaj do skrzyni (${nb})</button></div><div class="row"><button data-a="sx">Odznacz</button></div></div>`:''}`;
   $('stash').classList.add('on')}
 $('stash').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,p=S.p,st=S.stash=S.stash||[];
-  if(a==='x'){$('stash').classList.remove('on');openTown();return}
+  if(a==='x'){STM.clear();STF=null;$('stash').classList.remove('on');openTown();return}
   if(a&&a.startsWith('bf:')){bfClick(a);showStash();return}
-  if(a&&a.startsWith('st:')){STSEL=a.slice(3);showStash();return}
-  if(a==='mv'&&STSEL){const id=STSEL.slice(2);if(STSEL[0]==='s'){const i=st.findIndex(o=>o.id===id);if(p.bag.length>=30){toast('Plecak pełny');return}p.bag.push(st.splice(i,1)[0])}else{const i=p.bag.findIndex(o=>o.id===id);if(st.length>=60){toast('Schowek pełny');return}st.push(p.bag.splice(i,1)[0])}STSEL=null}
-  else if(a==='sa'){const l=p.bag.filter(o=>o.r<=1);if(st.length+l.length>60){toast('Schowek pełny');return}p.bag=p.bag.filter(o=>o.r>1);st.push(...l);toast('Przeniesiono: '+l.length)}
+  if(a&&a.startsWith('st:')){const d=a.slice(3);if(STM.has(d)){STM.delete(d);if(STF===d)STF=null}else{STM.add(d);STF=d}showStash();return}
+  if(a==='cm'){const o=S.opt=S.opt||{snd:1,vib:1};o.cmp=CMPON()?0:1}
+  else if(a==='sx'){STM.clear();STF=null}
+  else if(a==='sqs'){st.filter(bfOk).forEach(o=>STM.add('s:'+o.id))}
+  else if(a&&a.startsWith('sq')){const r=+a.slice(2);p.bag.forEach(o=>{if(o.r<=r&&bfOk(o))STM.add('b:'+o.id)})}
+  else if(a==='tb'){const ids=[...STM].filter(d=>d[0]==='s').map(d=>d.slice(2));let n=0;for(const id of ids){if(p.bag.length>=30){toast('Plecak pełny, przeniesiono '+n);break}const i=st.findIndex(o=>o.id===id);if(i<0)continue;p.bag.push(st.splice(i,1)[0]);STM.delete('s:'+id);n++}if(n&&p.bag.length<30)toast('Wyjęto: '+n);STF=null}
+  else if(a==='ts'){const ids=[...STM].filter(d=>d[0]==='b').map(d=>d.slice(2));let n=0;for(const id of ids){if(st.length>=60){toast('Skrzynia pełna, przeniesiono '+n);break}const i=p.bag.findIndex(o=>o.id===id);if(i<0)continue;st.push(p.bag.splice(i,1)[0]);STM.delete('b:'+id);n++}if(n&&st.length<60)toast('Schowano: '+n);STF=null}
   save();showStash()};
 // ---------- opcje, eksport i import zapisu ----------
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
@@ -1031,7 +1047,7 @@ function showChar(){
     ${(it.sn||0)?`<div>Gniazda: ${Array.from({length:it.sn},(_,i)=>it.so&&it.so[i]?gI(it.so[i]):'◇').join(' ')}</div>`:''}
     ${it.fx?`<div style="color:#e0a63a">✦ ${FXD[it.fx][0]}: ${FXD[it.fx][1]}</div>`:''}${enTxt(it)}
     ${it.set?`<div style="color:${SETS[it.set].c}">Komplet ${SETS[it.set].n}: założone ${setCnt()[it.set]||0} szt. (bonusy za 2/4/6)</div>`:''}
-    ${old?`<small>Porównanie z założonym: ${old.n}</small>`:''}<div class="row"><button data-a="do">${SEL[0]==='e'?'Zdejmij':'Załóż'}</button>${SEL[0]==='b'?`<button data-a="drop">Wyrzuć</button>`:''}<button data-a="sc">Zamknij</button></div></div>`}
+    ${SEL[0]==='b'&&CMPON()?cmpHtml(it):''}<div class="row"><button data-a="do">${SEL[0]==='e'?'Zdejmij':'Załóż'}</button>${SEL[0]==='b'?`<button data-a="drop">Wyrzuć</button>`:''}<button data-a="sc">Zamknij</button></div></div>`}
   const order=['amulet','helm','naramienniki','bron0','klata','bron1','pierscien0','spodnie','pierscien1','rekawice','buty',null];
   $('chr').innerHTML=`<div class="hd"><button id="cx">✕ Zamknij</button><button data-a="tree">Drzewko (${p.ps} pkt)</button><button data-a="bar">Pasek skilli</button></div>
   <h2 class="ttl">${CL[p.cls][4]} · poziom ${p.lvl}</h2>
@@ -1046,7 +1062,7 @@ function showChar(){
   <h3>Statystyki</h3><div class="sg">${[['Atak',atk()],['Moc zaklęć',sp()],['Odporność na ciosy',Math.round(rs())+'%'],['Krytyk',Math.round(Math.min(60,t.zre*.5+t.crit))+'%'],['Unik',Math.round(Math.min(35,t.zre+t.dod))+'%'],['Kradzież życia',Math.round(t.ls)+'%']].map(([a,b])=>`<div class="sc"><small>${a}</small><b>${b}</b></div>`).join('')}</div>
   <h3>Atrybuty · wolne punkty: ${p.pw}</h3>${[['wit','Witalność','zdrowie i odporność'],['sil','Siła','atak fizyczny, pancerz'],['zre','Zręczność','krytyk, unik, stamina'],['int','Inteligencja','moc zaklęć i mana']].map(([k,n,d])=>`<div class="at"><div><b>${n} ${Math.round(t[k])}</b><br><small>${d}</small></div>${p.pw?`<button class="plus" data-a="at${k}">+</button>`:''}</div>`).join('')}
   ${setsHtml()}
-  <h3>Plecak ${p.bag.length}/30 <span style="float:right"><button data-a="sm" style="margin:0">${MSEL?'Gotowe':'Zaznacz'}</button> <button data-a="sort" style="margin:0">Sortuj: ${['rzadkość','typ','poziom'][S.sm||0]}</button></span></h3>${bfHtml(p.bag)}<div class="bg">${BF.t||BF.s?(p.bag.filter(bfOk).map(i=>tile(i,'b:'+i.id)).join('')||'<p><small>Brak pasujących przedmiotów</small></p>'):Array.from({length:30},(_,i)=>p.bag[i]?tile(p.bag[i],'b:'+p.bag[i].id):'<div class="em"></div>').join('')}</div>
+  <h3>Plecak ${p.bag.length}/30 <span style="float:right"><button data-a="sm" style="margin:0">${MSEL?'Gotowe':'Zaznacz'}</button> <button data-a="cmpt" style="margin:0">Porównanie: ${CMPON()?'wł.':'wył.'}</button> <button data-a="sort" style="margin:0">Sortuj: ${['rzadkość','typ','poziom'][S.sm||0]}</button></span></h3>${bfHtml(p.bag)}<div class="bg">${BF.t||BF.s?(p.bag.filter(bfOk).map(i=>tile(i,'b:'+i.id)).join('')||'<p><small>Brak pasujących przedmiotów</small></p>'):Array.from({length:30},(_,i)=>p.bag[i]?tile(p.bag[i],'b:'+p.bag[i].id):'<div class="em"></div>').join('')}</div>
   <div style="height:${it||MSEL?230:20}px"></div>${det}${MSEL?`<div id="idet"><b>Zaznaczono: ${MSEL.size}</b><div class="row"><button data-a="mq0">Zaznacz zwykłe</button><button data-a="mq1">+ magiczne</button><button data-a="mq2">+ rzadkie</button></div><div class="row"><button data-a="mdrop"${MSEL.size?'':' disabled'}>Wyrzuć zaznaczone</button><button data-a="mx">Anuluj</button></div></div>`:''}`;
   $('chr').classList.add('on');
 }
@@ -1056,6 +1072,7 @@ $('chr').onclick=e=>{const ci=e.target.closest('[data-info]');if(ci){toast(ci.da
   if(b.id==='cx'){SEL=null;MSEL=null;$('chr').classList.remove('on');render();if(S.loot)showLoot();return}
   if(a&&a.startsWith('at')&&p.pw){p.pw--;const k=a.slice(2);if(k==='wit')p.wit++;else p.b[k]++}
   else if(a&&a.startsWith('bf:')){bfClick(a)}
+  else if(a==='cmpt'){const o=S.opt=S.opt||{snd:1,vib:1};o.cmp=CMPON()?0:1}
   else if(a==='sort'){const m=S.sm=((S.sm||0)+1)%3;p.bag.sort((x,y)=>m===0?(y.r-x.r)||(y.tier-x.tier):m===1?(x.t<y.t?-1:x.t>y.t?1:y.r-x.r):(y.tier-x.tier)||(y.r-x.r))}
   else if(a&&a.startsWith('pu:')){usePot(a.slice(3))}
   else if(a==='tree'){showTree();return}
@@ -1101,7 +1118,7 @@ function openTown(){
 $('town').onclick=e=>{const b=e.target.closest('button'),p=S.p;if(!b)return;const a=b.dataset.a;
   if(a==='tx'){TSEC=null;$('town').classList.remove('on');return}
   if(a==='back'){TSEC=null;openTown();return}
-  if(a.startsWith('sec:')){const k=a.slice(4);if(k==='smith'){showSmith();return}if(k==='ench'){ESEL=null;showEnch();return}if(k==='shop'){SSEL=null;showShop();return}if(k==='stash'){STSEL=null;showStash();return}TSEC=k;openTown();return}
+  if(a.startsWith('sec:')){const k=a.slice(4);if(k==='smith'){showSmith();return}if(k==='ench'){ESEL=null;showEnch();return}if(k==='shop'){SSEL=null;showShop();return}if(k==='stash'){STM.clear();STF=null;showStash();return}TSEC=k;openTown();return}
   if(a==='rest'){p.hp=mh();p.mana=mm();p.sta=sm();toast('Odpoczęto');render()}
   else if(a==='rep'){const c=rcost(),g=Math.min(p.gold,c),m=Math.ceil((c-g)/4);
     if(m>p.mat.szmaty+p.mat.stal){toast('Za mało złota i materiałów');return}
