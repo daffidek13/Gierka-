@@ -233,6 +233,17 @@ header #mini{pointer-events:auto}
 #skb{z-index:11}.bsr{display:flex;gap:10px;justify-content:center;margin:8px 0}.bs{width:74px;padding:0!important;background:none!important;border:0!important;display:flex;flex-direction:column;align-items:center}.bs .ik{display:block;width:62px;height:62px;border-radius:50%;border:3px solid #c9a24a;background:radial-gradient(#3a2e18,#120d06);overflow:hidden;line-height:56px;font-size:24px;text-align:center}#skb .ic{display:block;position:relative;width:100%;height:100%;text-align:center}#skb .ej{display:block;font-size:24px;line-height:56px}#skb .ik.s .ej{font-size:20px;line-height:40px}.bs.on .ik{border-color:#7fd8ff;box-shadow:0 0 14px #7fd8ff}.bs.emp .ik{border-style:dashed;border-color:#6a5a34;color:#8a7440}.bs em{font-style:normal;font-size:11px;margin-top:3px;line-height:1.1;height:25px;overflow:hidden}.bs small{font-size:10px;opacity:.7}.bsa{justify-content:center;min-height:42px;align-items:center}.pst{flex:1;border:1px solid #4a3f2e;border-radius:10px;padding:6px;text-align:center}.pst small{display:block;font-size:10px;opacity:.7;min-height:26px}.pst button{margin:2px!important;padding:4px 8px!important;font-size:12px!important}.sk{display:flex!important;gap:10px;align-items:center}.sk.in{border-color:#7fd8ff}.ik.s{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid #c9a24a;background:#1a1409;overflow:hidden;display:block}.bdg{font-size:11px;background:#1d4d6a;border-radius:8px;padding:1px 6px;margin-left:4px}
 .tl .tb{position:absolute;top:1px;right:4px;font-size:10px;font-weight:bold;color:#fff;text-shadow:0 1px 2px #000;opacity:.8}
 .rp{position:absolute;pointer-events:none;background-repeat:no-repeat;background-size:100% 100%;z-index:1}.obj.wl{width:88px;transform:translate(-50%,-50%);z-index:6}.obj.wl .ic{height:84px}.obj.wl small{position:absolute;left:-10px;right:-10px;bottom:-16px;margin:0;font-size:11px}.obj.big{width:130px}.obj.big .ic{height:118px}
+
+#town.tm{padding:calc(env(safe-area-inset-top,0px) + 8px) 8px calc(env(safe-area-inset-bottom,0px) + 8px)}
+.tmap{position:relative;margin:0 auto;aspect-ratio:864/1821;width:min(100%,calc((100dvh - 96px)*.4744));background:#0b0c0f center/100% 100% no-repeat;border-radius:10px;overflow:hidden;border:2px solid #6a5a34}
+.tmap img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;-webkit-user-drag:none}
+.tmap .hs{position:absolute;transform:translate(-50%,-50%);padding:0;margin:0;background:transparent;border:0;border-radius:14px;-webkit-tap-highlight-color:transparent}
+.tmap .hs:active{background:#ffffff33}
+.tmap .hs i{position:absolute;left:50%;bottom:-2px;transform:translate(-50%,100%);font-style:normal;white-space:nowrap;background:#000a;border:1px solid #e0b860;color:#ffe9a8;border-radius:12px;padding:2px 8px;font-size:12px;line-height:1.3;pointer-events:none}
+.tmap .hs.on i{border-color:#6fe08a}.tmap .hs.na i{display:none}
+.tmap .tname{position:absolute;left:8px;top:6px;background:#000a;color:#fff;border-radius:12px;padding:3px 10px;font-size:14px;font-weight:bold;z-index:2}
+.tmap .tbt{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:8px;z-index:2}
+.tmap .tbt button{flex:1;margin:0;padding:8px 6px;font-size:13px;background:#000b;border:1px solid #e0b860;color:#ffe9a8;border-radius:12px}
 #town .tn{text-align:center;opacity:.8}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .tcard{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px!important;text-align:center;border-radius:14px!important;border:2px solid #6a5a34!important;background:linear-gradient(160deg,#2b2115,#14100a)!important;box-shadow:inset 0 0 14px #0009}
@@ -1106,19 +1117,26 @@ function openTown(){
   let h=thd(p);
   if(!TSEC){
     const T=TCUR&&SET[TCUR.poi]?TCUR:{poi:'miasto',nm:'Stolica',sv:SORD},HS=k=>T.sv.includes(k);
-    const cards0=[['smith','kowal','🔨','Kowal','Ulepszanie, klejnoty, przetapianie'],['ench','zaklinacz','✨','Zaklinacz','Zaklęcia, gniazda, rozbijanie'],['shop','sklep','🛒','Sklep','Kupno i sprzedaż'],['stash','schowek','📦','Schowek',((S.stash||[]).length)+'/60 przedmiotów'],['karczma','karczma','🍺',TKN[T.poi]||'Karczma','Odpoczynek, mikstury, zwoje'],['zad','zadania','📜','Zadania',p.q.length?p.q.length+' przyjęte':'Tablica zleceń'],['port','portale','🌀','Portale',S.portals.length+' map']];
+    const MI={miasto:'stolica',zamek:'zamek',miasteczko:'miasteczko',wioska:'wioska',obozowisko:'wioska',klasztor:'miasteczko'}[T.poi]||'wioska';
+    const HP={wioska:{port:[50,8],smith:[26,26],ench:[76,26],shop:[22,47],karczma:[76,48],stash:[24,66],zad:[77,67],gate:[50,85]},
+      miasteczko:{port:[51,6],smith:[22,16],ench:[80,16],shop:[18,42],karczma:[81,42],stash:[23,63],zad:[79,66],gate:[50,84]},
+      zamek:{port:[50,9],smith:[20,20],ench:[80,22],shop:[17,43],karczma:[83,43],stash:[22,65],zad:[79,66],gate:[50,86]},
+      stolica:{port:[50,5],smith:[22,21],ench:[81,20],shop:[17,47],karczma:[81,48],stash:[21,68],zad:[80,71],gate:[50,87]}}[MI];
+    const HN={smith:['🔨','Kowal'],ench:['✨','Zaklinacz'],shop:['🛒','Sklep'],stash:['📦','Skrzynia'],karczma:['🍺',TKN[T.poi]||'Karczma'],zad:['📜','Zadania'],port:['🌀','Portal'],gate:['🚪','Wyjście']};
+    const SZ={port:[30,8],gate:[34,9],zad:[30,10],smith:[40,13],ench:[34,14],shop:[38,13],karczma:[38,14],stash:[40,13]};
+    const hs=Object.keys(HP).map(k=>{const [x,y]=HP[k],[w,hh]=SZ[k],ok=k==='gate'||HS(k);return `<button class="hs${ok&&k!=='gate'?' on':' na'}" data-a="${k==='gate'?'tx':'sec:'+k+(ok?'':':no')}" style="left:${x}%;top:${y}%;width:${w}%;height:${hh}%"><i>${HN[k][0]} ${HN[k][1]}</i></button>`}).join('');
     const nw=wps().length;
-    const cards=cards0.filter(c=>HS(c[0]));cards.push(['fast','portale','🧭','Szybka podróż',nw+' odwiedzonych miejsc']);
-    h+=`<div class="ban b-${T.poi}"><img src="assets/world/p_${T.poi}.png" alt="" onerror="this.onerror=null;this.src='assets/world/p_miasto.png'"><b>${T.nm}</b><small>${POI[T.poi][0]}</small></div>${HS('smith')?`<button class="it" data-a="rep"${c?'':' disabled'}>${ui('naprawa','🔧')} Napraw cały sprzęt${c?` (${c} zł)`:' (nic do naprawy)'}</button>`:'<p class="tn"><small>Tu nie ma kowala — naprawy zrobisz w większym mieście lub zamku.</small></p>'}<div class="tg">${cards.map(([k,u,e,n,d])=>`<button class="tcard" data-a="sec:${k}">${ui(u,e)}<b>${n}</b><small>${d}</small></button>`).join('')}</div>`}
+    h+=`<div class="tmap"><img class="bg" src="assets/world/w_${MI}.jpg" alt=""><span class="tname">${T.nm} · ${POI[T.poi][0]}</span>${hs}<div class="tbt">${HS('smith')?`<button data-a="rep"${c?'':' disabled'}>🔧 Napraw sprzęt${c?` (${c} zł)`:''}</button>`:''}<button data-a="sec:fast">🧭 Szybka podróż (${nw})</button></div></div>`;
+    $('town').classList.add('tm')}
   else if(TSEC==='karczma')h+=`<h3>${ui('karczma','🍺')} Karczma</h3><button class="it" data-a="rest">${ui('odpoczynek','🛏️')} Odpocznij (pełne HP, mana i stamina)</button>${p.lvl>=10?`<button class="it" data-a="scr">📜 Zwój powrotu do miasta (120 zł) · masz ${p.scrolls}</button>`:'<p><small>Zwoje teleportacji od poziomu 10.</small></p>'}<h3>Mikstury</h3>${Object.keys(POT).map(k=>`<button class="it" data-a="pt:${k}">${pI(k)} ${POT[k][0]} (${potPrice(k)} zł) · masz ${(p.pot||{})[k]||0}<br><small>${POT[k][3]}</small></button>`).join('')}`;
   else if(TSEC==='zad')h+=`<h3>${ui('zadania','📜')} Tablica zadań</h3>${p.q.map((q,i)=>`<p>${q.tx}: ${q.have}/${q.need} (${q.gold} zł, ${q.xp} XP) ${q.have>=q.need?`<button data-a="done${i}">Oddaj</button>`:''}</p>`).join('')||'<p>Brak przyjętych zadań</p>'}${p.offers.map((q,i)=>`<button class="it" data-a="acc${i}"${p.q.length>=3?' disabled':''}>Przyjmij: ${q.tx} (${q.gold} zł, ${q.xp} XP)</button>`).join('')}`;
   else if(TSEC==='fast'){const L=wps();h+=`<h3>${ui('portale','🧭')} Szybka podróż</h3><p><small>Podróżuj między odwiedzonymi osadami. Koszt zależy od odległości.</small></p>`+L.map(w=>`<button class="it" data-a="ft:${w.x},${w.y}"${w.d===0?' disabled':''}>${POI[w.f.poi][1]} <b>${w.f.nm}</b> <small>(${POI[w.f.poi][0].toLowerCase()})</small> · ${w.d===0?'tu jesteś':w.d+' pól · '+ftc(w.d)+' zł'}<br><small>${w.f.sv.map(k=>({smith:'Kowal',ench:'Zaklinacz',shop:'Sklep',stash:'Schowek',karczma:TKN[w.f.poi]||'Karczma',zad:'Zadania',port:'Portale'})[k]).join(' · ')}</small></button>`).join('')}
   else if(TSEC==='port')h+=`<h3>${ui('portale','🌀')} Portale</h3>${S.portals.map(m=>`<button class="it" data-a="go${m}"${m===(S.map||0)?' disabled':''}>Mapa ${m+1}${m===(S.map||0)?' (tu jesteś)':''}</button>`).join('')}`;
-  $('town').innerHTML=h;$('town').classList.add('on')}
+  if(TSEC)$('town').classList.remove('tm');$('town').innerHTML=h;$('town').classList.add('on')}
 $('town').onclick=e=>{const b=e.target.closest('button'),p=S.p;if(!b)return;const a=b.dataset.a;
   if(a==='tx'){TSEC=null;$('town').classList.remove('on');return}
   if(a==='back'){TSEC=null;openTown();return}
-  if(a.startsWith('sec:')){const k=a.slice(4);if(k==='smith'){showSmith();return}if(k==='ench'){ESEL=null;showEnch();return}if(k==='shop'){SSEL=null;showShop();return}if(k==='stash'){STM.clear();STF=null;showStash();return}TSEC=k;openTown();return}
+  if(a.startsWith('sec:')){let k=a.slice(4);if(k.endsWith(':no')){toast(({smith:'Tu nie ma kowala',ench:'Tu nie ma zaklinacza',shop:'Tu nie ma sklepu',stash:'Tu nie ma skrzyni',karczma:'Tu nie ma karczmy',zad:'Tu nie ma tablicy zadań',port:'Ten portal jest nieaktywny'})[k.slice(0,-3)]||'Niedostępne');return}if(k==='smith'){showSmith();return}if(k==='ench'){ESEL=null;showEnch();return}if(k==='shop'){SSEL=null;showShop();return}if(k==='stash'){STM.clear();STF=null;showStash();return}TSEC=k;openTown();return}
   if(a==='rest'){p.hp=mh();p.mana=mm();p.sta=sm();toast('Odpoczęto');render()}
   else if(a==='rep'){const c=rcost(),g=Math.min(p.gold,c),m=Math.ceil((c-g)/4);
     if(m>p.mat.szmaty+p.mat.stal){toast('Za mało złota i materiałów');return}
