@@ -990,7 +990,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.62d';
+const VER='0.62e';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1152,7 +1152,7 @@ function genItem(fr,bo,op){
   const dist=Math.hypot(S.x,S.y)+(S.map||0)*30,L=S.p.lvl,ty=(op&&op.ty)||['helm','klata','spodnie','buty','rekawice','naramienniki','amulet','pierscien','bron','bron'][Math.floor(Math.random()*10)];
   const q=Math.random()+dist/400+(bo||0),r=fr>0?fr:q>.98?3:q>.88?2:q>.6?1:0,tier=(op&&op.tier!=null)?op.tier:Math.min(8,Math.floor((dist+L*1.2)/14+Math.random()*2.2)),s={};
   let n,noun,ac=null,two=false,col=MC[tier];
-  if(ty==='bron'){const w=pickW(op);noun=w[0];two=!!w[1];n=MAT[tier]+' '+noun;s.atkp=two?Math.round((tier*4+4)*2.2):tier*4+4;if(noun==='Kostur')s.spp=tier*4+4;else if(noun==='Sztylet')s.crit=2+Math.floor(tier/2)}
+  if(ty==='bron'){const w=pickW(op);noun=w[0];two=!!w[1];n=(noun==='Maczuga'?MAT[tier].replace(/y$/,'a'):MAT[tier])+' '+noun;s.atkp=two?Math.round((tier*4+4)*2.2):tier*4+4;if(noun==='Kostur')s.spp=tier*4+4;else if(noun==='Sztylet')s.crit=2+Math.floor(tier/2)}
   else{const jw=ty==='amulet'||ty==='pierscien';ac=jw?null:pickAc(op);const[nn,g]=jw?NOUN[ty]:NOUNA[ac][ty],a=(jw?JEW:MATA[ac])[tier];noun=nn;n=g==='p'?a.slice(0,-1)+'e '+nn:g==='f'?a.slice(0,-1)+'a '+nn:a+' '+nn;
     if(jw){if(ty==='amulet')s.hpp=tier*2+2;else s.crit=1+Math.floor(tier/2)}else if(ac==='plyta')s.def=2+tier*3;else if(ac==='skora'){s.def=1+tier*2;s.zre=1+Math.floor(tier*.9);s.dod=1+Math.floor(tier/2)}else{s.def=Math.max(1,tier);s.int=1+Math.floor(tier*1.1);s.manap=2+tier*2}}
   const pool=REGSET[GCTX||ctxReg()]||[],sid=(op&&op.set)||(r>=2&&pool.length&&Math.random()<(r===3?.6:.35)?pool[Math.floor(Math.random()*pool.length)]:null);
