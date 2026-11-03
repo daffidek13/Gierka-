@@ -984,13 +984,13 @@ const ACT=[
  {id:4,nm:'Smocze Góry',lv:[60,80],h:5,foes:['troll','wywerna','smok'],sp:['troll','troll','troll','wywerna','wywerna','smok'],nowi:['wywerna'],boss:{k:'smok',nm:'Pyrrax',add:'wywerna'},mech:'zablokowane przełęcze, klucz z lochów',hp:1,dmg:1,xp:1,gold:1},
  {id:5,nm:'Kraina Cienia',lv:[80,100],h:6,foes:['demon','upadly'],nowi:['demon','upadly'],boss:{k:'boss',nm:'Vorgan',add:'demon'},mech:'wieczna noc (wrogowie +15%), osady do odbicia',hp:1.15,dmg:1,xp:1,gold:1}];
 // stałe strojenia balansu (Etap 1)
-const ELX={ttk:30,dk:1.6,dps:.022,dpe:.0004,bdur:40,tf:40,zone:60}; // ttk: docelowy czas walki (s) · dk: mnożnik referencyjnego DPS gracza Dref(EL)=12+dk·EL^2,15 (dk 1,6 ≈ połowa symulowanego "mocnego" buildu) · dps+dpe·EL: suma obrażeń grupy jako ułamek HPref/s (przed pancerzem/unikami; symulowany gracz ma ~50–60% redukcji) · bdur: boss zabija niechronionego gracza w tylu sekundach · tf: sekundy na walkę z drogą · zone: pól do końca strefy aktu
+const ELX={ttk:30,dk:1.6,dps:.031,dpe:.00056,bdur:30,tf:40,zone:60}; // ttk: docelowy czas walki (s) · dk: mnożnik referencyjnego DPS gracza Dref(EL)=12+dk·EL^2,15 (dk 1,6 ≈ połowa symulowanego "mocnego" buildu) · dps+dpe·EL: suma obrażeń grupy jako ułamek HPref/s (przed pancerzem/unikami; symulowany gracz ma ~50–60% redukcji) · bdur: boss zabija niechronionego gracza w tylu sekundach · tf: sekundy na walkę z drogą · zone: pól do końca strefy aktu
 ACT.forEach(a=>{a.elLo=a.lv[0];a.elHi=a.lv[1];a.fpl=3600*a.h/(ELX.tf*20);a.bossHp=a.bossHp||1}); // fpl = walk na poziom
 const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.68';
+const VER='0.69';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1152,7 +1152,7 @@ const pickAc=op=>{const c=CLR[S.p.cls];return c&&Math.random()<((op&&op.own)?1:.
 const pickW=op=>{if(op&&op.wk)return WP.find(w=>w[0]===WKN[op.wk]);const c=CLR[S.p.cls];if(c&&Math.random()<((op&&op.own)?1:.7)){const n=WKN[c.w[Math.floor(Math.random()*c.w.length)]];return WP.find(w=>w[0]===n)}return WP[Math.floor(Math.random()*WP.length)]};
 function genItem(fr,bo,op){
   const dist=Math.hypot(S.x,S.y)+(S.map||0)*30,L=S.p.lvl,ty=(op&&op.ty)||['helm','klata','spodnie','buty','rekawice','naramienniki','amulet','pierscien','bron','bron'][Math.floor(Math.random()*10)];
-  const q=Math.random()+dist/400+(bo||0),r=fr>0?fr:q>.98?3:q>.88?2:q>.6?1:0,tier=(op&&op.tier!=null)?op.tier:Math.min(8,Math.floor((dist+L*1.2)/14+Math.random()*2.2)),s={};
+  const u=Math.random(),q=u+Math.min(.05,dist/2000)+(bo||0),r=fr>0?fr:(u+(bo||0)*.3)>.996-(S.map||0)*.0008?3:q>.95?2:q>.75?1:0,tier=(op&&op.tier!=null)?op.tier:Math.min(8,Math.floor((dist+L*1.2)/14+Math.random()*2.2)),s={};
   let n,noun,ac=null,two=false,col=MC[tier];
   if(ty==='bron'){const w=pickW(op);noun=w[0];two=!!w[1];n=(WFEM.includes(noun)?MAT[tier].replace(/y$/,'a'):MAT[tier])+' '+noun;const wk=WKR[noun];s.atkp=two?Math.round((tier*4+4)*2.2):tier*4+4;if(noun==='Kostur')s.spp=tier*4+4;else if(noun==='Sztylet')s.crit=2+Math.floor(tier/2);
    else if(wk==='luk'){s.atkp=Math.round((tier*4+4)*1.9);s.crit=2+Math.floor(tier/2)}else if(wk==='halabarda'){s.atkp=Math.round((tier*4+4)*2.3)}else if(wk==='buzdygan'){s.atkp=tier*4+5;s.sil=1+Math.floor(tier/2)}
@@ -1568,7 +1568,7 @@ function objAct(a){if(F)return;const L=S.loc,f=cur();
   if(a==='exit'){transit('Powrót na powierzchnię',()=>{S.loc=null;save();render(0,0,1)});return}
   if(a==='down'||a==='up'){const nf=L.fl+(a==='down'?1:-1);transit('Piętro '+(nf+1),()=>{L.fl=nf;const m=LM(L.id,L.fl,L.k),c=a==='down'?m.st:m.ex;L.x=c[0];L.y=c[1];L.px=undefined;save();render(0,0,1);ambush()})}}
 function openChest(key,big,k){const p=S.p,lo=[],g=(40+p.lvl*12+Math.floor(Math.random()*20))*(big?3:1);p.gold+=g;S.chs[key]=1;bump('ch');
-  const n=big?3:1+(Math.random()<.5?1:0);for(let i=0;i<n;i++)lo.push({k:'item',it:genItem(big&&i===0&&Math.random()<.5?3:undefined,k==='ruiny'?.12:0)});
+  const n=big?2:(Math.random()<.25?1:0)+1;for(let i=0;i<n;i++)lo.push({k:'item',it:genItem(big&&i===0?(Math.random()<.15?3:2):undefined,k==='ruiny'?.04:0)});
   lo.push({k:'szmaty',v:1+Math.floor(Math.random()*3)+(k==='jaskinia'?2:0)});if(big||Math.random()<.4)lo.push({k:'esn',v:big?3:1});lo.push({k:'stal',v:(big?3:1)+(k==='jaskinia'?1:0)});
   for(let i=0;i<(big?2:1)+(Math.random()<.5?1:0);i++)lo.push(rndPot());
   if(big||Math.random()<.4)lo.push(rndGem());regDrop(lo,ctxReg(),big?2:1);
@@ -1840,7 +1840,7 @@ function win(){if(F.rift){riftWin();return}heroAnim('win');const zb=F.pk&&F.pk.h
   const lo=[];if(INVW){INVW=0;lo.push({k:'item',it:genItem(2,0,{tier:Math.random()<.2?9:8})},{k:'esn',v:3});lt+=' · Najazd odparty!'}
   if(bs){if(S.boss)S.boss.dead=true;if(!S.loc){delete S.dead[k];if(S.dt)delete S.dt[k]}cache.clear();S.portals=S.portals||[0];const nm=(S.map||0)+1;if(nm<ACT.length&&!S.portals.includes(nm))S.portals.push(nm);GCTX='boss';lo.push({k:'item',it:genItem(3)});GCTX=null;lt+=nm<ACT.length?' · Boss pokonany! Portal do aktu '+(nm+1)+' otwarty':' · Władca Zła pokonany!';if(ky==='herszt'&&S.boss.vil)lt+=` · wioska uratowana: ${S.boss.vil}`;S.shA=S.shA||{};const nsh=!S.shA[S.map||0];S.shA[S.map||0]=1;S.shards=Math.min(5,Object.keys(S.shA).length);if(nsh)lt+=` · Odłamek Osi ${S.shards}/5`;setTimeout(()=>{bsay(ky,2);if(ky==='boss')setTimeout(()=>toast('Kryształ Osi zostaje sklejony, ale nie jest już cały. Rysy na nim to Szczeliny.',7000),5200)},900)}
   if(Math.random()<.5)lo.push({k:'szmaty',v:1+Math.floor(Math.random()*2)});if(Math.random()<.2)lo.push({k:'stal',v:1});if(Math.random()<(bs||ky==='krolowa'||ky==='licz'?1:.1))lo.push({k:'esn',v:bs?5:1});
-  if(Math.random()<.45)lo.push({k:'item',it:genItem()});if(nn>=4&&Math.random()<.3)lo.push({k:'item',it:genItem()});
+  if(Math.random()<.25)lo.push({k:'item',it:genItem()});if(nn>=4&&Math.random()<.15)lo.push({k:'item',it:genItem()});
   if(Math.random()<.2)lo.push(rndPot());if(Math.random()<(bs||ky==='krolowa'||ky==='licz'?1:.05))lo.push(rndGem());regDrop(lo,bs?'boss':ctxReg(),bs?3:(nn>=4?1.3:1));if(bs)regDrop(lo,ctxReg(),2);
   sfx.win();if(up){sfx.lvl();banner('POZIOM '+p.lvl+'!','#ffd34a');burst(innerWidth/2,innerHeight*.45,['⭐','✨','🔥'],26,210)}
   toast(`Wygrana! +${x} XP · ${lt}`+(up?` · poziom ${p.lvl}!`:''));save();render();openLoot(lo,'Łup po walce');
