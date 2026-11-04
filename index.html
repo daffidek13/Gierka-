@@ -310,6 +310,7 @@ body.night .foe::before,body.night .obj::before{opacity:.8}
 #fight.on~#sqt,#town.on~#sqt,#loot.on~#sqt{display:none!important}
 .stfx{position:absolute;left:-15%;right:-15%;bottom:-6%;height:80%;background-size:600% 100%;background-repeat:no-repeat;animation:auf .75s steps(6) infinite;mix-blend-mode:screen;pointer-events:none;z-index:3}
 .fx-leg{--fx:url(assets/fx/fx_mapa_skrzynia_legendarna.webp)}.fx-por{--fx:url(assets/fx/fx_mapa_portal.webp)}.fx-poch{--fx:url(assets/fx/fx_mapa_pochodnia.webp)}
+.obj.fx-poch .ic::before{left:-6%;right:auto;width:30%;top:-12%;bottom:auto;height:48%}.obj.fx-poch .ic::after{content:"";position:absolute;right:-6%;width:30%;top:-12%;height:48%;background:var(--fx) 0 0/600% 100% no-repeat;animation:auf .75s steps(6) infinite;animation-delay:-.3s;mix-blend-mode:screen;pointer-events:none;z-index:2}
 .obj.fxm .ic::before{content:"";position:absolute;left:-40%;right:-40%;top:-50%;bottom:-40%;background:var(--fx) 0 0/600% 100% no-repeat;animation:auf .75s steps(6) infinite;mix-blend-mode:screen;pointer-events:none;z-index:2}
 .aufx{position:absolute;left:-28%;right:-28%;bottom:-12%;height:72%;background-size:600% 100%;background-repeat:no-repeat;animation:auf .75s steps(6) infinite;z-index:0;pointer-events:none;mix-blend-mode:screen}@keyframes auf{from{background-position:0 0}to{background-position:120% 0}}
 .wfx{position:absolute;left:12%;top:4%;width:32%;height:62%;border-radius:50%;background:radial-gradient(closest-side,var(--c),transparent 72%);mix-blend-mode:screen;opacity:.75;animation:wf 1.4s ease-in-out infinite;z-index:2;pointer-events:none}
@@ -553,7 +554,8 @@ const GCOL={rubin:['#d8334a','#ff93a0','#7d1020'],szafir:['#3b73e0','#9cc0ff','#
 const gemSvg=k=>{const c=GCOL[k]||GCOL.onyks;return `<svg viewBox="0 0 32 32" style="width:1.15em;height:1.15em;vertical-align:-.22em"><path d="M16 3 27 11 16 29 5 11z" fill="${c[0]}" stroke="${c[2]}" stroke-width="1.2" stroke-linejoin="round"/><path d="M16 3 27 11 16 14 5 11z" fill="${c[1]}"/><path d="M5 11 16 14 16 29z" fill="${c[2]}" opacity=".55"/><path d="M10 7 14 5.5 12 9.5z" fill="#fff" opacity=".8"/></svg>`};
 const wkey=it=>it.wk||(/Łuk/.test(it.n)?'luk':/Tarcza/.test(it.n)?'tarcza':/Różdżka/.test(it.n)?'rozdzka':/Czaszka/.test(it.n)?'czaszka':/Księga/.test(it.n)?'ksiega':/Buzdygan/.test(it.n)?'buzdygan':/Halabarda/.test(it.n)?'halabarda':/Kostur/.test(it.n)?'kostur':/Młot/.test(it.n)?'mlot':/Maczuga/.test(it.n)?'maczuga':/Topór/.test(it.n)?'topor':/Sztylet/.test(it.n)?'sztylet':'miecz');
 const iip0=it=>it.t==='bron'?`assets/items/i_${wkey(it)}.png`:(it.t==='amulet'||it.t==='pierscien')?`assets/items/i_${it.t}.png`:`assets/items/i_${it.t}_${it.ac||'plyta'}.png`;
-const iip=it=>it.set?`assets/items/i_${it.set}_${it.t==='bron'?wkey(it):it.t}.png|${iip0(it)}`:iip0(it);
+const LEGI={herszt:'kiel_borka',krolowa:'welon_arachnei',licz:'klepsydra_sethuna',smok:'serce_pyrraxa',boss:'korona_osi'};
+const iip=it=>it.uq&&LEGI[it.uq]?`assets/items/i_leg_${LEGI[it.uq]}.png|${iip0(it)}`:it.set?`assets/items/i_${it.set}_${it.t==='bron'?wkey(it):it.t}.png|${iip0(it)}`:iip0(it);
 const iic=it=>enWrap(it,pic(iip(it),ico(it)));
 // ---------- widok ----------
 const $=id=>document.getElementById(id);
@@ -568,7 +570,7 @@ function render(dx=0,dy=0,pp=0){
   v.style.background=`linear-gradient(160deg,${t.c},${t.c2})`;
   let tsrc=`assets/world/t_${S.loc?S.loc.k:f.t}.jpg`,fl2=false;if(S.loc){const rv=roomVar();if(rv){tsrc=rv.src;fl2=rv.flip}}const tkey=tsrc+(fl2?'F':''),old=v.querySelector('img.tile');
   if(!old||old.dataset.s!==tkey){if(old)old.remove();const im=new Image();im.className='tile';im.alt='';im.decoding='async';im.dataset.s=tkey;if(fl2)im.style.transform='scaleX(-1)';if(tsrc.includes('_r_'))im.style.objectFit='fill';im.onerror=()=>im.remove();im.src=tsrc;v.prepend(im)}
-  {const hs=heroSig()+'|'+auraKey(),he=$('hero');if(he.dataset.s!==hs||!he.firstChild){he.innerHTML=heroHtml();he.dataset.s=hs}}wxSet(S.loc?'':tod(),S.loc?'':wth());$('tname').textContent=S.loc?POI[S.loc.k][0]:f.poi&&SET[f.poi]?f.nm:t.n;
+  {const hs=heroSig()+'|'+auraKey(),he=$('hero');if(he.dataset.s!==hs||!he.firstChild){he.innerHTML=heroHtml();he.dataset.s=hs}}wxSet(S.loc?'':tod(),S.loc?'':wth());$('tname').textContent=S.loc?(S.loc.tomb?'Grobowiec Sethuna':POI[S.loc.k][0]):f.poi&&SET[f.poi]?f.nm:t.n;
   $('coords').textContent=`Pole ${S.x}, ${S.y} · mapa ${(S.map||0)+1} · ${TODE[tod()]}${wth()?WX[wth()].e:''}${bossHint()}`;
   if(S.loc){S.loc.vis=S.loc.vis||{};S.loc.vis[S.loc.fl+':'+S.loc.x+','+S.loc.y]=1;$('coords').textContent=`Piętro ${S.loc.fl+1} z ${S.loc.fls}`}
   $('poi').onclick=S.loc?null:SET[fo.poi]?()=>{if(needFree(fo)){startFree(fo);return}TCUR=fo;TSEC=null;openTown()}:fo.poi&&fo.poi!=='oaza'?()=>enterLoc(fo):null;$('poi').className=!S.loc&&fo.poi&&SET[fo.poi]?'hzp':'';$('poi').innerHTML=S.loc?'':fo.poi&&SET[fo.poi]?`<div class="hz" style="--hzc:${HZC[fo.t]||'#cfe6b0'};width:${({wioska:68,miasteczko:78,zamek:74,obozowisko:74,klasztor:74,miasto:84})[fo.poi]||80}%"><img src="assets/world/w_hz_${fo.poi==='miasto'?'stolica':fo.poi}.png" onerror="this.onerror=null;this.src='assets/world/p_${fo.poi}.png';this.classList.add('fb')" alt="" draggable="false"><b>${fo.nm} <small>(${POI[fo.poi][0].toLowerCase()})</small></b><u>${needFree(fo)?'zajęte przez demony · tap, aby odbić':'tap, aby wejść'}</u></div>`:fo.poi?icon('',fo.tomb?`assets/world/p_grobowiec.png|assets/world/p_${fo.poi}.png`:`assets/world/p_${fo.poi}.png`,POI[fo.poi][1])+(SET[fo.poi]?fo.nm+' <small>('+POI[fo.poi][0].toLowerCase()+')</small>':POI[fo.poi][0])+(SET[fo.poi]?(needFree(fo)?' · zajęte przez demony':' · tap, aby wejść'):(S.cleared&&S.cleared[ckey(fo)]?' (wyczyszczone)':' · tap, aby wejść')):'';
@@ -998,7 +1000,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.75b';
+const VER='0.76';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1645,8 +1647,8 @@ function objs(){const f=cur(),o=[],mk=(a,fi,em,tx,x,y,pth,cl)=>`<button class="o
   if(!S.loc&&f.ev&&!(S.evs[ckey(f)]&&S.evs[ckey(f)].done))o.push(mk('event',f.ev,EVI[f.ev][0],EVI[f.ev][1],20,52,null,f.ev==='oltarz'?'fxm fx-por':''));return o.join('')}
 let RMT=0;const RMP={};
 const RVS=['n','s','e','ns','ew','ne','se','nse','new','sew','nsew'];
-function roomVar(){const L=S.loc;if(!L)return null;const op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy);let n=op(0,-1),sd=op(0,1),e=op(1,0),w=op(-1,0),flip=false;if(w&&!e){e=true;w=false;flip=true}
-  const key=(n?'n':'')+(sd?'s':'')+(e?'e':'')+(w?'w':'');if(!RVS.includes(key))return null;const s1=`assets/world/d_${L.k}_r_${key}.jpg`,s2=`assets/d_${L.k}_r_${key}.jpg`;
+function roomVar(){const L=S.loc;if(!L)return null;const op=(dx,dy)=>!!LC(L,L.x+dx,L.y+dy);let n=op(0,-1),sd=op(0,1),e=op(1,0),w=op(-1,0),flip=false;const dk=L.tomb?'grobowiec':L.k;if(w&&!e&&!L.tomb){e=true;w=false;flip=true}
+  const key=(n?'n':'')+(sd?'s':'')+(e?'e':'')+(w?'w':'');if(!RVS.includes(key)&&!(L.tomb&&key))return null;const s1=`assets/world/d_${dk}_r_${key}.jpg`,s2=`assets/world/d_${L.k}_r_${key}.jpg`;
   if(HIMG[s1]===undefined&&!RMP[s1]){RMP[s1]=1;hLoad([s1,s2]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}
   const src=HIMG[s1]?s1:HIMG[s2]?s2:null;return src?{src,flip}:null}
 function roomHtml(){const L=S.loc,k=L.k,have=n=>{const u=`assets/world/d_${k}_${n}.png`;if(HIMG[u]===undefined&&!RMP[u]){RMP[u]=1;hLoad([u]).then(()=>{clearTimeout(RMT);RMT=setTimeout(()=>{if(S.loc&&!F)render(0,0,0)},60)})}return !!HIMG[u]},
