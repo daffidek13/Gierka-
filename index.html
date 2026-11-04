@@ -23,6 +23,8 @@ header{display:flex;justify-content:space-between;align-items:center}
 @keyframes mpulse{50%{transform:scale(.6);opacity:.7}}
 header{align-items:flex-start;gap:10px}
 #loc{min-width:0}#loc b{font-size:22px;line-height:1.1;text-shadow:0 2px 4px #000}#loc span{display:block;margin-top:3px}
+#sqt{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 86px);z-index:4;max-width:62%;text-align:left;font:12px/1.3 inherit;color:#f3e6c4;background:#140f0acc;border:1px solid #8a6a34;border-radius:9px;padding:5px 9px;box-shadow:0 2px 8px #0008}#sqt b{color:#ffd34a;margin-right:3px}
+#sqd{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;background:#000a;padding:16px}#sqd.on{display:flex}#sqd .sqc{max-width:360px;width:100%;background:linear-gradient(#2a2016,#17110b);border:2px solid #b8893c;border-radius:14px;padding:14px;color:#f3e6c4;text-align:center;box-shadow:0 8px 30px #000}#sqd img{width:110px;height:110px;object-fit:cover;border-radius:50%;border:2px solid #b8893c;margin:-60px auto 6px;display:block;background:#000}#sqd b{font-size:17px;color:#ffd34a}#sqd p{font-size:14px;line-height:1.45;margin:8px 0 12px;text-align:left}#sqd button{background:#b8893c;color:#1a120a;border:0;border-radius:9px;padding:9px 22px;font-weight:bold;font-size:15px}
 #hud{display:flex;flex-direction:column;gap:5px}
 #hud .r{display:flex;gap:6px}
 #hud .b{position:relative;flex:1;height:19px;border-radius:7px;background:#0a0b0e;border:1px solid #2c2f38;overflow:hidden}
@@ -577,10 +579,10 @@ function render(dx=0,dy=0,pp=0){
       if(!c){m+=`<i style="background:#0d0e11"></i>`;continue}
       const ic=sn||near?(c.exit?'🚪':c.up?'⬆️':c.down?'⬇️':c.big?'🎁':c.chest?'📦':c.trap&&sn?'⚠️':c.foes&&c.foes.length?'<b style="width:5px;height:5px;border-radius:50%;background:#d9604c;display:block"></b>':''):'';
       m+=`<i class="${me?'me':''}${sn?'':' fg'}" style="background:${sn?'#a99d82':'#7a7160'}">${me?'':ic}</i>`;continue}
-    const g=field(S.x+i,S.y+j),seen=S.visited[(S.x+i)+','+(S.y+j)]||me,ic=g.poi&&(seen||Math.abs(i)+Math.abs(j)<=2)?POI[g.poi][1]:'';
+    const g=field(S.x+i,S.y+j),seen=S.visited[(S.x+i)+','+(S.y+j)]||me,sqp=sqPos(),ic=sqp&&sqp[0]===S.x+i&&sqp[1]===S.y+j?'❗':g.poi&&(seen||Math.abs(i)+Math.abs(j)<=2)?POI[g.poi][1]:'';
     m+=`<i class="${me?'me':''}${seen?'':' fg'}" style="background:linear-gradient(145deg,${T[g.t].c},${T[g.t].c2})">${me?'':ic}</i>`;
   }
-  $('mini').innerHTML=m;hudUi();
+  $('mini').innerHTML=m;hudUi();try{sqTick();sqUi()}catch(e){}
   if((dx||dy)&&AN()){v.animate([{transform:`translate(${dx*70}px,${dy*70}px) scale(1.04)`,opacity:.3},{transform:`translate(${-dx*6}px,${-dy*6}px)`,opacity:1,offset:.7},{transform:'none'}],{duration:320,easing:'ease-out'});
     $('hero').animate([{transform:'translateX(-50%) translateY(0)'},{transform:'translateX(-50%) translateY(-14px) rotate(-4deg)'},{transform:'translateX(-50%) translateY(0)'}],{duration:280})}
   else if(pp&&AN())v.animate([{opacity:0,transform:'scale(1.08)'},{opacity:1,transform:'none'}],{duration:350,easing:'ease-out'});
@@ -635,7 +637,7 @@ function move(dx,dy){if(F)return;heroAnim('walk',dx);if(S.loc){lmove(dx,dy);retu
   const nx=S.x+dx,ny=S.y+dy,f=field(nx,ny);
   if(T[f.t].ok===false){toast('Woda blokuje drogę');return}
   if((S.map||0)===3&&ringOf(nx,ny)>(S.pass||0)){toast(`⛰ Przełęcz zablokowana (${S.pass||0}/2 kluczy). Klucz leży w lochu tego aktu.`,3000);return}
-  S.px=S.x;S.py=S.y;S.x=nx;S.y=ny;{const p=S.p;p.hp=Math.min(mh(),p.hp+Math.max(3,mh()*.02));p.mana=Math.min(mm(),p.mana+mm()*.1);p.sta=Math.min(sm(),p.sta+sm()*.1)}S.visited[nx+','+ny]=1;S.steps++;S.rec.dist=Math.max(S.rec.dist||0,Math.round(Math.hypot(nx,ny)));actStep(f,nx,ny);spawnWd(f);save();render(dx,dy);
+  S.px=S.x;S.py=S.y;S.x=nx;S.y=ny;{const p=S.p;p.hp=Math.min(mh(),p.hp+Math.max(3,mh()*.02));p.mana=Math.min(mm(),p.mana+mm()*.1);p.sta=Math.min(sm(),p.sta+sm()*.1)}S.visited[nx+','+ny]=1;S.steps++;S.rec.dist=Math.max(S.rec.dist||0,Math.round(Math.hypot(nx,ny)));actStep(f,nx,ny);spawnWd(f);save();render(dx,dy);if(sqArrive(nx,ny))return;
   (S.p.q||[]).forEach(q=>{if(q.t==='reach'&&(q.m||0)===(S.map||0))q.have=Math.min(q.need,Math.max(q.have,Math.round(Math.hypot(S.x-(q.ox||0),S.y-(q.oy||0)))))});S.ms=(S.ms||0)+1;if(!S.boss&&S.ms>=300&&S.p.lvl>=actOf().lv[1]-2&&Math.random()<(S.p.lvl>=actOf().lv[1]?.08:.03))spawnBoss();
   const fc=cur(),a=fc.foes.findIndex((o,i)=>o.ag&&!isDead(fc,i));if(a>=0)startFight(a,true)
 }
@@ -992,7 +994,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.71';
+const VER='0.72';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1450,6 +1452,95 @@ function spawnBoss(){const A=actOf(),mp=S.map||0;
   {const dx=x-S.x,dy=y-S.y;delete S.dead[x+','+y];if(S.dt)delete S.dt[x+','+y];if(S.wd)delete S.wd[x+','+y];toast(ZZ[mp].replace('{kierunek}',Math.abs(dy)>Math.abs(dx)?(dy<0?'północy':'południu'):(dx>0?'wschodzie':'zachodzie')),6000)}save();return}}}
 const MK=['x','y','visited','dead','boss','ms','dt','wd','pass','free','oas'];
 function travel(m){S.maps=S.maps||{};const o={};MK.forEach(k=>o[k]=S[k]);S.maps[S.map||0]=o;const n=S.maps[m]||{x:0,y:0,visited:{'0,0':1},dead:{},boss:null,ms:0,dt:{},wd:{}};MK.forEach(k=>S[k]=n[k]);S.map=m;S.px=undefined;cache.clear();save();render();actIntro(m)}
+
+// ---------- Fabuła: łańcuchy zadań w każdym akcie (jak w Diablo) ----------
+// typy kroków: talk (rozmowa w osadzie; here:1 = od razu po poprzednim kroku), fight (idź na miejsce i wygraj), boss, pass (klucze przełęczy), free (odbij osady)
+const NPI=k=>`assets/world/w_npc_${k}.jpg`;
+const SQ=[
+ [ // Akt 1 – Ziemie Pogranicza
+  {t:'talk',who:'Sołtys Wiesław',img:NPI('zad_wm'),txt:'Dobrze, że Kryształ Cię poskładał, bo akurat brakuje nam rąk. W nocy na wschodzie płonęła farma Bednarzy. Sprawdź, czy ktoś przeżył. I uważaj, wilki ostatnio chodzą stadami jak urzędnicy.'},
+  {t:'fight',at:[7,-2],nm:'Spalona farma',k:'goblin',n:4,hm:1.2,txt:'W zgliszczach grzebią gobliny. Jeden ma na sobie skórzany fartuch kowala, o trzy rozmiary za duży.'},
+  {t:'talk',who:'Kowalowa Hanna',img:NPI('smith_wf'),txt:'Ten fartuch… to fartuch Marka, mojego męża! Gobliny zabrały go do swojego leża na północy. Mówią, że rządzi nimi jakiś Grabarz. Proszę, przyprowadź go z powrotem.'},
+  {t:'fight',at:[-4,-11],nm:'Leże Goblinów',k:'goblin',n:5,hm:1.8,txt:'Leże śmierdzi rdzą i strachem. Grabarz, herszt goblinów, siedzi na stosie ukradzionych mieczy i nie zamierza się nimi dzielić.'},
+  {t:'talk',here:1,who:'Kowal Marek',img:NPI('smith_wm'),txt:'Dzięki ci! Słuchaj, to nie zwykły rabunek. Gobliny kradną stal dla orków. Bork Grubozęby zbiera armię pod trzema chorągwiami na zachodzie. Spal je, zanim ruszy na wioski.'},
+  {t:'fight',at:[-12,4],nm:'Pierwsza chorągiew',k:'ork',n:3,hm:1.1,txt:'Przy chorągwi z wilczą czaszką pilnują jej orkowie. Jeszcze nie wiedzą, że ten sztandar idzie na podpałkę.'},
+  {t:'fight',at:[-17,11],nm:'Druga chorągiew',k:'wilk',n:5,hm:1.3,txt:'Drugiej chorągwi strzegą oswojone wilki. Ktoś je dobrze karmi.'},
+  {t:'fight',at:[-21,2],nm:'Chorągiew wodza',k:'ork',n:4,hm:1.5,txt:'Chorągiew samego Borka. Orkowie są tu więksi, głośniejsi i gorzej pachną.'},
+  {t:'boss',txt:'Bork Grubozęby wpadł w szał po spaleniu chorągwi i rusza na wioski. Znajdź go i zakończ tę wojnę.'},
+  {t:'talk',who:'Sołtys Wiesław',img:NPI('zad_wm'),txt:'Pogranicze odetchnęło. Ale ten odłamek, który wypadł z Borka… pulsuje jak serce. Kryształ Osi pękł, a jego kawałki leżą po całym świecie. Portal na Bagna już się otworzył.',end:1}
+ ],
+ [ // Akt 2 – Bagna Rozpaczy
+  {t:'talk',who:'Zielarka Bogna',img:NPI('zad_wf'),txt:'Mgła zabiera ludzi. Mój brat poszedł po mech pod Stary Most i wrócił bez głowy. Dosłownie. Topielce stamtąd wyłażą każdej nocy. Sprawdź, co je wypędza z wody.'},
+  {t:'fight',at:[6,7],nm:'Stary Most',k:'topielec',n:5,hm:1.2,txt:'Topielce mają na szyjach pętle z pajęczego jedwabiu. Ktoś je prowadzi jak psy na smyczy.'},
+  {t:'talk',who:'Zielarka Bogna',img:NPI('zad_wf'),txt:'Pajęczy jedwab? To robota kogoś starszego niż wiedźmy. Ale Wiedźma Morana z Trzęsawiska może coś wiedzieć. Za darmo nic nie powie, więc pewnie będziesz musiał ją przekonać.'},
+  {t:'fight',at:[-9,10],nm:'Chata Wiedźmy',k:'wiedzma',n:1,hm:4,txt:'„Odpowiem na pytania, jeśli przeżyjesz pierwszą klątwę!” – woła Morana i od razu rzuca trzy.'},
+  {t:'talk',here:1,who:'Wiedźma Morana',img:NPI('ench_wf'),txt:'Dobrze już, dobrze! Arachnea, Królowa Pajęczyny, tka mgłę z dusz utopionych. Jej jaja leżą w trzech gniazdach. Zniszcz je, a sama wyjdzie z sieci. I nie mów nikomu, że ci pomogłam.'},
+  {t:'fight',at:[13,-6],nm:'Gniazdo przy trzcinach',k:'pajak',n:4,hm:1.2,txt:'Jaja pulsują zielonym światłem. Pająki nie lubią, gdy ktoś je depcze.'},
+  {t:'fight',at:[17,6],nm:'Gniazdo w wierzbach',k:'pajak',n:5,hm:1.3,txt:'Wierzby zarosły siecią tak gęstą, że da się po niej chodzić. Lepiej nie próbować.'},
+  {t:'fight',at:[-15,-13],nm:'Gniazdo pod kurhanem',k:'szkielet',n:5,hm:1.4,txt:'Ostatnie gniazdo pilnują szkielety oplecione siecią jak kukiełki.'},
+  {t:'boss',txt:'Arachnea poczuła zniszczenie gniazd. Mgła gęstnieje w sieć – Królowa Pajęczyny wyszła na łowy.'},
+  {t:'talk',who:'Zielarka Bogna',img:NPI('zad_wf'),txt:'Mgła rzednie, a w trzcinach znów kumkają żaby. Drugi odłamek Osi? Weź go, zanim ktoś zrobi z niego zupę. Na południu czeka Pustynia Popiołów.',end:1}
+ ],
+ [ // Akt 3 – Pustynia Popiołów
+  {t:'talk',who:'Karawaniarz Hasim',img:NPI('shop_mm'),txt:'Na pustyni upał zabija szybciej niż skorpiony, a woda jest droższa od złota. Oaza Trzech Palm na wschodzie została zatruta. Bez niej żadna karawana nie przejdzie.'},
+  {t:'fight',at:[8,3],nm:'Zatruta oaza',k:'skorpion',n:5,hm:1.3,txt:'Przy wodzie roi się od skorpionów, a w mule leżą puste fiolki z czarną pieczęcią.'},
+  {t:'talk',who:'Kapłanka Nefer',img:NPI('ench_wf'),txt:'Czarna pieczęć to znak kapłanów Sethuna. Wstali z grobów i szukają dwóch pieczęci, które trzymają jego grobowiec zamknięty. Jeśli je zdobędą, licz się obudzi.'},
+  {t:'fight',at:[-11,6],nm:'Pieczęć Słońca',k:'mumia',n:4,hm:1.4,txt:'Mumie kapłanów otaczają kamienny ołtarz. Bandaże mają świeże, co jest bardzo niepokojące.'},
+  {t:'fight',at:[13,-11],nm:'Pieczęć Księżyca',k:'dzin',n:3,hm:1.5,txt:'Dżiny wirują nad drugą pieczęcią. Śmieją się, jakby wiedziały coś, czego Ty nie wiesz.'},
+  {t:'talk',here:1,who:'Kapłanka Nefer',img:NPI('ench_wf'),txt:'Za późno… obie pieczęcie pękły, gdy je dotknąłeś. Sethun się budzi. Jego grobowiec otworzył się gdzieś na pustyni. Zejdź na samo dno i zakończ to.'},
+  {t:'boss',txt:'Grobowiec Sethuna stoi otworem. Licz czeka na najniższym piętrze.'},
+  {t:'talk',who:'Karawaniarz Hasim',img:NPI('shop_mm'),txt:'Karawany znów ruszają! Za trzeci odłamek nie wezmę od ciebie cła. Ale na północy, w Smoczych Górach, ludzie mówią o ogniu spadającym z nieba.',end:1}
+ ],
+ [ // Akt 4 – Smocze Góry
+  {t:'talk',who:'Krasnolud Bruno',img:NPI('smith_mm'),txt:'Pyrrax pali wioski z góry, a przełęcze zasypało. Najpierw trolle: zablokowały Trollowy Most i biorą myto w kościach. Przegoń je, to pogadamy.'},
+  {t:'fight',at:[5,3],nm:'Trollowy Most',k:'troll',n:3,hm:1.4,txt:'Trolle siedzą na moście i liczą kości. Twoje też chętnie by policzyły.'},
+  {t:'talk',who:'Krasnolud Bruno',img:NPI('smith_mm'),txt:'Dobra robota. Bramy przełęczy otwierają dwa klucze, które leżą w lochach tych gór. Przynieś oba, a droga do Leża Pyrraxa stanie otworem.'},
+  {t:'pass',txt:'Zdobądź 2 klucze przełęczy z lochów Smoczych Gór.'},
+  {t:'fight',at:[-7,-6],nm:'Gniazdo wywern',k:'wywerna',n:4,hm:1.5,txt:'Wywerny strzegą przejścia do Leża. Pyrrax wyhodował je jak kury, tylko bardziej ogniste.'},
+  {t:'boss',txt:'Pyrrax, Pradawny Smok, wyleciał z leża. Niebo czerwienieje.'},
+  {t:'talk',who:'Krasnolud Bruno',img:NPI('smith_mm'),txt:'Smok padł! Zrobię ci z jego łuski coś ładnego… kiedyś. Czwarty odłamek pulsuje na czarno. Coś na niego czeka po drugiej stronie portalu.',end:1}
+ ],
+ [ // Akt 5 – Kraina Cienia
+  {t:'talk',who:'Rycerz Aldric',img:NPI('zad_mm'),txt:'Tu jest wieczna noc. Osady padły jedna po drugiej i demony siedzą w nich jak w gospodach. Odbij trzy osady, a ludzie znów podniosą sztandary.'},
+  {t:'free',need:3,txt:'Odbij 3 osady z rąk demonów.'},
+  {t:'talk',who:'Rycerz Aldric',img:NPI('zad_mm'),txt:'Ludzie wracają! Teraz Brama Cienia. Pilnują jej upadli rycerze – kiedyś moi bracia. Nie oszczędzaj ich, oni by Ciebie nie oszczędzili.'},
+  {t:'fight',at:[-9,8],nm:'Brama Cienia',k:'upadly',n:4,hm:1.5,txt:'Upadli rycerze stoją w szyku, jakby wciąż pamiętali musztrę.'},
+  {t:'fight',at:[11,13],nm:'Ołtarz Krwi',k:'demon',n:4,hm:1.6,txt:'Na ołtarzu płonie czarny ogień. To z niego Vorgan czerpie moc.'},
+  {t:'boss',txt:'Vorgan, Władca Cienia, wie, że tu jesteś. To koniec drogi.'},
+  {t:'talk',who:'Rycerz Aldric',img:NPI('zad_mm'),txt:'Świt! Pierwszy od lat. Kryształ Osi znów jest cały… prawie. Rysy na nim to Szczeliny i coś z nich wyłazi. Ale to już zupełnie inna historia.',end:1}
+ ]];
+const SQM=()=>S.map||0;
+function sqSt(){S.sqa=S.sqa||{};const m=SQM();if(S.sqa[m]==null){const P=S.portals||[0];S.sqa[m]=P.includes(m+1)||(m===4&&S.boss&&S.boss.dead)?SQ[m].length:0}return S.sqa[m]}
+function sqStep(){const i=sqSt();return SQ[SQM()]&&SQ[SQM()][i]}
+function sqPos(){const q=sqStep();if(!q||q.t!=='fight')return null;S.sqp=S.sqp||{};const id=SQM()+':'+sqSt();if(S.sqp[id])return S.sqp[id];
+ let best=null;for(let r=0;r<6&&!best;r++)for(let dx=-r;dx<=r&&!best;dx++)for(let dy=-r;dy<=r;dy++){const x=q.at[0]+dx,y=q.at[1]+dy,f=field(x,y);if(T[f.t].ok!==false&&!f.poi){best=[x,y];break}}
+ return S.sqp[id]=best||q.at}
+function sqObj(){const q=sqStep();if(!q)return null;const p=sqPos();
+ if(q.t==='talk')return q.here?`Porozmawiaj: ${q.who}`:`Porozmawiaj w osadzie: ${q.who}`;
+ if(q.t==='fight'){const dx=p[0]-S.x,dy=p[1]-S.y,d=Math.abs(dx)+Math.abs(dy),ar=d===0?'':(dy<0?(dx>0?'↗':dx<0?'↖':'↑'):dy>0?(dx>0?'↘':dx<0?'↙':'↓'):(dx>0?'→':'←'));return `${q.nm} ${ar} ${d} pól`}
+ if(q.t==='boss'){if(S.boss&&!S.boss.dead){const dx=S.boss.x-S.x,dy=S.boss.y-S.y,d=Math.abs(dx)+Math.abs(dy),ar=d===0?'':(dy<0?(dx>0?'↗':dx<0?'↖':'↑'):dy>0?(dx>0?'↘':dx<0?'↙':'↓'):(dx>0?'→':'←'));return `Pokonaj: ${actOf().boss.nm} ${ar} ${d} pól`}return `Szukaj: ${actOf().boss.nm}`}
+ if(q.t==='pass')return `Klucze przełęczy: ${S.pass||0}/2`;
+ if(q.t==='free')return `Odbite osady: ${Object.keys(S.free||{}).length}/${q.need}`;return null}
+function sqUi(){let e=$('sqt');if(!e){e=document.createElement('button');e.id='sqt';e.onclick=()=>sqShow();document.body.appendChild(e)}
+ const o=!S.loc&&!F&&S.p&&S.p.cls?sqObj():null;e.style.display=o?'':'none';if(o)e.innerHTML=`<b>📜 ${['I','II','III','IV','V'][SQM()]}</b> ${o}`}
+function sqDlg(who,img,txt,btn,cb){let d=$('sqd');if(!d){d=document.createElement('div');d.id='sqd';document.body.appendChild(d)}
+ d.innerHTML=`<div class="sqc">${img?`<img src="${img}" alt="">`:''}<b>${who}</b><p>${txt}</p><button>${btn||'Dalej'}</button></div>`;d.classList.add('on');d.querySelector('button').onclick=()=>{d.classList.remove('on');cb&&cb()}}
+function sqShow(){const q=sqStep();if(!q)return;if(q.t==='talk'&&q.here){sqTalk();return}const o=sqObj();
+ sqDlg(q.t==='talk'?q.who:'Zadanie',q.t==='talk'?q.img:null,q.t==='talk'?'Znajdziesz tę osobę w najbliższej osadzie.':((q.txt&&q.t!=='fight')?q.txt:`Cel: ${o}. ${q.t==='fight'?'Dojdź na to pole, a zaczniesz walkę.':''}`),'OK')}
+function sqTalk(){const q=sqStep();if(!q||q.t!=='talk')return false;sfx.chest&&sfx.chest();sqDlg(q.who,q.img,q.txt,q.end?'Zakończ akt':'Ruszam',()=>sqNext());return true}
+function sqNext(){const m=SQM();S.sqa[m]=sqSt()+1;const q=sqStep();save();
+ if(q&&q.t==='boss'){if(S.boss&&S.boss.dead){sqNext();return}if(!S.boss)spawnBoss()}
+ if(q&&q.t==='talk'&&q.here)setTimeout(()=>{if(!$('loot').classList.contains('on'))sqTalk();else{const w=setInterval(()=>{if(!$('loot').classList.contains('on')){clearInterval(w);sqTalk()}},500)}},700);
+ else if(q){const o=sqObj();if(o)toast('📜 Nowy cel: '+o,4500)}
+ try{render()}catch(_){}}
+function sqTick(){const q=sqStep();if(!q)return;if((q.t==='pass'&&(S.pass||0)>=2)||(q.t==='free'&&Object.keys(S.free||{}).length>=q.need)){toast('📜 Cel wykonany!',3000);sqNext()}}
+function sqArrive(x,y){const q=sqStep();if(!q||q.t!=='fight'||F)return false;const p=sqPos();if(!p||p[0]!==x||p[1]!==y)return false;
+ sqDlg(q.nm,null,q.txt,'Do walki!',()=>{const A=actOf(),f=field(x,y),el=Math.max(elAt(x,y,SQM()),Math.min(A.elHi,S.p.lvl)),g={key:q.k,n:q.n,ag:true,px:50,py:62};
+  startFight(0,false,{f:{...f,x:'q'+SQM(),y:sqSt(),foes:[g],nm:q.nm},g,el,bg:f.t,nr:1,hm:q.hm||1,xp:xpn(Math.min(S.p.lvl,A.elHi))/A.fpl*A.xp*.7,gm:1.5});if(F){F.sq=1;$('flog').textContent=q.nm+'!'}});return true}
+function sqAfterWin(sqf,bs,ky,lo){const q=sqStep();if(!q)return;
+ if(sqf&&q.t==='fight'){const A=actOf();lo.push({k:'item',it:genItem(2)});const g=Math.round(goldFight(A.elHi,3,SQM())*6);S.p.gold+=g;gainXp(xpn(Math.min(S.p.lvl,A.elHi))*.12);setTimeout(()=>toast(`📜 ${q.nm}: wykonane! +${g} zł`,3500),300);sqNext()}
+ else if(bs&&q.t==='boss'&&ky===actOf().boss.k)sqNext()}
+
 function actIntro(m){const a=actOf(m);setTimeout(()=>{try{banner(`AKT ${a.id}: ${a.nm}`,'#ffd34a');toast(INTRO[Math.min(m,4)],9000);setTimeout(()=>toast(`Poziomy ${a.lv[0]}–${a.lv[1]} · ${a.mech}`,5000),9500)}catch(_){}},500)}
 function genOffers(c){c=c||3;const m=S.map||0,A=actOf(m),ks=A.foes.filter(k=>ST[k]&&E[k]&&!['boss','smok','krolowa','licz'].includes(k)),o=[],os=(TCUR&&TCUR.nm)||'Osigród',ph=(t,n)=>t.replace(/\{osada\}/g,os).replace(/\{n\}/g,n);for(let i=0;i<c;i++){if(Math.random()<.6&&ks.length){const n=5+Math.floor(Math.random()*10),k=ks[Math.floor(Math.random()*ks.length)];o.push({t:'kill',k,need:n,have:0,m,xk:.8*n/3,gk:1.2*n,tx:`Zabij ${n}× ${E[k][0]}`,ds:ph(QK[Math.floor(Math.random()*QK.length)][0],n)})}else{const d=10+Math.floor(Math.random()*30);o.push({t:'reach',need:d,have:0,m,xk:.08*d,gk:.25*d,tx:`Dojdź ${d} pól (zlecenie: ${os})`,ds:QR[Math.floor(Math.random()*QR.length)]})}}return o}
 function qRew(q){if(q.xk==null)return[q.gold||0,q.xp||0];const m=q.m!=null?q.m:(S.map||0),A=actOf(m),el=Math.round((A.elLo+A.elHi)/2),L=S.p.lvl,lr=Math.max(1,Math.min(100,L,A.elHi));return[Math.round(q.gk*goldFight(el,1,m)),Math.round(q.xk*xpn(lr)/A.fpl*A.xp*XPEN(L-A.elHi))]}
@@ -1463,6 +1554,7 @@ const thd=p=>`<div class="thd"><button data-a="${TSEC?'back':'tx'}">${TSEC?'← 
 const VIMG={};function vimgOk(n){if(n in VIMG)return VIMG[n];if(!VIMG['_'+n]){VIMG['_'+n]=1;const im=new Image();im.onload=()=>{VIMG[n]=true;if($('town').classList.contains('on')&&!TSEC)openTown()};im.onerror=()=>{VIMG[n]=false};im.src='assets/world/'+n+'.jpg'}return false}
 const npcBan=sv=>{const T=TCUR||{poi:'miasto',x:0,y:0},t=['wioska','obozowisko','klasztor'].includes(T.poi)?'w':'m',g=(Math.abs((T.x||0)*7+(T.y||0)*13))%2?'f':'m';return `<div class="npcb"><img src="assets/world/w_npc_${sv}_${t}${g}.jpg" alt="" onerror="this.parentNode.remove()"></div>`};
 function openTown(){
+  {const q=sqStep();if(q&&q.t==='talk'&&!q.here&&!TSEC)setTimeout(sqTalk,350)}
   const p=S.p,c=rcost();p.q=p.q||[];if(!p.offers||!p.offers.length||(S.pt||0)-(p.offAt||0)>=900||(p.offers[0].m!=null&&p.offers[0].m!==(S.map||0))){p.offers=genOffers();p.offAt=S.pt||0}p.scrolls=p.scrolls||0;S.portals=S.portals||[0];p.mat.esn=p.mat.esn||0;
   let h=thd(p);if(!TSEC&&S.ret&&(!TCUR||TCUR.poi==='miasto'))h=h.replace(/<\/div>$/,`<button data-a="ret" style="margin:0">🌀 Wróć: ${S.ret.loc?POI[S.ret.loc.k]?POI[S.ret.loc.k][0]:'loch':'pole '+S.ret.x+','+S.ret.y}</button></div>`);
   if(!TSEC){
@@ -1840,7 +1932,7 @@ $('skills').addEventListener('click',e=>{const b=e.target.closest('button');if(b
 function wear(){Object.values(S.p.eq).forEach(i=>{if(Math.random()<.22&&i.d>0)i.d--})}
 function endFight(w){clearInterval(F.iv);F=null;setTimeout(()=>{if(!F)$('fight').classList.remove('on')},w&&AN()?430:0);wear()}
 function back(){if(S.px!==undefined){S.x=S.px;S.y=S.py}}
-function win(){if(F.rift){riftWin();return}heroAnim('win');const zb=F.pk&&F.pk.has('zbiory');
+function win(){if(F.rift){riftWin();return}const sqf=F.sq;heroAnim('win');const zb=F.pk&&F.pk.has('zbiory');
   const bs=F.g.boss,ky=F.g.key,nn=F.g.n,bt=Math.round((Date.now()-(F.t0||Date.now()))/1000),p=S.p,x=Math.round(F.xp*F.g.n),gb=F.gold||0,fr=F.g.free,ff=F.f,k=F.f.x+','+F.f.y;if(F.g.wd){if(S.wd)delete S.wd[k]}else{(S.dead[k]=S.dead[k]||[]).push(F.i);if(typeof F.f.x==='number'){S.dt=S.dt||{};S.dt[k]=S.steps}}deathFx();endFight(1);p.dths=0;if(fr){S.free=S.free||{};S.free[ckey(ff)]=1;if(S.inv&&S.inv[ckey(ff)]){delete S.inv[ckey(ff)];if(S.invT)delete S.invT[ckey(ff)];INVW=1}else toast('Osada odbita z rąk demonów!',3500)}
   const up=gainXp(x);S.kills=(S.kills||0)+nn;S.best[ky]=(S.best[ky]||0)+nn;if(bs||ky==='krolowa'||ky==='licz'){if(!S.rec.boss||bt<S.rec.boss)S.rec.boss=bt}if(p.bl){p.bl.n--;if(p.bl.n<=0)p.bl=null}
   if(up){p.hp=mh();p.mana=mm();p.sta=sm()}
@@ -1853,7 +1945,7 @@ function win(){if(F.rift){riftWin();return}heroAnim('win');const zb=F.pk&&F.pk.h
   if(Math.random()<.25)lo.push({k:'item',it:genItem()});if(nn>=4&&Math.random()<.15)lo.push({k:'item',it:genItem()});
   if(Math.random()<.2)lo.push(rndPot());if(Math.random()<(bs||ky==='krolowa'||ky==='licz'?1:.05))lo.push(rndGem());regDrop(lo,bs?'boss':ctxReg(),bs?3:(nn>=4?1.3:1));if(bs)regDrop(lo,ctxReg(),2);
   sfx.win();if(up){sfx.lvl();banner('POZIOM '+p.lvl+'!','#ffd34a');burst(innerWidth/2,innerHeight*.45,['⭐','✨','🔥'],26,210)}
-  toast(`Wygrana! +${x} XP · ${lt}`+(up?` · poziom ${p.lvl}!`:''));save();render();openLoot(lo,'Łup po walce');
+  toast(`Wygrana! +${x} XP · ${lt}`+(up?` · poziom ${p.lvl}!`:''));try{sqAfterWin(sqf,bs,ky,lo)}catch(e){}save();render();openLoot(lo,'Łup po walce');
 }
 function lose(){
   if(RFT){endFight();riftEnd(0);return}
