@@ -994,7 +994,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.72';
+const VER='0.73';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1780,7 +1780,7 @@ function enterLoc(f){if(F||!S.p.cls)return;S.cleared=S.cleared||{};if(S.cleared[
 $('hint').onclick=e=>{const b=e.target.closest('button');if(!b||F)return;if(b.dataset.p==='_s'){if(S.p.scrolls&&confirm('Użyć Odprysku Osi i wrócić do Osigrodu?'))useScroll();return}if(b.dataset.p)usePot(b.dataset.p)};
 let F=null;
 const alive=()=>F.u.filter(u=>u.hp>0).length,uel=i=>$('fico').children[i];
-const AOE=new Set(['i22','h9','p20','s6','s8','z8','z12','i4','i9','i12','i14','p9','p16','n16','i19','n9']);
+const AOE=new Set(['s27','z25','i22','h9','p20','s6','s8','z8','z12','i4','i9','i12','i14','p9','p16','n16','i19','n9']);
 function tgt(){let b=-1;if(F.tg!=null&&F.u[F.tg]&&F.u[F.tg].hp>0)return F.tg;F.u.forEach((u,i)=>{if(u.hp>0&&(b<0||u.hp<F.u[b].hp))b=i});return b}
 function killU(i){if(F.tg===i)F.tg=null;const el=uel(i);if(!el)return;el.classList.add('dead');if(!AN())return;const[x,y]=ctr(el);el.animate([{transform:'scale(1)',opacity:1},{transform:'scale(1.3) rotate(8deg)',opacity:.85,offset:.3},{transform:'scale(.2) rotate(-40deg)',opacity:0}],{duration:420,fill:'forwards'});burst(x,y,['💥','✨','⭐','🪙'],10,110)}
 function dealU(i,d){const u=F.u[i],a=Math.min(u.hp,d);u.hp-=a;if(u.hp<=1e-6){u.hp=0;killU(i);if(i===0&&F.g.boss)F.u.forEach((q,j)=>{if(q.hp>0){q.hp=0;killU(j)}})}F.hp=F.u.reduce((q,w)=>q+w.hp,0);return d-a}
@@ -1916,7 +1916,7 @@ function reaction(id,k){F.S=F.S||{};const S0=F.S,a=(SAP[id]||[]).map(x=>x[0]),on
   return{m,x,n}}
 function gangCheck(k,ao){F.S=F.S||{};const S0=F.S;if((k.t==='r'&&S0.poison>0)||(k.t==='d'&&S0.bleed>0)){const bo=1+.35*pkn('rozp');F.dots=F.dots||[];F.dots.push({dps:(atk()+sp())*.9*bo,t:8,k:'g',a:ao?1:0});S0.gang=8;S0.bleed=S0.poison=0;fl('GANGRENA!','#b8a04a',0,1);$('flog').textContent='Reakcja: GANGRENA';return true}return false}
 function cast(j,fromQ){
-  if(!F)return;if(!F.sl[j]){toast('Wolny slot: ułóż pasek w Postać → Pasek skilli');return}const k=F.sl[j].e,p=S.p,r=k.r;
+  if(!F)return;if(!F.sl[j]){toast('Wolny slot: ułóż pasek w Postać → Pasek skilli');return}const k=F.sl[j].e,p=S.p,r=k.r;{const nw=F.sl[j].x&&F.sl[j].x.w;if(nw&&!nw.some(w=>(F.wa||wkAll()).includes(w))){toast('Ten skill wymaga: '+nw.map(w=>WKN[w].toLowerCase()).join(' / '));return}}
   const sk=k.t==='m'&&F.pk.has('skupienie'),cost=sk?Math.round(k.c*.75):k.c;if(F.cd[j]>0){if(!fromQ&&F.cd[j]<=.6)F.q={j,t:Date.now()};return}if(p[r]<cost){toast('Za mało '+(r==='mana'?'many':'staminy'));return}
   p[r]-=cost;F.cd[j]=k.cd*(sk?1.2:1);F.cdm=F.cdm||[];F.cdm[j]=F.cd[j];if(k.t==='m'&&F.pk.has('przeplyw'))F.cd=F.cd.map((c,q)=>q===j?c:Math.max(0,c-1));const prev=F.lc&&Date.now()-F.lc.at<8000?F.lc.t:'';F.lc={t:k.t,at:Date.now()};sfx.skill();const ao=AOE.has(F.sl[j].id);skillFx(F.sl[j],k,ao);
   if(k.t==='h'){const hv=Math.round(mh()*k.m/100)+sp();p.hp=Math.min(mh(),p.hp+hv);if(F.pk.has('blogo'))F.sh=(F.sh||0)+Math.round(hv*.5);if(F.pk.has('pochl'))hit(Math.round(hv*.8))}
@@ -2044,7 +2044,8 @@ const TR=[
 ['w10','Święty płomień','w2','a',{t:'m',r:'mana',c:30,cd:8,m:3.4}],['w11','Błogosławiony młot','w6','a',{t:'p',r:'sta',c:30,cd:10,m:4.5}],['w12','Odnowa','w4','p',{hpp:6,wit:2}],
 ['w13','Aura odnowy','w5','a',{t:'h',r:'mana',c:35,cd:14,m:25}],['wx4','Świetlista reakcja','w10','p',{},{f:'kat',ex:'wC',ic:'✨',d:'Każda reakcja zwraca 12% many i staminy.'}],
 ['h9','Burza ognia i lodu','h2,i21','a',{t:'m',r:'mana',c:60,cd:16,m:9}],['hx3','Zapis statusów','h1','p',{},{f:'trwale',ex:'hA',ic:'📜',d:'Statusy na wrogu trwają o 40% dłużej.'}],['h10','Władca reakcji','h9','p',{spp:6,atkp:6}],
-['h7','Mroczny wojownik','s7,n8','p',{atkp:6,ls:3}],['h8','Druidzka magia','p4,w4','p',{hpp:6,spp:6}]];
+['h7','Mroczny wojownik','s7,n8','p',{atkp:6,ls:3}],['h8','Druidzka magia','p4,w4','p',{hpp:6,spp:6}],
+['s25','Uderzenie tarczą','s2','a',{t:'p',r:'sta',c:18,cd:5,m:3.6},{w:['tarcza']}],['s26','Gniew buzdygana','s2','a',{t:'p',r:'sta',c:22,cd:6,m:4.6},{w:['buzdygan']}],['s27','Zamach halabardą','s2','a',{t:'p',r:'sta',c:26,cd:7,m:3.4},{w:['halabarda']}],['w14','Modlitwa z księgi','w2','a',{t:'h',r:'mana',c:22,cd:9,m:26},{w:['ksiega']}],['w15','Tarcza wiary','w1','a',{t:'p',r:'sta',c:16,cd:5,m:3.4},{w:['tarcza']}],['w16','Młot światła','w2','a',{t:'p',r:'sta',c:22,cd:6,m:4.4},{w:['buzdygan']}],['z25','Cios halabardą','z2','a',{t:'p',r:'sta',c:24,cd:7,m:3.2},{w:['halabarda']}],['z26','Strzał z biodra','z2','a',{t:'p',r:'sta',c:14,cd:3,m:3.4},{w:['luk']}],['p22','Celny strzał','p2','a',{t:'p',r:'sta',c:16,cd:3,m:3.8},{w:['luk']}],['i27','Pocisk różdżki','i2','a',{t:'m',r:'mana',c:10,cd:2,m:2.8},{w:['rozdzka']}],['i28','Zaklęcie z księgi','i2','a',{t:'m',r:'mana',c:24,cd:7,m:5},{w:['ksiega']}],['n21','Rzut czaszką','n2','a',{t:'m',r:'mana',c:18,cd:5,m:4.4},{w:['czaszka']}],['n22','Mroczny pocisk','n2','a',{t:'m',r:'mana',c:10,cd:2,m:2.8},{w:['rozdzka']}],];
 const TN={};TR.forEach(r=>TN[r[0]]={id:r[0],n:r[1],par:r[2]?r[2].split(','):[],t:r[3],e:r[4],x:r[5]||null});
 const TD={};
 const dep=id=>TD[id]??(TD[id]=TN[id].par.length?1+Math.max(...TN[id].par.map(dep)):0);
@@ -2112,16 +2113,20 @@ $('skb').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.p
   else if(a.startsWith('ld')){const q=(p.bars||[])[+a.slice(2)];if(q){p.lo=q.filter(id=>p.tr.includes(id)&&TN[id]).slice(0,4);SBSEL=-1;toast('Układ wczytany')}}
   save();showBar()};
 const BRN={s:'Siła',z:'Zwinność',i:'Umysł',w:'Życie',n:'Mrok',p:'Natura',h:'Hybrydy'},BRI={s:'💪',z:'🌀',i:'🧠',w:'❤️',n:'💀',p:'🌿',h:'⚗️'},BRC={s:'#d2573d',z:'#4fb36e',i:'#4f8fe6',w:'#e0709f',n:'#9a5ad0',p:'#8fbf3a',h:'#e0b04a'},BRB={s:'Wojownik',z:'Zabójca',i:'Mag',w:'Obrońca',n:'Nekromanta',p:'Łowca',h:'Mistrz hybryd'};
+// gałęzie klas: własna (cała) + pokrewna (2 pierwsze poziomy) + hybrydy
+const CLBR={silacz:['s','w'],paladyn:['w','s'],atleta:['z','w'],'łowca':['p','z'],uczony:['i','w'],nekromanta:['n','i']};
+const brOk=id=>{if(id==='o')return true;const b=id[0],c=CLBR[S.p.cls];if(!c||b==='h'||b===c[0])return true;return b===c[1]&&dep(id)<=2};
+const brTabs=()=>{const c=CLBR[S.p.cls];return c?[c[0],c[1],'h']:Object.keys(BRN)};
 const rsCost=()=>100*S.p.lvl*(1+(S.p.rsn||0));
 let TAB='s',TPATH=new Set();
 const brOf=id=>id[0],ownN=id=>rk(id)>0;
 function pathTo(id){const memo={},f=q=>{if(q in memo)return memo[q];if(ownN(q))return memo[q]=[];const n=TN[q];memo[q]=null;let best=null;for(const pr of n.par){const a=f(pr);if(a&&(!best||a.length<best.length))best=a}if(!best&&n.par.length)return memo[q]=null;return memo[q]=[...(best||[]),q]};return f(id)}
-function canBuy(id){const p=S.p,r=rk(id),m=mxOf(id);if(r>=m)return[false,'Maksymalna ranga'];if(r===0){const c=cflOf(id);if(c)return[false,`Wykluczone przez: ${c.n}`];if(!TN[id].par.some(ownN))return[false,'Najpierw odblokuj poprzedni węzeł']}
+function canBuy(id){const p=S.p,r=rk(id),m=mxOf(id);if(!brOk(id))return[false,`Niedostępne dla klasy ${CL[p.cls]?CL[p.cls][4]:''}${CLBR[p.cls]&&id[0]===CLBR[p.cls][1]?' (z tej gałęzi tylko 2 pierwsze poziomy)':''}`];if(r>=m)return[false,'Maksymalna ranga'];if(r===0){const c=cflOf(id);if(c)return[false,`Wykluczone przez: ${c.n}`];if(!TN[id].par.some(ownN))return[false,'Najpierw odblokuj poprzedni węzeł']}
   if(p.lvl<rqLv(id,r+1))return[false,`Ranga ${r+1} od poziomu ${rqLv(id,r+1)}`];if(p.ps<1)return[false,'Brak punktów drzewka'];return[true,'']}
 function nodeNow(id,r){const n=TN[id];if(n.t==='p'){const b=Object.entries(n.e||{}).map(([k,v])=>(v*r>0?'+':'')+(+(v*r).toFixed(1))+' '+LB[k]).join(', ');return [b,n.x&&n.x.d].filter(Boolean).join(' · ')||'Środek drzewka'}
   const e=skE(id,r);return `${skDesc(e)}${stTx(id,e)}<br><small>Koszt ${e.c} ${e.r==='mana'?'many':'staminy'} · odnowienie ${e.cd} s${e.d!=null&&!'pmhs'.includes(e.t)?' · czas '+e.d+' s':''}</small>`}
 function diffHtml(a,b){const ta=a.split(/(\d+(?:[.,]\d+)?)/),tb=b.split(/(\d+(?:[.,]\d+)?)/);return tb.map((t,i)=>i%2&&ta[i]!==t?`<b class="gr">${t}</b>`:t).join('')}
-function treeNode(id){const n=TN[id],r=rk(id),m=mxOf(id),cf=!ownN(id)&&cflOf(id),av=!ownN(id)&&!cf&&n.par.some(ownN),req=n.par.filter(q=>q!=='o'&&brOf(q)!==brOf(id)),hp=n.par.some(q=>q!=='o'&&brOf(q)===brOf(id)),ho=n.par.some(q=>brOf(q)===brOf(id)&&ownN(q)),eo=exOth(id),ts=TSEL&&TN[TSEL],hk=ts&&brOf(TSEL)===brOf(id)&&!TPATH.has(id)&&id!==TSEL?(ts.par.includes(id)?' hlp':n.par.includes(TSEL)?' hlc':' dim'):'';
+function treeNode(id){const n=TN[id],r=rk(id),m=mxOf(id),cf=!ownN(id)&&(cflOf(id)||(!brOk(id)?{n:'klasa'}:null)),av=!ownN(id)&&!cf&&n.par.some(ownN),req=n.par.filter(q=>q!=='o'&&brOf(q)!==brOf(id)),hp=n.par.some(q=>q!=='o'&&brOf(q)===brOf(id)),ho=n.par.some(q=>brOf(q)===brOf(id)&&ownN(q)),eo=exOth(id),ts=TSEL&&TN[TSEL],hk=ts&&brOf(TSEL)===brOf(id)&&!TPATH.has(id)&&id!==TSEL?(ts.par.includes(id)?' hlp':n.par.includes(TSEL)?' hlc':' dim'):'';
   return `<button class="tn${n.t==='a'?' a':' p'}${n.x&&(n.x.f||n.x.ar||n.x.wp||n.x.ex)?' kx':''}${ownN(id)?(r>=m?' own max':' own'):cf?' bl':av?' av':''}${TSEL===id?' sel':''}${TPATH.has(id)?' pth':''}${hk}${hp?' hp':''}${ho?' ho':''}" data-n="${id}"><b class="tnc">${tIc(id)}${cf?'<i class="lck">🔒</i>':''}</b>${m>1&&(r>0)?`<i class="rkb">${r}/${m}</i>`:''}<span class="tnn">${n.n}</span>${req.length?`<small class="rq">wymaga: ${req.map(q=>TN[q].n+' ('+BRN[brOf(q)]+')').join(', ')}</small>`:''}${eo.length?`<small class="exl">wyklucza: ${eo.map(q=>q.n).join(', ')}</small>`:''}</button>`}
 function treeBranch(b){const ids=Object.keys(TN).filter(id=>id!=='o'&&brOf(id)===b),by={};ids.forEach(id=>(by[dep(id)]=by[dep(id)]||[]).push(id));let h='';
   Object.keys(by).sort((a,c)=>a-c).forEach(d=>{const units=[],seen=new Set();
@@ -2129,7 +2134,7 @@ function treeBranch(b){const ids=Object.keys(TN).filter(id=>id!=='o'&&brOf(id)==
     const rows=[];let cur=[],n=0;units.forEach(u=>{if(n+u.length>3){rows.push(cur);cur=[];n=0}cur.push(u);n+=u.length});if(cur.length)rows.push(cur);
     h+=`<div class="tier"><h4>Poziom ${d}</h4>${rows.map(r=>`<div class="trow">${r.map(u=>u.length>1?`<div class="exg" style="flex:${u.length}"><small>Wybierz jedną</small><div class="exi">${u.map(treeNode).join('')}</div></div>`:treeNode(u[0])).join('')}</div>`).join('')}</div>`});return h}
 function showTree(){
-  const p=S.p;syncTr(p);const n=TSEL&&TN[TSEL],lo=p.lo.includes(TSEL),sp={};Object.keys(p.rk).forEach(id=>{if(p.rk[id]>0&&id!=='o'){const b=brOf(id);sp[b]=(sp[b]||0)+p.rk[id]}});
+  const p=S.p;if(!brTabs().includes(TAB))TAB=brTabs()[0];syncTr(p);const n=TSEL&&TN[TSEL],lo=p.lo.includes(TSEL),sp={};Object.keys(p.rk).forEach(id=>{if(p.rk[id]>0&&id!=='o'){const b=brOf(id);sp[b]=(sp[b]||0)+p.rk[id]}});
   const tot=Object.values(sp).reduce((a,b)=>a+b,0)||1,top=Object.keys(sp).sort((a,b)=>sp[b]-sp[a]),bn=top.length?`${BRB[top[0]]}${top[1]?` (${BRN[top[0]]} + ${BRN[top[1]]})`:` (${BRN[top[0]]})`}`:'Bez specjalizacji';
   let det='';
   if(n){const r=rk(TSEL),m=mxOf(TSEL),cb=canBuy(TSEL),av=!ownN(TSEL)&&n.par.some(ownN),cf=!ownN(TSEL)&&cflOf(TSEL),pt=!ownN(TSEL)&&!av?pathTo(TSEL):null;
@@ -2141,7 +2146,7 @@ function showTree(){
   $('tree').innerHTML=`<div class="thd"><button data-a="tx">✕ Zamknij</button><button data-a="bar">Pasek skilli</button><button data-a="rs">Reset (${rsCost()} zł)</button></div>
   <p style="margin:6px 0 2px">Wolne punkty: <b>${p.ps}</b> · <small>pasek walki: ${p.lo.map(i=>TN[i].n+' '+rk(i)).join(', ')||'—'}</small></p>
   <div class="tov"><b>${bn}</b><div class="tbr">${Object.keys(BRN).map(k=>`<i style="width:${(sp[k]||0)/tot*100}%;background:${BRC[k]}"></i>`).join('')}</div></div>
-  <div class="ttabs">${Object.keys(BRN).map(k=>`<button data-a="tab:${k}" class="${TAB===k?'on':''}" style="--bc:${BRC[k]}">${BRI[k]}<small>${sp[k]||0}</small></button>`).join('')}</div>
+  <div class="ttabs">${brTabs().map(k=>`<button data-a="tab:${k}" class="${TAB===k?'on':''}" style="--bc:${BRC[k]}">${BRI[k]}<small>${sp[k]||0}</small></button>`).join('')}</div>
   <h3 style="color:${BRC[TAB]}">${BRI[TAB]} ${BRN[TAB]}</h3>${treeBranch(TAB)}<div style="height:${n?'52vh':'130px'}"></div>${det||`<div id="tdet" class="mini"><small>Dotknij węzła, aby zobaczyć opis i ulepszyć rangę. Ozdobne węzły to talenty (ranga 1), a ramka „Wybierz jedną” oznacza talenty, które się wykluczają. COMBO w 8 s: osłabienie → atak ×1.5 · tarcza → cios ×1.3 · krwawienie/trucizna → czar ×1.4</small></div>`}`;
   $('tree').classList.add('on');
 }
@@ -2161,6 +2166,7 @@ $('tree').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.
 if(!S.shA){S.shA={};(S.portals||[]).forEach(m=>{if(m>0)S.shA[m-1]=1});S.shards=Math.min(5,Object.keys(S.shA).length)}
 S.chs=S.chs||{};S.ground=S.ground||{};S.evs=S.evs||{};S.cnt=S.cnt||{};S.rec=S.rec||{};S.best=S.best||{};S.ach=S.ach||{};if(S.loc&&!S.loc.id)S.loc=null;
 if(S.p.cls&&!S.p.tr)initTree(S.p);else if(S.p.cls&&S.p.tr)migTree(S.p);
+if(S.p.cls&&S.p.trc!==1){S.p.trc=1;if(Object.keys(S.p.rk||{}).some(id=>S.p.rk[id]>0&&TN[id]&&!brOk(id))){initTree(S.p);setTimeout(()=>toast('Klasy mają teraz własne gałęzie umiejętności. Drzewko zresetowane za darmo – rozdaj punkty od nowa.',7000),2500)}}
 if(S.p.lo&&S.p.lo.length>4)S.p.lo.length=4;
 render();
 if(S.loot)showLoot();
