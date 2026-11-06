@@ -768,7 +768,7 @@ $('smith').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b
   if(a.startsWith('wg:')){WGEM=WGEM===a.slice(3)?null:a.slice(3);showSmith();return}
   if(a==='gadd'){const it=ESEL&&getIt(ESEL),g=WGEM;if(!it||!g||!(p.gem[g]>0))return;it.so=it.so||[];if(it.so.length>=(it.sn||0))return;p.gem[g]--;it.so.push(g);toast(`${gName(g)} wstawiony: ${gemEff(g,enG(it))}`);sfx.loot();if(!(p.gem[g]>0))WGEM=null;save();showSmith();return}
   if(a.startsWith('up:')){const it=getIt(a.slice(3));if(!it)return;const[g,st]=upCost(it);if(p.gold<g||p.mat.stal<st){toast('Za mało złota lub stali');return}p.gold-=g;p.mat.stal-=st;
-    if(Math.random()*100<upCh(it)){it.up=(it.up||0)+1;toast(`Ulepszono do +${it.up}!`);sfx.win();if(it.up>=5)S.cnt.up5=1}else{toast('Ulepszenie nieudane, materiały stracone');sfx.hurt()}}
+    if(Math.random()*100<upCh(it)){it.up=(it.up||0)+1;uiFx('upgrade',200,1000,40);toast(`Ulepszono do +${it.up}!`);sfx.win();if(it.up>=5)S.cnt.up5=1}else{toast('Ulepszenie nieudane, materiały stracone');sfx.hurt()}}
   else if(a.startsWith('gm:')){const q=a.split(':'),g=q.pop(),it=getIt(q.slice(1).join(':'));if(!it||!(p.gem[g]>0))return;it.so=it.so||[];if(it.so.length>=(it.sn||0))return;p.gem[g]--;it.so.push(g);toast(`${gName(g)} wstawiony: ${gemEff(g,enG(it))}`);sfx.loot()}
   else if(a.startsWith('gc:')){const k=a.slice(3),[b,t]=gP(k);if((p.gem[k]||0)<3||t>=4||p.gold<gCost(t)){toast('Nie można połączyć');return}p.gold-=gCost(t);p.gem[k]-=3;const nk=gKey(b,t+1);p.gem[nk]=(p.gem[nk]||0)+1;toast(`Połączono: ${gName(nk)}`);sfx.win()}
   else if(a==='gca'){let n=0;for(let t=1;t<=3;t++)Object.keys(GEM).forEach(b=>{const k=gKey(b,t),nk=gKey(b,t+1);while((p.gem[k]||0)>=3&&p.gold>=gCost(t)){p.gold-=gCost(t);p.gem[k]-=3;p.gem[nk]=(p.gem[nk]||0)+1;n++}});toast(n?`Połączono ${n}× — klejnoty ulepszone`:'Nic do połączenia lub brak złota');if(n)sfx.win()}
@@ -800,8 +800,8 @@ $('ench').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.
   if(a&&a.startsWith('s:')){ESEL=a.slice(2);WPICK=false;showEnch();return}
   const it=ESEL&&getIt(ESEL);if(!it)return;p.mat.esn=p.mat.esn||0;
   const pay=c=>{if(p.gold<c.g||p.mat.esn<c.e){toast('Za mało złota lub esencji');return false}p.gold-=c.g;p.mat.esn-=c.e;return true};
-  if(a==='ea'&&!it.en){if(!pay(enAdd(it)))return;it.en={k:enPick(it),l:1};toast('Zaklęcie: '+ENS[it.en.k][0]);sfx.skill()}
-  else if(a==='eu'&&it.en&&it.en.l<5){const u=enUp(it);if(!pay(u))return;if(Math.random()*100<u.c){it.en.l++;toast(`Zaklęcie wzmocnione: ${it.en.l}/5`);sfx.win()}else{toast('Wzmocnienie nieudane, materiały stracone');sfx.hurt()}}
+  if(a==='ea'&&!it.en){if(!pay(enAdd(it)))return;it.en={k:enPick(it),l:1};uiFx('enchant',200,1000,40);toast('Zaklęcie: '+ENS[it.en.k][0]);sfx.skill()}
+  else if(a==='eu'&&it.en&&it.en.l<5){const u=enUp(it);if(!pay(u))return;if(Math.random()*100<u.c){it.en.l++;uiFx('enchant',200,1000,40);toast(`Zaklęcie wzmocnione: ${it.en.l}/5`);sfx.win()}else{toast('Wzmocnienie nieudane, materiały stracone');sfx.hurt()}}
   else if(a==='er'&&it.en){if(!pay(enRe(it)))return;it.en.k=enPick(it);toast('Nowe zaklęcie: '+ENS[it.en.k][0]);sfx.skill()}
   else if(a==='es'&&(it.sn||0)<3){const k=enSock(it);if(!pay(k))return;if(Math.random()*100<k.c){it.sn=(it.sn||0)+1;toast('Nowe gniazdo!');sfx.chest()}else{toast('Nie udało się, materiały stracone');sfx.hurt()}}
   else if(a==='ed'&&ESEL[0]==='b'){if((it.r>=2||it.en||(it.so&&it.so.length))&&!confirm(`Rozbić „${it.n}” na ${deVal(it)} esencji? To nieodwracalne.${it.so&&it.so.length?' Klejnoty wrócą do Ciebie.':''}`))return;retGems(it);p.mat.esn+=deVal(it);p.bag=p.bag.filter(o=>o!==it);ESEL=null;toast('Rozbito');sfx.loot()}
@@ -831,10 +831,10 @@ $('shop').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.
   if(a==='bgx'){const c=bagCost();if((p.bagX||0)>=6||p.gold<c)return;p.gold-=c;p.bagX=(p.bagX||0)+1;toast('Plecak powiększony: '+BCAP()+' miejsc');sfx.win();save();showShop();return}
   if(a==='sma'){p.bag.forEach(o=>SHS.add('b:'+o.id));showShop();return}
   if(a==='smn'){SHS.clear();SSEL=null;showShop();return}
-  if(a==='sml'){const l=p.bag.filter(o=>SHS.has('b:'+o.id));if(!l.length)return;const v=l.reduce((n,o)=>n+sellPrice(o),0),risk=l.some(o=>o.r>=2||o.en||(o.so&&o.so.length)||o.set||o.fx);if(risk&&!confirm(`Wśród zaznaczonych są cenne przedmioty. Sprzedać ${l.length} szt. za ${v} zł?`))return;p.gold+=v;p.bag=p.bag.filter(o=>!l.includes(o));SHS.clear();SSEL=null;toast(`Sprzedano ${l.length} szt. za ${v} zł`);sfx.loot();save();showShop();return}
+  if(a==='sml'){const l=p.bag.filter(o=>SHS.has('b:'+o.id));if(!l.length)return;const v=l.reduce((n,o)=>n+sellPrice(o),0),risk=l.some(o=>o.r>=2||o.en||(o.so&&o.so.length)||o.set||o.fx);if(risk&&!confirm(`Wśród zaznaczonych są cenne przedmioty. Sprzedać ${l.length} szt. za ${v} zł?`))return;p.gold+=v;p.bag=p.bag.filter(o=>!l.includes(o));SHS.clear();SSEL=null;uiFx('gold_pickup',170,900,40);toast(`Sprzedano ${l.length} szt. za ${v} zł`);sfx.loot();save();showShop();return}
   if(a&&a.startsWith('bk')){const r=+a.slice(2),c=[40+p.lvl*10,(40+p.lvl*10)*3,(40+p.lvl*10)*9][r];if(p.gold<c||p.bag.length>=BCAP()){toast(p.bag.length>=BCAP()?'Plecak pełny':'Za mało złota');return}p.gold-=c;const it=r?genItem(r):genItem();p.bag.push(it);toast('Kupiono: '+it.n);sfx.loot()}
-  else if(a==='bvl'){const l=valL(),v=l.reduce((n,o)=>n+sellPrice(o),0);if(!l.length)return;if(!confirm(`Sprzedać ${l.length} cennych szt. za ${v} zł? (lepsze od założonych zostają)`))return;p.gold+=v;p.bag=p.bag.filter(o=>!l.includes(o));SSEL=null;toast(`Sprzedano ${l.length} szt. za ${v} zł`);sfx.loot()}
-  else if(a&&a.startsWith('bs')){const l=bulkL(+a.slice(2)),v=l.reduce((n,o)=>n+sellPrice(o),0);if(!l.length)return;if(+a.slice(2)>=2&&!confirm(`Sprzedać ${l.length} szt. za ${v} zł?`))return;p.gold+=v;p.bag=p.bag.filter(o=>!l.includes(o));SSEL=null;toast(`Sprzedano ${l.length} szt. za ${v} zł`);sfx.loot()}
+  else if(a==='bvl'){const l=valL(),v=l.reduce((n,o)=>n+sellPrice(o),0);if(!l.length)return;if(!confirm(`Sprzedać ${l.length} cennych szt. za ${v} zł? (lepsze od założonych zostają)`))return;p.gold+=v;p.bag=p.bag.filter(o=>!l.includes(o));SSEL=null;uiFx('gold_pickup',170,900,40);toast(`Sprzedano ${l.length} szt. za ${v} zł`);sfx.loot()}
+  else if(a&&a.startsWith('bs')){const l=bulkL(+a.slice(2)),v=l.reduce((n,o)=>n+sellPrice(o),0);if(!l.length)return;if(+a.slice(2)>=2&&!confirm(`Sprzedać ${l.length} szt. za ${v} zł?`))return;p.gold+=v;p.bag=p.bag.filter(o=>!l.includes(o));SSEL=null;uiFx('gold_pickup',170,900,40);toast(`Sprzedano ${l.length} szt. za ${v} zł`);sfx.loot()}
   else if(a==='sl'){const it=SSEL&&getIt(SSEL);if(!it||SSEL[0]!=='b')return;const v=sellPrice(it);if((it.r>=2||it.en||(it.so&&it.so.length))&&!confirm(`Sprzedać „${it.n}” za ${v} zł?`))return;p.gold+=v;p.bag=p.bag.filter(o=>o!==it);SSEL=null;toast(`Sprzedano za ${v} zł`);sfx.loot()}
   save();showShop()};
 // ---------- schowek w mieście ----------
@@ -1000,7 +1000,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.77b';
+const VER='0.78';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1539,12 +1539,12 @@ function sqNext(){const m=SQM();S.sqa[m]=sqSt()+1;const q=sqStep();save();
  if(q&&q.t==='talk'&&q.here)setTimeout(()=>{if(!$('loot').classList.contains('on'))sqTalk();else{const w=setInterval(()=>{if(!$('loot').classList.contains('on')){clearInterval(w);sqTalk()}},500)}},700);
  else if(q){const o=sqObj();if(o)toast('📜 Nowy cel: '+o,4500)}
  try{render()}catch(_){}}
-function sqTick(){const q=sqStep();if(!q)return;if((q.t==='pass'&&(S.pass||0)>=2)||(q.t==='free'&&Object.keys(S.free||{}).length>=q.need)){toast('📜 Cel wykonany!',3000);sqNext()}}
+function sqTick(){const q=sqStep();if(!q)return;if((q.t==='pass'&&(S.pass||0)>=2)||(q.t==='free'&&Object.keys(S.free||{}).length>=q.need)){uiFx('quest_complete',210,1200,38);toast('📜 Cel wykonany!',3000);sqNext()}}
 function sqArrive(x,y){const q=sqStep();if(!q||q.t!=='fight'||F)return false;const p=sqPos();if(!p||p[0]!==x||p[1]!==y)return false;
  sqDlg(q.nm,null,q.txt,'Do walki!',()=>{const A=actOf(),f=field(x,y),el=Math.max(elAt(x,y,SQM()),Math.min(A.elHi,S.p.lvl)),g={key:q.k,n:q.n,ag:true,px:50,py:62};
   startFight(0,false,{f:{...f,x:'q'+SQM(),y:sqSt(),foes:[g],nm:q.nm},g,el,bg:f.t,nr:1,hm:q.hm||1,xp:xpn(Math.min(S.p.lvl,A.elHi))/A.fpl*A.xp*.7,gm:1.5});if(F){F.sq=1;$('flog').textContent=q.nm+'!'}});return true}
 function sqAfterWin(sqf,bs,ky,lo){const q=sqStep();if(!q)return;
- if(sqf&&q.t==='fight'){const A=actOf();lo.push({k:'item',it:genItem(2)});const g=Math.round(goldFight(A.elHi,3,SQM())*6);S.p.gold+=g;gainXp(xpn(Math.min(S.p.lvl,A.elHi))*.12);setTimeout(()=>toast(`📜 ${q.nm}: wykonane! +${g} zł`,3500),300);sqNext()}
+ if(sqf&&q.t==='fight'){const A=actOf();lo.push({k:'item',it:genItem(2)});const g=Math.round(goldFight(A.elHi,3,SQM())*6);S.p.gold+=g;gainXp(xpn(Math.min(S.p.lvl,A.elHi))*.12);setTimeout(()=>{uiFx('quest_complete',210,1200,38);toast(`📜 ${q.nm}: wykonane! +${g} zł`,3500)},300);sqNext()}
  else if(bs&&q.t==='boss'&&ky===actOf().boss.k)sqNext()}
 
 function actIntro(m){const a=actOf(m);setTimeout(()=>{try{banner(`AKT ${a.id}: ${a.nm}`,'#ffd34a');toast(INTRO[Math.min(m,4)],9000);setTimeout(()=>toast(`Poziomy ${a.lv[0]}–${a.lv[1]} · ${a.mech}`,5000),9500)}catch(_){}},500)}
@@ -1673,7 +1673,7 @@ function objAct(a){if(F)return;const L=S.loc,f=cur();
   if(!L)return;
   if(a==='exit'){transit('Powrót na powierzchnię',()=>{S.loc=null;save();render(0,0,1)});return}
   if(a==='down'||a==='up'){const nf=L.fl+(a==='down'?1:-1);transit('Piętro '+(nf+1),()=>{L.fl=nf;const m=LM(L.id,L.fl,L.k),c=a==='down'?m.st:m.ex;L.x=c[0];L.y=c[1];L.px=undefined;save();render(0,0,1);ambush()})}}
-function openChest(key,big,k){const p=S.p,lo=[],g=(40+p.lvl*12+Math.floor(Math.random()*20))*(big?3:1);p.gold+=g;S.chs[key]=1;bump('ch');
+function openChest(key,big,k){uiFx('chest_open',200,1100,45);const p=S.p,lo=[],g=(40+p.lvl*12+Math.floor(Math.random()*20))*(big?3:1);p.gold+=g;S.chs[key]=1;bump('ch');
   const n=big?2:(Math.random()<.25?1:0)+1;for(let i=0;i<n;i++)lo.push({k:'item',it:genItem(big&&i===0?(Math.random()<.15?3:2):undefined,k==='ruiny'?.04:0)});
   lo.push({k:'szmaty',v:1+Math.floor(Math.random()*3)+(k==='jaskinia'?2:0)});if(big||Math.random()<.4)lo.push({k:'esn',v:big?3:1});lo.push({k:'stal',v:(big?3:1)+(k==='jaskinia'?1:0)});
   for(let i=0;i<(big?2:1)+(Math.random()<.5?1:0);i++)lo.push(rndPot());
@@ -1692,7 +1692,7 @@ function openLocMap(){const L=S.loc,c=$('mapc'),cs=Math.min(54,Math.floor(Math.m
   $('mapinfo').textContent=`${POI[L.k][0]} · piętro ${L.fl+1}/${L.fls} · jasne pokoje odwiedzone, ciemne jeszcze nie · amber: Ty`;$('ov').classList.add('on')}
 // ---------- łup po walce / ze skrzyni: wybierasz, co zabierasz ----------
 function lootTxt(o){return o.k==='item'?`${iic(o.it)} ${fmt(o.it)}`:o.k==='pot'?`${pI(o.pk)} ${POT[o.pk][0]} ×${o.v}`:o.k==='gem'?`${gI(o.gk)} ${gName(o.gk)} ×${o.v}`:o.k==='szmaty'?`${ui('szmaty','🧵')} Szmaty ×${o.v}`:o.k==='esn'?`${ui('esencja','✨')} Esencja ×${o.v}`:MR[o.k]?`${ui('m_'+o.k,MR[o.k][1])} ${MR[o.k][0]} ×${o.v}`:`${ui('stal','🔩')} Stal ×${o.v}`}
-function openLoot(l,t){if(!l.length){return}S.loot={t,l};save();showLoot(1);if(l.some(o=>o.k==='item'&&o.it.r===3)){banner('LEGENDARNY!','#ff9a3c');sfx.lvl()}}
+function openLoot(l,t){if(!l.length){return}S.loot={t,l};save();showLoot(1);if(l.some(o=>o.k==='item'&&o.it.r===3)){banner('LEGENDARNY!','#ff9a3c');sfx.lvl();uiFx('legendary_loot',230,1200,64)}else if(l.some(o=>o.k==='item'&&o.it.r===2))uiFx('rare_loot',190,1000,64)}
 function lootScore(it){return Object.values(it.s||{}).reduce((n,v)=>n+v,0)+(it.sn||0)*2+(it.fx?4:0)}
 function showLoot(fresh){const L=S.loot;if(!L||!L.l.length){S.loot=null;$('loot').classList.remove('on');return}
   const p=S.p,items=[],oth=[];L.l.forEach((o,i)=>(o.k==='item'?items:oth).push([o,i]));
@@ -1829,6 +1829,9 @@ const FXS={w18:['t','w18'],w23:['t','w23'],p23:['t','p23'],p24:['t','p24'],n24:[
  s8:['t','wir_ostrzy'],z8:['t','wir_ostrzy'],w2:['h','leczenie'],w5:['h','leczenie'],w13:['h','leczenie'],i10:['h','tarcza'],s14:['h','tarcza']};
 Object.assign(FXS,{i9:['t','p14_meteor'],i14:['t','p14_supernova'],i12:['t','p14_ice_storm'],i21:['t','p14_ice_spike'],i22:['t','p14_chain_lightning'],i6:['t','p14_thunder'],i23:['t','p14_arcane_burst'],s4:['t','p14_charge'],s8:['t','p14_blade_whirl'],n12:['t','p14_bone_prison'],n4:['h','p14_life_drain'],z6:['t','p14_shadow_step']});
 setTimeout(()=>Object.values(FXS).flat().forEach(n=>n.length>1&&fxImg(n)),2500);
+// efekty interfejsu (paczka 15): wyświetlane na środku ekranu, ponad oknami
+function uiFx(n,sz,dur,y){if(!AN())return;const im=fxImg('ui_'+n);const go=()=>{const e=document.createElement('div');sz=sz||200;e.style.cssText=`position:fixed;left:50%;top:${y||42}%;width:${sz}px;height:${sz}px;margin:${-sz/2}px 0 0 ${-sz/2}px;z-index:400;pointer-events:none;background:url(${im.src}) 0 0/800% 100% no-repeat;filter:drop-shadow(0 0 18px #000c)`;document.body.appendChild(e);const t0=performance.now();dur=dur||1100;const st=t=>{const k=Math.min(7,Math.floor((t-t0)/dur*8));e.style.backgroundPosition=`${k/7*100}% 0`;if(t-t0<dur)requestAnimationFrame(st);else e.animate([{opacity:1},{opacity:0}],{duration:250}).onfinish=()=>e.remove()};requestAnimationFrame(st)};if(im.complete&&im.naturalWidth)go();else im.onload=go}
+setTimeout(()=>['level_up','legendary_loot','rare_loot','chest_open','quest_complete','upgrade','enchant','gold_pickup'].forEach(n=>fxImg('ui_'+n)),3000);
 function skillFx(sk,k,aoe){if(!AN()||!F)return;const te=aoe?$('fico'):(uel(tgt())||$('fico')),tl=aoe?F.u.map((u,i)=>u.hp>0?uel(i):null).filter(Boolean):[te],fe=$('fe'),fr=fe.getBoundingClientRect(),col=SKC2[sk.id]||SKC[k.t]||'#fff',pos=el=>{const r=el.getBoundingClientRect();return[r.left-fr.left+r.width/2,r.top-fr.top+r.height/2]},[hx,hy]=pos($('fhero')),[ex,ey]=pos(te);
   const mk=(x,y,sz)=>{const e=document.createElement('div');e.style.cssText=`position:absolute;left:${x-sz/2}px;top:${y-sz/2}px;width:${sz}px;height:${sz}px;pointer-events:none;z-index:7;filter:drop-shadow(0 0 10px ${col})`;const im=new Image();im.src=`assets/skills/s_${sk.id}.png`;im.style.cssText='width:100%;height:100%;object-fit:contain';im.onerror=()=>{im.remove();e.textContent=SKI[k.t]||'✨';e.style.cssText+=`;font-size:${sz*.75}px;line-height:${sz}px;text-align:center`};e.appendChild(im);fe.appendChild(e);return e},
   ring=(x,y,sz,keep)=>{const e=document.createElement('div');e.style.cssText=`position:absolute;left:${x-sz/2}px;top:${y-sz/2}px;width:${sz}px;height:${sz}px;border-radius:50%;border:4px solid ${col};box-shadow:0 0 18px ${col},inset 0 0 18px ${col}66;pointer-events:none;z-index:6`;fe.appendChild(e);e.animate([{transform:'scale(.2)',opacity:.95},{transform:'scale(1.15)',opacity:keep?.7:0}],{duration:keep?700:520,easing:'ease-out'}).onfinish=()=>e.remove()},
@@ -1954,7 +1957,7 @@ function win(){if(F.rift){riftWin();return}const sqf=F.sq;heroAnim('win');const 
   if(Math.random()<.5)lo.push({k:'szmaty',v:1+Math.floor(Math.random()*2)});if(Math.random()<.2)lo.push({k:'stal',v:1});if(Math.random()<(bs||ky==='krolowa'||ky==='licz'?1:.1))lo.push({k:'esn',v:bs?5:1});
   if(Math.random()<.25)lo.push({k:'item',it:genItem()});if(nn>=4&&Math.random()<.15)lo.push({k:'item',it:genItem()});
   if(Math.random()<.2)lo.push(rndPot());if(Math.random()<(bs||ky==='krolowa'||ky==='licz'?1:.05))lo.push(rndGem());regDrop(lo,bs?'boss':ctxReg(),bs?3:(nn>=4?1.3:1));if(bs)regDrop(lo,ctxReg(),2);
-  sfx.win();if(up){sfx.lvl();banner('POZIOM '+p.lvl+'!','#ffd34a');burst(innerWidth/2,innerHeight*.45,['⭐','✨','🔥'],26,210)}
+  sfx.win();if(up){sfx.lvl();uiFx('level_up',240,1200,40);banner('POZIOM '+p.lvl+'!','#ffd34a');burst(innerWidth/2,innerHeight*.45,['⭐','✨','🔥'],26,210)}
   toast(`Wygrana! +${x} XP · ${lt}`+(up?` · poziom ${p.lvl}!`:''));try{sqAfterWin(sqf,bs,ky,lo)}catch(e){}save();render();openLoot(lo,'Łup po walce');
 }
 function lose(){
