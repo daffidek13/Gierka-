@@ -1491,7 +1491,7 @@ function travel(m){S.maps=S.maps||{};const o={};MK.forEach(k=>o[k]=S[k]);S.maps[
 const NPI=k=>`assets/world/w_npc_${k}.jpg`;
 // ---------- fabuła: imiona, płeć, karty ----------
 const SNM={ks:['Aurel','Aurela'],ci:['Ragnar','Ragna'],kr:'Solmar',ry:'Kasimir',lu:['Bogna','Bogdan']};
-const GX=t=>{if(t==null)return t;const f=S&&S.p&&S.p.g==='f'?1:0;return String(t).replace(/\{KS\}/g,SNM.ks[f]).replace(/\{CI\}/g,SNM.ci[f]).replace(/\{KR\}/g,SNM.kr).replace(/\{RY\}/g,SNM.ry).replace(/\{LU\}/g,SNM.lu[f]).replace(/\{LUI\}/g,NPI(f?'shop_wm':'zad_wf')).replace(/\{([^{}|]*)\|([^{}|]*)\}/g,(_,a,b)=>f?b:a)};
+const GX=t=>{if(t==null)return t;const f=S&&S.p&&S.p.g==='f'?1:0;return String(t).replace(/\{KS\}/g,SNM.ks[f]).replace(/\{CI\}/g,SNM.ci[f]).replace(/\{KR\}/g,SNM.kr).replace(/\{RY\}/g,SNM.ry).replace(/\{LU\}/g,SNM.lu[f]).replace(/\{LUI\}/g,`assets/world/w_npc_lu_${f?'m':'f'}.jpg|`+NPI(f?'shop_wm':'zad_wf')).replace(/\{([^{}|]*)\|([^{}|]*)\}/g,(_,a,b)=>f?b:a)};
 const PROLOG=[
  ['pr1','👑','Królestwo {KR}. Stary król umiera, a dwór dzieli się na dwa obozy. Ty, {KS}, {pierworodny syn|pierworodna córka} króla, masz prawo do tronu. Twój kuzyn {RY} ma za sobą połowę lordów i wszystkie ich miecze.'],
  ['pr2','⚔️','W {KR}ze nie ma potworów. Są tylko ludzie, a to w zupełności wystarcza. Od dziecka uczysz się szermierki, taktyki i tego, komu nie ufać. Na samej górze tej listy jest {RY}.'],
@@ -1603,7 +1603,7 @@ function sqObj(){const q=sqStep();if(!q)return null;const p=sqPos();
 function sqUi(){let e=$('sqt');if(!e){e=document.createElement('button');e.id='sqt';e.onclick=()=>sqShow();document.body.appendChild(e)}
  const o=!S.loc&&!F&&S.p&&S.p.cls?sqObj():null;e.style.display=o?'':'none';if(o)e.innerHTML=`<b>📜 ${['I','II','III','IV','V'][SQM()]}</b> ${o}`}
 function sqDlg(who,img,txt,btn,cb,ch){let d=$('sqd');if(!d){d=document.createElement('div');d.id='sqd';document.body.appendChild(d)}
- d.innerHTML=`<div class="sqc${who==='Ty'?' me':''}">${img?`<img src="${img}" alt="">`:''}<b>${who}</b><p>${txt}</p>${ch?ch.map((c,x)=>`<button class="ch" data-x="${x}">${c[0]}</button>`).join(''):`<button>${btn||'Dalej'}</button>`}</div>`;d.classList.add('on');d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.classList.remove('on');if(ch)ch[+b.dataset.x][1]();else cb&&cb()})}
+ d.innerHTML=`<div class="sqc${who==='Ty'?' me':''}">${img?`<img src="${img.split('|')[0]}"${img.includes('|')?` onerror="this.onerror=null;this.src='${img.split('|')[1]}'"`:''} alt="">`:''}<b>${who}</b><p>${txt}</p>${ch?ch.map((c,x)=>`<button class="ch" data-x="${x}">${c[0]}</button>`).join(''):`<button>${btn||'Dalej'}</button>`}</div>`;d.classList.add('on');d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.classList.remove('on');if(ch)ch[+b.dataset.x][1]();else cb&&cb()})}
 function sqShow(){const q=sqStep();if(!q)return;if(q.t==='talk'&&q.here){sqTalk();return}const o=sqObj();
  sqDlg(q.t==='talk'?q.who:'Zadanie',q.t==='talk'?q.img:null,q.t==='talk'?'Znajdziesz tę osobę w najbliższej osadzie.':((q.txt&&q.t!=='fight')?q.txt:`Cel: ${o}. ${q.t==='fight'?'Dojdź na to pole, a zaczniesz walkę.':''}`),'OK')}
 function sqNext(){const m=SQM();S.sqa[m]=sqSt()+1;const q=sqStep();save();
