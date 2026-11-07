@@ -553,9 +553,14 @@ const pI=k=>pic(`assets/ui/pot_${k}.png`,POT[k][1]),gI=k=>{const[b,t]=gP(k);retu
 const GCOL={rubin:['#d8334a','#ff93a0','#7d1020'],szafir:['#3b73e0','#9cc0ff','#17337c'],szmaragd:['#2fb866','#9af0b8','#0d5a2c'],topaz:['#e8b434','#ffe9a0','#8a620c'],onyks:['#4a4f63','#a0a6c0','#14161f'],ametyst:['#9a4fd8','#d9b0ff','#4a1a7a']};
 const gemSvg=k=>{const c=GCOL[k]||GCOL.onyks;return `<svg viewBox="0 0 32 32" style="width:1.15em;height:1.15em;vertical-align:-.22em"><path d="M16 3 27 11 16 29 5 11z" fill="${c[0]}" stroke="${c[2]}" stroke-width="1.2" stroke-linejoin="round"/><path d="M16 3 27 11 16 14 5 11z" fill="${c[1]}"/><path d="M5 11 16 14 16 29z" fill="${c[2]}" opacity=".55"/><path d="M10 7 14 5.5 12 9.5z" fill="#fff" opacity=".8"/></svg>`};
 const wkey=it=>it.wk||(/Łuk/.test(it.n)?'luk':/Tarcza/.test(it.n)?'tarcza':/Różdżka/.test(it.n)?'rozdzka':/Czaszka/.test(it.n)?'czaszka':/Księga/.test(it.n)?'ksiega':/Buzdygan/.test(it.n)?'buzdygan':/Halabarda/.test(it.n)?'halabarda':/Kostur/.test(it.n)?'kostur':/Młot/.test(it.n)?'mlot':/Maczuga/.test(it.n)?'maczuga':/Topór/.test(it.n)?'topor':/Sztylet/.test(it.n)?'sztylet':'miecz');
+const SLUG=t=>t.toLowerCase().replace(/[ąćęłńóśźż]/g,c=>'acelnoszz'['ąćęłńóśźż'.indexOf(c)]);
+// najbliższa wizualnie ikona dla poziomów materiału, dopóki nie ma własnych (null = zwykła ikona)
+const TNEAR={plyta:[0,0,0,0,'tytan','cien','tytan','zywioly','smok','swit'],skora:[0,0,0,'lowca','smok','cien',0,'lowca','smok','swit'],szata:[0,0,0,0,'arcymag','arcymag','zywioly','cien','smok','swit'],bron:[0,0,0,0,0,0,'tytan','cien','smok','swit'],jew:[0,0,0,'swit','krew','arcymag','zywioly','tytan','smok','swit']};
+const iipT=it=>{const t=Math.max(0,Math.min(9,it.tier||0));if(!t)return '';const jw=it.t==='amulet'||it.t==='pierscien',wb=it.t==='bron',nm=(wb?MAT:jw?JEW:MATA[it.ac||'plyta'])[t],key=wb?wkey(it):jw?it.t:it.t+'_'+(it.ac||'plyta'),nr=TNEAR[wb?'bron':jw?'jew':(it.ac||'plyta')][t];
+ return `assets/items/i_${key}_${SLUG(nm)}.png|`+(nr?`assets/items/i_${nr}_${wb?wkey(it):it.t}.png|`:'')};
 const iip0=it=>it.t==='bron'?`assets/items/i_${wkey(it)}.png`:(it.t==='amulet'||it.t==='pierscien')?`assets/items/i_${it.t}.png`:`assets/items/i_${it.t}_${it.ac||'plyta'}.png`;
 const LEGI={herszt:'kiel_borka',krolowa:'welon_arachnei',licz:'klepsydra_sethuna',smok:'serce_pyrraxa',boss:'korona_osi'};
-const iip=it=>it.uq&&LEGI[it.uq]?`assets/items/i_leg_${LEGI[it.uq]}.png|${iip0(it)}`:it.set?`assets/items/i_${it.set}_${it.t==='bron'?wkey(it):it.t}.png|${iip0(it)}`:iip0(it);
+const iip=it=>it.uq&&LEGI[it.uq]?`assets/items/i_leg_${LEGI[it.uq]}.png|${iip0(it)}`:it.set?`assets/items/i_${it.set}_${it.t==='bron'?wkey(it):it.t}.png|${iip0(it)}`:iipT(it)+iip0(it);
 const iic=it=>enWrap(it,pic(iip(it),ico(it)));
 // ---------- widok ----------
 const $=id=>document.getElementById(id);
@@ -1022,7 +1027,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.86';
+const VER='0.87';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
