@@ -1041,7 +1041,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.89';
+const VER='0.90';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2001,8 +2001,29 @@ fe0.addEventListener('pointerup',e=>{if(!GP||e.pointerId!==GP.id)return;const g=
   let key=null;if(g.mv){const gl0=S.p.gest||{},al=new Set();F.sl.forEach(k=>{if(k&&gl0[k.id])al.add(gl0[k.id])});key=al.size?gMatch(g.p,al):gMatch(g.p)}
   if(g.mv&&(key||g.p.length>6)){const gl=S.p.gest||{};if(!key){$('flog').textContent='Gest nierozpoznany';return}const j=F.sl.findIndex(k=>k&&gl[k.id]===key);if(j<0){$('flog').textContent=`Gest ${GD[key][0]} nie ma przypisanej umiejętności`;return}$('flog').textContent=`Gest ${GD[key][0]} → ${F.sl[j].n}`;cast(j);return}
   if(g.eu){const i=+g.eu.dataset.i;if(F.u[i]&&F.u[i].hp>0&&alive()>1)F.tg=(F.tg===i?null:i)}
-  heroAnim('atk');const te=uel(tgt());if(te)te.animate([{transform:'scale(.9)'},{transform:'none'}],{duration:90});hit(Math.round(atk()*(F.buff>0?F.bm:1)))});
+  basicFx();const te=uel(tgt());if(te)te.animate([{transform:'scale(.9)'},{transform:'none'}],{duration:90});hit(Math.round(atk()*(F.buff>0?F.bm:1)))});
 
+
+// ---------- animacja ataku podstawowego zależna od broni i klasy ----------
+let BFT=0;setTimeout(()=>['ciecie_mieczem','trafienie','hit_physical','hit_arcane','hit_shadow'].forEach(fxImg),2000);
+function basicFx(){if(!F||!AN()){heroAnim('atk');return}const now=performance.now(),cheap=now-BFT<140;BFT=now;
+ const e=S.p.eq||{},w0=e.bron0&&e.bron0.d>0?WT[wkey(e.bron0)]:null,w1=e.bron1&&e.bron1.d>0?WT[wkey(e.bron1)]:null,cl=S.p.cls;
+ const t=w0||(w1&&!['shield'].includes(w1)?w1:null)||'none';
+ const kind=['staff','wand','book','skull'].includes(t)?'cast':t==='bow'?'bow':['hammer2h','halberd'].includes(t)?'heavy':t==='none'?'fist':'melee';
+ const h=document.querySelector('#fhero .hw'),fe=$('fe'),te=uel(tgt())||$('fico');if(!fe||!te){heroAnim('atk');return}
+ const fr=fe.getBoundingClientRect(),hr=$('fhero').getBoundingClientRect(),tr=te.getBoundingClientRect(),hx=hr.left-fr.left+hr.width/2,hy=hr.top-fr.top+hr.height*.35,ex=tr.left-fr.left+tr.width/2,ey=tr.top-fr.top+tr.height/2;
+ const col=cl==='nekromanta'?'#7dff9a':cl==='uczony'?'#8fb6ff':'#ffe9a8',el=cl==='nekromanta'?'shadow':cl==='uczony'?'arcane':'physical';
+ if(h){if(kind==='cast')h.animate([{transform:'none',filter:'none'},{transform:'translateY(-6px) scale(1.04)',filter:`brightness(1.5) drop-shadow(0 0 10px ${col})`,offset:.4},{transform:'none',filter:'none'}],{duration:280,easing:'ease-out'});
+  else if(kind==='bow')h.animate([{transform:'none'},{transform:'translateY(6px) scale(.97)',offset:.45},{transform:'translateY(-4px)',offset:.7},{transform:'none'}],{duration:260});
+  else if(kind==='heavy')h.animate([{transform:'none'},{transform:'translateY(8px) rotate(-6deg) scale(.96)',offset:.3},{transform:'translateY(-30px) rotate(5deg) scale(1.12)',offset:.6},{transform:'translateY(4px)',offset:.8},{transform:'none'}],{duration:380,easing:'ease-out'});
+  else heroAnim('atk')}
+ if(cheap)return;
+ const shot=(html,css,dur,done)=>{const d=document.createElement('div');d.innerHTML=html;d.style.cssText=`position:absolute;left:${hx}px;top:${hy}px;pointer-events:none;z-index:8;${css}`;fe.appendChild(d);d.animate([{left:hx+'px',top:hy+'px'},{left:ex+'px',top:ey+'px'}],{duration:dur,easing:'ease-in'}).onfinish=()=>{d.remove();done&&done()}};
+ if(kind==='cast'){const sz=t==='staff'?26:20;shot('',`width:${sz}px;height:${sz}px;margin:${-sz/2}px 0 0 ${-sz/2}px;border-radius:50%;background:radial-gradient(circle,#fff 0,${col} 45%,${col}00 72%);box-shadow:0 0 16px ${col},0 0 30px ${col}`,200,()=>F&&fxPlay('hit_'+el,ex,ey,t==='staff'?130:110,420))}
+ else if(kind==='bow'){const ang=Math.atan2(ey-hy,ex-hx)*180/Math.PI,d=document.createElement('div');d.style.cssText=`position:absolute;left:${hx}px;top:${hy}px;width:46px;height:3px;margin:-1.5px 0 0 -23px;pointer-events:none;z-index:8;background:linear-gradient(90deg,#c9b38a 0,#8a6a3a 75%,#e8e8f0 76%,#fff 100%);border-radius:2px;box-shadow:0 0 6px #fff8;transform:rotate(${ang}deg)`;fe.appendChild(d);d.animate([{left:hx+'px',top:hy+'px'},{left:ex+'px',top:ey+'px'}],{duration:150,easing:'linear'}).onfinish=()=>{d.remove();F&&fxPlay('hit_physical',ex,ey,100,360)}}
+ else if(kind==='heavy')setTimeout(()=>{if(!F)return;fxPlay(t==='halberd'?'ciecie_mieczem':'trafienie',ex,ey,t==='halberd'?190:170,420,{flip:Math.random()<.5});shake(te,8,220);fe.animate([{transform:'translateY(0)'},{transform:'translateY(4px)'},{transform:'none'}],{duration:160})},220);
+ else if(kind==='fist')setTimeout(()=>F&&fxPlay('hit_physical',ex,ey,95,320),110);
+ else{const sm=t==='dagger';setTimeout(()=>{if(!F)return;if(['mace','buzdygan'].includes(t))fxPlay('trafienie',ex,ey,135,340);else fxPlay('ciecie_mieczem',ex,ey,sm?110:145,sm?260:320,{flip:Math.random()<.5,rot:sm?(Math.random()*40-20):0})},120)}}
 // ---------- statusy i reakcje (combosy) ----------
 const comboCodex=()=>'<h3>⚔️ Reakcje statusów (combosy)</h3><p><small>Skille nakładają statusy na wroga (podpalenie, mróz, porażenie, krwawienie, trucizna, ogłuszenie). Kolejny skill może je wykorzystać:</small></p>'+[['🔥+❄️','Szok termiczny','ogień na zamrożonym (lub lód na podpalonym): +50% i dodatkowy wybuch w całą grupę'],['⚡+💫','Paraliż','porażenie na ogłuszonym (lub ogłuszenie na porażonym): wróg traci 3,5 s i +40%'],['🩸+☠️','Gangrena','krwawienie na zatrutym (lub trucizna na krwawiącym): silne obrażenia w czasie, 8 s'],['🔥+☠️','Toksyczny wybuch','ogień na zatrutym: zużywa truciznę i rani całą grupę'],['⚔️+❄️','Rozbicie lodu','cios fizyczny na zamrożonym: +80%'],['🔮+⚡','Przeciążenie','zaklęcie na porażonym: +50%'],['⚔️+💫','Uderzenie w oszołomionego','cios fizyczny na ogłuszonym: +50%'],['⚔️+🩸','Dobicie krwawiącego','cios fizyczny na krwawiącym: +35%'],['💥','Detonacja','Eksplozja arkanów zużywa wszystkie statusy: +70% za każdy']].map(([i,n,d])=>`<div class="at"><div><b>${i} ${n}</b><br><small>${d}</small></div></div>`).join('')
 
