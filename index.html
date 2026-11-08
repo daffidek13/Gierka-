@@ -544,14 +544,19 @@ const SNDL={"boss_sethun_soul":1,"town_enter":1,"e_upadly_atk":1,"e_skorpion_die
 const SBUF={};let SLAST=0,SINIT=0;
 function sndInit(){if(SINIT)return;SINIT=1;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}
  Object.entries(SNDL).forEach(([n,c])=>{for(let i=1;i<=c;i++){const f=n+(i>1?'_'+i:'');fetch(`assets/snd/${f}.mp3`).then(r=>r.ok?r.arrayBuffer():null).then(b=>b&&new Promise((ok,no)=>AC.decodeAudioData(b,ok,no))).then(d=>{if(d)(SBUF[n]=SBUF[n]||[]).push(d)}).catch(()=>{})}})}
-function snd(n,v){if(S.opt&&S.opt.snd===0)return true;const L=SBUF[n];if(!L||!L.length||!AC)return false;try{if(AC.state==='suspended')AC.resume();const src=AC.createBufferSource(),g=AC.createGain();src.buffer=L[Math.floor(Math.random()*L.length)];g.gain.value=v==null?.7:v;src.connect(g);g.connect(AC.destination);src.start();SLAST=performance.now();return true}catch(e){return false}}
+const SLT={};let SACT=0;
+function snd(n,v){if(S.opt&&S.opt.snd===0)return true;const L=SBUF[n];if(!L||!L.length||!AC)return false;
+ const now=performance.now(),grp=/^e_.*_die$/.test(n)?'e_die':/^e_.*_atk$/.test(n)?'e_atk':/^(st_|hit_|loot_|step_)/.test(n)?n.split('_')[0]:n,gap=grp==='e_die'?260:grp==='e_atk'?600:grp==='step'?180:120;
+ if(now-(SLT[grp]||0)<gap)return true;if(SACT>=7&&!/^(ui_|boss_|loot_leg)/.test(n))return true;SLT[grp]=now;
+ try{if(AC.state==='suspended')AC.resume();const src=AC.createBufferSource(),g=AC.createGain();src.buffer=L[Math.floor(Math.random()*L.length)];g.gain.value=v==null?.7:v;src.connect(g);g.connect(AC.destination);SACT++;src.onended=()=>{SACT=Math.max(0,SACT-1)};src.start();SLAST=now;return true}catch(e){return false}}
 addEventListener('pointerdown',()=>{sndInit();musTick()},{once:true,capture:true});
 // ---- muzyka i ambient (pliki strumieniowane, płynne przejścia) ----
 const MUSV={"amb_gory":1,"amb_grobowiec":1,"amb_pustynia":1,"amb_bagno":1,"mus_menu":1,"amb_miasto":1,"mus_miasto":2,"mus_walka":2,"mus_fabula":2,"amb_walka":1,"amb_las":1,"amb_laka":1,"mus_akt5":2,"amb_spalona":1,"mus_boss":2,"mus_akt3":1,"amb_mrok":1,"mus_akt4":1,"mus_akt1":1,"amb_ruiny":1,"mus_akt2":1,"amb_jaskinia":1};
 const MCH={m:{el:null,k:null,v:.32},a:{el:null,k:null,v:.28}};
 function musOn(){return !(S.opt&&(S.opt.snd===0||S.opt.mus===0))}
-function chPlay(ch,k){const c=MCH[ch];if(c.k===k)return;c.k=k;const old=c.el;if(old){const o=old;let v=o.volume;const t=setInterval(()=>{v-=.04;if(v<=0){clearInterval(t);o.pause()}else o.volume=v},60)}
- if(!k||!musOn()){c.el=null;return}const n=MUSV[k]||1,f=k+(n>1&&Math.random()<.5?'_2':''),a=new Audio(`assets/mus/${f}.mp3`);a.loop=true;a.volume=0;a.play().catch(()=>{c.k=null});c.el=a;let v=0;const t=setInterval(()=>{v+=.03;if(v>=c.v||c.el!==a){clearInterval(t);if(c.el===a)a.volume=c.v}else a.volume=v},80)}
+const MEL={};
+function chPlay(ch,k){const c=MCH[ch];if(c.k===k)return;c.k=k;const old=c.el;if(old){const o=old;let v=o.volume;const t=setInterval(()=>{if(c.el===o){clearInterval(t);return}v-=.04;if(v<=0){clearInterval(t);o.pause()}else o.volume=v},60)}
+ if(!k||!musOn()){c.el=null;return}let a=MEL[k];if(!a){const n=MUSV[k]||1,f=k+(n>1&&Math.random()<.5?'_2':'');a=MEL[k]=new Audio(`assets/mus/${f}.mp3`);a.loop=true;a.volume=0}a.play().catch(()=>{c.k=null});c.el=a;let v=a.volume;const t=setInterval(()=>{v+=.03;if(v>=c.v||c.el!==a){clearInterval(t);if(c.el===a)a.volume=c.v}else a.volume=v},80)}
 function musTick(){try{if(!SINIT)return;const on=musOn();let m=null,a=null;
  if(on){const crd=$('crd')&&$('crd').classList.contains('on'),tw=$('town')&&$('town').classList.contains('on');
   if(!S.p||!S.p.cls)m='mus_menu';else if(crd)m='mus_fabula';else if(F)m=(F.g&&(F.g.boss||['krolowa','licz'].includes(F.g.key)))?'mus_boss':'mus_walka';else if(tw)m='mus_miasto';else m='mus_akt'+Math.min(5,(S.map||0)+1);
@@ -1077,7 +1082,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.97b';
+const VER='0.97c';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
