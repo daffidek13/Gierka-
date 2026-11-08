@@ -516,10 +516,20 @@ function field(x,y){
 
 // ---------- stan i zapis ----------
 let S;
-function newGame(){S={av:2,seed:Math.floor(Math.random()*1e9),x:0,y:0,visited:{'0,0':1},steps:0,p:{lvl:1,xp:0,hp:100,mana:50,sta:50},dead:{},chs:{},ground:{},evs:{},cnt:{},rec:{},best:{},ach:{}};cache.clear();save()}
-let SVW=0;function save(){try{localStorage.setItem('rl-save',JSON.stringify(S))}catch(e){try{if(S.wd)for(const k in S.wd)if(S.steps-S.wd[k].s>RESP*2)delete S.wd[k];if(S.dt)for(const k in S.dt)if(S.steps-S.dt[k]>RESP){delete S.dt[k];if(S.dead)delete S.dead[k]}localStorage.setItem('rl-save',JSON.stringify(S))}catch(e2){if(Date.now()-SVW>20000){SVW=Date.now();try{toast('Nie udało się zapisać gry (brak miejsca)',4000)}catch(_){}}}}}
+function newGame(){const sid=S&&S.sid;S={av:2,sid,seed:Math.floor(Math.random()*1e9),x:0,y:0,visited:{'0,0':1},steps:0,p:{lvl:1,xp:0,hp:100,mana:50,sta:50},dead:{},chs:{},ground:{},evs:{},cnt:{},rec:{},best:{},ach:{}};cache.clear();save()}
+let SVW=0;function save(){try{if(typeof slMeta==='function')slMeta()}catch(_){}try{localStorage.setItem('rl-save',JSON.stringify(S))}catch(e){try{if(S.wd)for(const k in S.wd)if(S.steps-S.wd[k].s>RESP*2)delete S.wd[k];if(S.dt)for(const k in S.dt)if(S.steps-S.dt[k]>RESP){delete S.dt[k];if(S.dead)delete S.dead[k]}localStorage.setItem('rl-save',JSON.stringify(S))}catch(e2){if(Date.now()-SVW>20000){SVW=Date.now();try{toast('Nie udało się zapisać gry (brak miejsca)',4000)}catch(_){}}}}}
 try{S=JSON.parse(localStorage.getItem('rl-save'))}catch(e){S=null}
 if(!S||typeof S.seed!=='number')newGame();
+// ---------- wiele postaci (sloty) ----------
+const SLK='rl-slots',slGet=()=>{try{return JSON.parse(localStorage.getItem(SLK))}catch(e){return null}},slSet=m=>{try{localStorage.setItem(SLK,JSON.stringify(m))}catch(e){}};
+let SM=slGet();if(!SM||!SM.l)SM={cur:S.sid||1,n:(S.sid||1)+1,l:{}};if(!S.sid)S.sid=SM.cur;if(S.sid!==SM.cur)SM.cur=S.sid;SM.n=Math.max(SM.n,S.sid+1);
+const slMeta=()=>{if(!S.p||!S.p.cls)return;const o=SM.l[S.sid]||{};SM.l[S.sid]={nm:o.nm||'',cls:S.p.cls,g:S.p.g,lvl:S.p.lvl,map:S.map||0,pt:S.pt||0,t:Date.now()};slSet(SM)};
+function slSwitch(id){save();try{localStorage.setItem('rl-s-'+S.sid,JSON.stringify(S))}catch(e){toast('Brak miejsca w pamięci przeglądarki – usuń jakąś postać',4000);return false}
+ if(id==null){localStorage.removeItem('rl-save');id=SM.n++}else{const d=localStorage.getItem('rl-s-'+id);if(!d){toast('Nie znaleziono zapisu tej postaci');return false}localStorage.setItem('rl-save',d);localStorage.removeItem('rl-s-'+id)}
+ SM.cur=id;slSet(SM);location.reload();return true}
+function slDel(id){if(id===S.sid)return;localStorage.removeItem('rl-s-'+id);delete SM.l[id];slSet(SM)}
+function slotsHtml(){slMeta();const L=Object.entries(SM.l).filter(([,m])=>m&&m.cls).sort((a,b)=>b[1].t-a[1].t);
+ return `<h3>👥 Postacie</h3><p><small>Każda postać ma własny świat, fabułę, przedmioty i złoto.</small></p>`+L.map(([id,m])=>{const me=+id===S.sid,cn=(CL[m.cls]||[])[4]||m.cls;return `<div class="at" style="display:block${me?';border-color:#e0a63a':''}"><b>${m.g==='f'?'♀':'♂'} ${m.nm?m.nm+' · ':''}${cn}</b> · poziom ${m.lvl} · akt ${(m.map||0)+1}${me?' · <span style="color:#ffd34a">grasz teraz</span>':''}<br><small>czas gry ${Math.floor((m.pt||0)/3600)} h ${Math.floor((m.pt||0)%3600/60)} min</small><br>${me?'':`<button data-a="slp:${id}">▶ Graj</button> `}<button data-a="sln:${id}">✏️ Nazwa</button>${me?'':` <button data-a="sld:${id}">🗑 Usuń</button>`}</div>`}).join('')+`<button class="it" data-a="slnew">➕ Nowa postać</button>`}
 if(S.av==null)S.av=(S.steps>0||S.p&&S.p.cls)?1:2;
 S.p=S.p||{lvl:1,xp:0,hp:100,mana:50,sta:50};S.dead=S.dead||{};
 
@@ -900,11 +910,11 @@ const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
 function showOpt(){const o=S.opt=S.opt||{snd:1,vib:1},t=S.pt||0;
   $('opt').innerHTML=`<button data-a="ox">✕ Zamknij</button><h3>Opcje</h3>
   <p>Czas gry: ${Math.floor(t/3600)} h ${Math.floor(t%3600/60)} min · poziom ${S.p.lvl}/100 · pokonani wrogowie: ${S.kills||0}</p>
-  <button class="it" data-a="odf">Trudność wrogów: ${['łatwa (−25% HP, −20% obrażeń)','normalna','trudna (+40% HP, +40% obrażeń, +25% XP)'][o.df!=null?o.df:1]}</button><button class="it" data-a="ofl">Długość walk: ${FLN[o.fl!=null?o.fl:2]}<br><small>Dłuższe walki: wrogowie mają więcej HP i słabiej biją, a za wygraną dostajesz więcej XP i złota.</small></button><button class="it" data-a="olt">Zbieranie lootu: ${o.lt?'dotknięcie zabiera od razu':'przeciągnięcie / podwójne dotknięcie'}<br><small>Gesty na oknie łupów: ⬇ weź wszystko · ➡ same materiały · ⬅ zostaw · ⬆ plecak. Dotknięcie przedmiotu zabiera go, podwójne dotknięcie zabiera wszystko.</small></button><button class="it" data-a="osnd">Dźwięk: ${o.snd===0?'wyłączony':'włączony'}</button><button class="it" data-a="oani">Animacje: ${o.an===0?'wyłączone':'włączone'}</button><button class="it" data-a="ovib">Wibracje: ${o.vib===0?'wyłączone':'włączone'}</button>
+  ${slotsHtml()}<h3>Ustawienia</h3><button class="it" data-a="odf">Trudność wrogów: ${['łatwa (−25% HP, −20% obrażeń)','normalna','trudna (+40% HP, +40% obrażeń, +25% XP)'][o.df!=null?o.df:1]}</button><button class="it" data-a="ofl">Długość walk: ${FLN[o.fl!=null?o.fl:2]}<br><small>Dłuższe walki: wrogowie mają więcej HP i słabiej biją, a za wygraną dostajesz więcej XP i złota.</small></button><button class="it" data-a="olt">Zbieranie lootu: ${o.lt?'dotknięcie zabiera od razu':'przeciągnięcie / podwójne dotknięcie'}<br><small>Gesty na oknie łupów: ⬇ weź wszystko · ➡ same materiały · ⬅ zostaw · ⬆ plecak. Dotknięcie przedmiotu zabiera go, podwójne dotknięcie zabiera wszystko.</small></button><button class="it" data-a="osnd">Dźwięk: ${o.snd===0?'wyłączony':'włączony'}</button><button class="it" data-a="oani">Animacje: ${o.an===0?'wyłączone':'włączone'}</button><button class="it" data-a="ovib">Wibracje: ${o.vib===0?'wyłączone':'włączone'}</button>
   <h3>Zapis gry</h3><p><small>Skopiuj zapis i schowaj go (np. w notatkach). Po wyczyszczeniu danych przeglądarki albo zmianie adresu wklejasz go tutaj i wczytujesz.</small></p>
   <textarea id="osv" rows="5" style="width:100%;background:#1d2027;color:var(--ink);border:1px solid #4a4e59;border-radius:8px;user-select:text;-webkit-user-select:text" placeholder="Tu pojawi się zapis albo wklej go tutaj"></textarea>
   <button data-a="oexp">Pokaż i skopiuj zapis</button> <button data-a="oimp">Wczytaj zapis z pola</button>
-  ${S.test?testHtml():''}<h3>Świat</h3><button data-a="onew">Zacznij nowy świat</button><p style="text-align:center;margin:18px 0 8px"><button data-a="ver" style="background:none;border:0;color:#6c6f78;font-size:12px">Wersja ${VER}${S.test?' · tryb testowy':''}</button></p>`;$('opt').classList.add('on')}
+  ${S.test?testHtml():''}<h3>Świat</h3><button data-a="onew">Zacznij od nowa tą postacią</button><p style="text-align:center;margin:18px 0 8px"><button data-a="ver" style="background:none;border:0;color:#6c6f78;font-size:12px">Wersja ${VER}${S.test?' · tryb testowy':''}</button></p>`;$('opt').classList.add('on')}
 function testHtml(){const T=S.test,m=S.map||0,a=actOf(m);return `<h3>🧪 Tryb testowy</h3><p><small>Akt ${a.id}: ${a.nm} (lvl ${a.lv[0]}–${a.lv[1]}) · poziom ${S.p.lvl} · XP ×${T.tx||1} · złoto ×${T.tg||1}</small></p>
   <div class="fch"><button data-a="tx">XP ×${T.tx||1}</button><button data-a="tg">Złoto ×${T.tg||1}</button><button data-a="tgold">+100 000 zł</button></div>
   <div class="fch"><button data-a="tl-10">Lvl −10</button><button data-a="tl-1">−1</button><button data-a="tl+1">+1</button><button data-a="tl+10">+10</button><button data-a="tl100">Lvl 100</button></div>
@@ -929,6 +939,10 @@ function testAct(a){const T=S.test;
 $('opb').onclick=()=>showOpt();
 $('opt').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a,o=S.opt=S.opt||{snd:1,vib:1};
   if(a==='ox'){$('opt').classList.remove('on');return}
+  if(a==='slnew'){if(confirm('Stworzyć nową postać? Obecna zostanie zapisana i wrócisz do niej z listy postaci.'))slSwitch(null);return}
+  if(a.startsWith('slp:')){slSwitch(+a.slice(4));return}
+  if(a.startsWith('sld:')){const id=+a.slice(4),m=SM.l[id];if(m&&confirm(`Usunąć postać (${(CL[m.cls]||[])[4]||''}, poziom ${m.lvl})? Tego nie da się cofnąć.`)){slDel(id);showOpt()}return}
+  if(a.startsWith('sln:')){const id=+a.slice(4),m=SM.l[id];if(!m)return;const n=prompt('Nazwa postaci:',m.nm||'');if(n!=null){m.nm=n.trim().slice(0,20);slSet(SM);showOpt()}return}
   if(testAct(a))return;
   if(a==='odf'){o.df=((o.df!=null?o.df:1)+1)%3;save();showOpt();return}
   if(a==='ofl'){o.fl=((o.fl!=null?o.fl:2)+1)%4;save();showOpt();return}
@@ -1027,7 +1041,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.87';
+const VER='0.88';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1393,10 +1407,10 @@ function equip(id){
   put(p.eq[sl]);p.eq[sl]=it;
 }
 function showCls(){
-  $('cls').innerHTML='<h3>Wybierz klasę</h3><p>Klasa ustala startowe statystyki oraz to, jakie zbroje i bronie możesz nosić (biżuteria jest dla wszystkich). Specjalizację zbudujesz punktami.</p>'+`<div class="grow"><button class="cb gb${(S.p.g||'m')==='m'?' on':''}" data-g="m">♂ Mężczyzna</button><button class="cb gb${S.p.g==='f'?' on':''}" data-g="f">♀ Kobieta</button></div>`+Object.entries(CL).map(([k,c])=>`<button class="cb" data-k="${k}"><img class="cpv" data-pb="${PDK[k]}_${S.p.g||'m'}" alt=""><b>${c[4]}</b><br>Sił ${c[0]} · Zręcz ${c[1]} · Int ${c[2]} · Witalność ${c[3]}<br><small>${c[5]}</small></button>`).join('');
+  $('cls').innerHTML=(Object.keys(SM.l).some(k=>+k!==S.sid&&SM.l[k]&&SM.l[k].cls)?'<button data-a="slback" style="margin-bottom:6px">👥 Wróć do moich postaci</button>':'')+'<h3>Wybierz klasę</h3><p>Klasa ustala startowe statystyki oraz to, jakie zbroje i bronie możesz nosić (biżuteria jest dla wszystkich). Specjalizację zbudujesz punktami.</p>'+`<div class="grow"><button class="cb gb${(S.p.g||'m')==='m'?' on':''}" data-g="m">♂ Mężczyzna</button><button class="cb gb${S.p.g==='f'?' on':''}" data-g="f">♀ Kobieta</button></div>`+Object.entries(CL).map(([k,c])=>`<button class="cb" data-k="${k}"><img class="cpv" data-pb="${PDK[k]}_${S.p.g||'m'}" alt=""><b>${c[4]}</b><br>Sił ${c[0]} · Zręcz ${c[1]} · Int ${c[2]} · Witalność ${c[3]}<br><small>${c[5]}</small></button>`).join('');
   pdFill($('cls'));$('cls').classList.add('on');
 }
-$('cls').onclick=e=>{const gb=e.target.closest('[data-g]');if(gb){S.p.g=gb.dataset.g;showCls();return}const b=e.target.closest('[data-k]');if(!b)return;if(!S.p.g)S.p.g='m';const c=CL[b.dataset.k],p=S.p;
+$('cls').onclick=e=>{const sb=e.target.closest('[data-a=slback]');if(sb){const L=Object.entries(SM.l).filter(([k,m])=>+k!==S.sid&&m&&m.cls).sort((a,b)=>b[1].t-a[1].t);if(L.length){localStorage.removeItem('rl-save');const id=+L[0][0],d=localStorage.getItem('rl-s-'+id);if(d){localStorage.setItem('rl-save',d);localStorage.removeItem('rl-s-'+id);SM.cur=id;slSet(SM);location.reload()}}return}const gb=e.target.closest('[data-g]');if(gb){S.p.g=gb.dataset.g;showCls();return}const b=e.target.closest('[data-k]');if(!b)return;if(!S.p.g)S.p.g='m';const c=CL[b.dataset.k],p=S.p;
   Object.assign(p,{cls:b.dataset.k,g:p.g||'m',b:{sil:c[0],zre:c[1],int:c[2]},wit:c[3],sk:[1,1,1],pw:p.lvl-1,ps:p.lvl-1,gold:0,mat:{szmaty:0,stal:0},eq:{},bag:[],dths:0});
   initTree(p);p.hp=mh();p.mana=mm();p.sta=sm();save();$('cls').classList.remove('on');render();cards(PROLOG,()=>actIntro(0))};
 let SEL=null;
