@@ -1055,7 +1055,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.95b';
+const VER='0.96';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1159,7 +1159,7 @@ function riftEnd(ok){const R=RFT;RFT=null;if(!R)return;const p=S.p,lo=[],xg=Math
 // ---------- Fabuła: Pęknięty Świat ----------
 const BN={herszt:'Bork Grubozęby',krolowa:'Arachnea',licz:'Sethun',smok:'Pyrrax',boss:'Vorgan'};
 const BL={herszt:['Wioska moja! Twoje buty też będą moje!','Wracaj, jak urośniesz. Buty zostaw.','To… nie… mój… kamyk…'],krolowa:['Moje dzieci mówiły, że jesteś smaczny. Sprawdzimy.','Uciekaj. Lubię, gdy jedzenie samo się marynuje.','Mgła… rzednie… dzieci, chowajcie się…'],licz:['Nie spałem od tysiąca lat. Ty też już nie zaśniesz.','Wróć. Wieczność ma dla ciebie czas.','Wreszcie… cisza…'],smok:['Kolejny bohater. Lubię chrupiące.','Wróć z lepszą zbroją. Lepiej się piecze.','Mój ogień… był starszy niż twój świat…'],boss:['{Kuzynie|Kuzynko}! Też tu trafił{eś|aś}? Ten świat ma lepsze zabawki niż {KR}.','Kryształ znów cię poskłada, {KS}. Sprawdzimy, ile razy jeszcze.','Drzwi… są… otwarte…']};
-const bsay=(k,i)=>{if(!BL[k])return;const t=GX(BL[k][i]);toast(`${BN[k]}: „${t}”`,5000);if(i===0&&F)$('flog').textContent=`${BN[k]}: „${t}”`};
+const bsay=(k,i)=>{if(!BL[k])return;if(k==='boss')vo('boss_vorgan_'+i);const t=GX(BL[k][i]);toast(`${BN[k]}: „${t}”`,5000);if(i===0&&F)$('flog').textContent=`${BN[k]}: „${t}”`};
 const ZZ=['Na {kierunek} rozległ się bęben wojenny. Orkowie zebrali się pod jednym sztandarem!','Na {kierunek} mgła zgęstniała w sieć. Coś wielkiego się w niej porusza!','Na {kierunek} otworzył się grobowiec, który miał pozostać zamknięty na wieki!','Na {kierunek} niebo poczerwieniało. Pradawny Smok wyszedł z leża!','Na {kierunek} cienie ucichły. Vorgan wie, że tu jesteś.'];
 const INTRO=['Pogranicze było kiedyś spokojne: łąki, lasy, krowy. Teraz wilki chodzą stadami, gobliny kradną nawet płoty, a orkowie zaczęli liczyć wioski. Ktoś musi to sprawdzić. Wygląda na to, że Ty.','Brama z pierwszego odłamka otwiera się na mgłę, która pachnie jak stara zupa. Na Bagnach topielcy wstają z wody, a wiedźmy sprzedają mikstury, po których lepiej nie pytać o skład. Mgła ma oczy. Dosłownie, tysiące małych, pajęczych oczu.','Po Bagnach nawet piasek wydaje się przyjazny, dopóki nie zacznie parzyć przez buty. Pustynia była kiedyś królestwem, a jego władcy nie chcieli umrzeć. Mumie wciąż strzegą grobowców, dżiny spełniają życzenia na swój złośliwy sposób, a skorpiony po prostu bolą. Szukaj oaz, bo upał nie wybacza.','Góry to dom trolli, wywern i ech, które odpowiadają nie tym głosem. Przełęcze zasypało, a klucze do starych bram leżą w lochach, gdzie nikt rozsądny nie chodzi. Nad szczytami unosi się dym. To nie wulkan, tylko coś, co oddycha.','Tu słońce nie wschodzi. Demony zajęły osady i trzeba je odbijać jedna po drugiej, a upadli rycerze wciąż służą panu, który ich zdradził. Cztery odłamki w Twoim plecaku brzęczą coraz głośniej. Piąty jest tutaj, w koronie Vorgana.'];
 const SETL={tytan:'Wykuty dla strażników bram Stolicy z rudy, która nie rdzewieje. Mówią, że jeden tytan powstrzymał lawinę, bo zapomniał się przesunąć.',lowca:'Zszyty ze skór, które łowca zdobywał tylko w pełnię. Kto go nosi, słyszy stado, zanim stado usłyszy jego.',arcymag:'Szata ostatniego maga, który próbował skleić Kryształ Osi. Nie zdążył, ale runy pamiętają zaklęcie.',krew:'Zbroja rycerza, który przysiągł nie cofać się nigdy. Dotrzymał słowa, a zbroja wciąż pije za niego.',cien:'Noszony przez zwiadowców, których nikt nie widział, a więc oficjalnie nie istnieli. Esencja mroku tłumi każdy krok.',smok:'Łuski zrzucane przez Pyrraxa raz na sto lat. Wciąż są ciepłe i odrobinę obrażone.',swit:'Utkany z płatków, które rozkwitają tylko o świcie nad Pograniczem. Przypomina, że noc kiedyś się kończy.',zywioly:'Zszyty z pyłu ze Szczelin, gdzie ogień, woda i wiatr kłócą się o miejsce. Na nosicielu na chwilę się godzą.'};
@@ -1535,8 +1535,11 @@ const EPILOG=[
  ['ep3','✨','Wchodzisz w światło. Cudze ciało zostaje za tobą i puszcza cię jak za ciasna rękawica. Słyszysz jeszcze śmiech {RY}a, coraz dalej.'],
  ['ep4','👁️','Budzisz się na kamiennej posadzce. Zapach kadzidła, dźwięk dzwonów. Przez chwilę myślisz, że to kaplica w {KR}ze. Ale to nie ona. A ręce, które podnosisz do twarzy, znowu nie są twoje.'],
  ['ep5','📖','KONIEC CZĘŚCI PIERWSZEJ. Ciąg dalszy nastąpi…\n\nŚwiat Osi wciąż czeka: Szczeliny, wyższe poziomy i legendy. Możesz grać dalej.']];
+// ---- głosy (ElevenLabs): assets/vo/vo_<id>_<m|f>.mp3, a gdy brak – vo_<id>.mp3 ----
+let VOA=null;
+function vo(id){try{if(VOA){VOA.pause();VOA=null}if(S.opt&&S.opt.snd===0)return;const g=(S.p&&S.p.g)||'m',a=new Audio(`assets/vo/vo_${id}_${g}.mp3`);a.onerror=()=>{if(a.dataset.f)return;a.dataset.f=1;a.src=`assets/vo/vo_${id}.mp3`;a.play().catch(()=>{})};a.volume=.95;a.play().catch(()=>{});VOA=a}catch(e){}}
 function cards(L,cb){let d=$('crd');if(!d){d=document.createElement('div');d.id='crd';document.body.appendChild(d)}let i=0;const g=(S.p&&S.p.g)||'m';
- const sh=()=>{if(i>=L.length){d.classList.remove('on');cb&&cb();return}const[id,em,tx]=L[i],t=GX(typeof tx==='function'?tx():tx);
+ const sh=()=>{if(i>=L.length){d.classList.remove('on');if(VOA)VOA.pause();cb&&cb();return}const[id,em,tx]=L[i],t=GX(typeof tx==='function'?tx():tx);{const l=S.lu||{w:0,t:0};vo(typeof tx==='function'?id+(l.t>=2?'a':l.w>=2?'b':'c'):id)}
   d.innerHTML=`<div class="crc"><div class="cim"><span>${em}</span><img src="assets/story/${id}_${g}.jpg" alt="" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='assets/story/${id}.jpg'}else this.remove()"></div><p>${t.replace(/\n/g,'<br>')}</p><div class="crb"><button data-a="skip">Pomiń</button><span>${i+1}/${L.length}</span><button data-a="nx">${i===L.length-1?'Graj':'Dalej ›'}</button></div></div>`;d.classList.add('on');
   d.querySelector('[data-a=nx]').onclick=()=>{i++;sh()};d.querySelector('[data-a=skip]').onclick=()=>{i=L.length;sh()}};sh()}
 const SQ=[
@@ -1584,7 +1587,7 @@ const SQ=[
    pg:[{who:'Kapłanka Nefer',img:NPI('ench_wf'),txt:'Nefer przykłada dłoń do twojego czoła i cofa ją jak oparzona. – Odłamki to wrota dusz. Ktoś przeszedł przez nie przed tobą. I nie był to przyjaciel. Jest was więcej, obcy{|a}.'}]},
   {t:'boss',txt:'Grobowiec Sethuna stoi otworem. Licz czeka na najniższym piętrze.'},
   {t:'talk',who:'Karawaniarz Hasim',img:NPI('shop_mm'),txt:'Karawany znów ruszają! Za trzeci odłamek nie wezmę od ciebie cła. Ale na północy, w Smoczych Górach, ludzie mówią o ogniu spadającym z nieba. A, i jest list do ciebie.',end:1,
-   pg:[{who:'List od {LU}',img:'{LUI}',txt:'Krzywe litery, zapach ziół. „Wracaj {cały|cała}. I powiedz mi kiedyś, co się z tobą stało. Bo coś się stało, prawda?”',ch:[['Odpisz prawdę: to nie ja.','Piszesz długo. Skreślasz, piszesz od nowa. Wysyłasz, zanim zdążysz się rozmyślić.',{t:1}],['Odpisz: nic się nie stało, wrócę.','Krótko i bezpiecznie, jak na dworze. Przez chwilę czujesz się jak {RY}.',{t:-1}],['Nie odpisuj.','List zostaje w sakwie. Ciąży bardziej niż cała zbroja.',{w:-1}]]}]}
+   pg:[{who:'List ({LU})',img:'{LUI}',txt:'Krzywe litery, zapach ziół. „Wracaj {cały|cała}. I powiedz mi kiedyś, co się z tobą stało. Bo coś się stało, prawda?”',ch:[['Odpisz prawdę: to nie ja.','Piszesz długo. Skreślasz, piszesz od nowa. Wysyłasz, zanim zdążysz się rozmyślić.',{t:1}],['Odpisz: nic się nie stało, wrócę.','Krótko i bezpiecznie, jak na dworze. Przez chwilę czujesz się jak {RY}.',{t:-1}],['Nie odpisuj.','List zostaje w sakwie. Ciąży bardziej niż cała zbroja.',{w:-1}]]}]}
  ],
  [ // Akt 4 – Smocze Góry
   {t:'talk',who:'Krasnolud Bruno',img:NPI('smith_mm'),txt:'{CI}, {stary druhu|stara druhno}! Pyrrax pali wioski z góry, a przełęcze zasypało. Najpierw trolle: zablokowały Trollowy Most i biorą myto w kościach. Przegoń je, to pogadamy.',
@@ -1611,9 +1614,9 @@ const SQ=[
    pg:[{who:'Ty',txt:'Zanim Vorgan upadł, przemówił głosem {RY}a: – Myślisz, że wygrał{eś|aś}, {kuzynie|kuzynko}? Drzwi są otwarte. Zobaczymy się po drugiej stronie.'}]}
  ]];
 function sqTalk(){const q=sqStep();if(!q||q.t!=='talk')return false;sfx.chest&&sfx.chest();
- const L=[{who:q.who,img:q.img,txt:q.txt,ch:q.ch},...(q.pg||[])],m=SQM();let i=0;
- const nx=()=>{if(i>=L.length){sqNext();if(q.end&&m===4)setTimeout(()=>cards(EPILOG),400);return}const P=L[i++],last=i>=L.length;
-  if(P.ch)sqDlg(GX(P.who),GX(P.img),GX(P.txt),null,null,P.ch.map(([lb,rep,ef])=>[GX(lb),()=>{S.lu=S.lu||{w:0,t:0,c:[]};S.lu.w+=ef.w||0;S.lu.t+=ef.t||0;S.lu.c.push(m+':'+lb.slice(0,20));save();sqDlg(GX(P.who),GX(P.img),GX(rep),last?(q.end?'Zakończ akt':'Ruszam'):'Dalej',nx)}]));
+ const L=[{who:q.who,img:q.img,txt:q.txt,ch:q.ch},...(q.pg||[])],m=SQM(),qi=sqSt();let i=0;
+ const nx=()=>{if(i>=L.length){sqNext();if(q.end&&m===4)setTimeout(()=>cards(EPILOG),400);return}const P=L[i++],last=i>=L.length,vid=`a${m+1}_${qi}_${i-1}`;vo(vid);
+  if(P.ch)sqDlg(GX(P.who),GX(P.img),GX(P.txt),null,null,P.ch.map(([lb,rep,ef],ck)=>[GX(lb),()=>{vo(vid+'_c'+ck);S.lu=S.lu||{w:0,t:0,c:[]};S.lu.w+=ef.w||0;S.lu.t+=ef.t||0;S.lu.c.push(m+':'+lb.slice(0,20));save();sqDlg(GX(P.who),GX(P.img),GX(rep),last?(q.end?'Zakończ akt':'Ruszam'):'Dalej',nx)}]));
   else sqDlg(GX(P.who),GX(P.img),GX(P.txt),last?(q.end?'Zakończ akt':'Ruszam'):'Dalej',nx)};nx();return true}
 
 const SQM=()=>S.map||0;
@@ -1633,7 +1636,7 @@ function sqUi(){let e=$('sqt');if(!e){e=document.createElement('button');e.id='s
 function sqDlg(who,img,txt,btn,cb,ch){let d=$('sqd');if(!d){d=document.createElement('div');d.id='sqd';document.body.appendChild(d)}
  d.innerHTML=`<div class="sqc${who==='Ty'?' me':''}">${img?`<img src="${img.split('|')[0]}"${img.includes('|')?` onerror="this.onerror=null;this.src='${img.split('|')[1]}'"`:''} alt="">`:''}<b>${who}</b><p>${txt}</p>${ch?ch.map((c,x)=>`<button class="ch" data-x="${x}">${c[0]}</button>`).join(''):`<button>${btn||'Dalej'}</button>`}</div>`;d.classList.add('on');d.querySelectorAll('button').forEach(b=>b.onclick=()=>{d.classList.remove('on');if(ch)ch[+b.dataset.x][1]();else cb&&cb()})}
 function sqShow(){const q=sqStep();if(!q)return;if(q.t==='talk'&&q.here){sqTalk();return}const o=sqObj();
- sqDlg(q.t==='talk'?q.who:'Zadanie',q.t==='talk'?q.img:null,q.t==='talk'?'Znajdziesz tę osobę w najbliższej osadzie.':((q.txt&&q.t!=='fight')?q.txt:`Cel: ${o}. ${q.t==='fight'?'Dojdź na to pole, a zaczniesz walkę.':''}`),'OK')}
+ sqDlg(q.t==='talk'?q.who:'Zadanie',q.t==='talk'?q.img:null,q.t==='talk'?'Znajdziesz tę osobę w najbliższej osadzie.':((q.txt&&q.t!=='fight')?GX(q.txt):`Cel: ${o}. ${q.t==='fight'?'Dojdź na to pole, a zaczniesz walkę.':''}`),'OK')}
 function sqNext(){const m=SQM();S.sqa[m]=sqSt()+1;const q=sqStep();save();
  if(q&&q.t==='boss'){if(S.boss&&S.boss.dead){sqNext();return}if(!S.boss)spawnBoss()}
  if(q&&q.t==='talk'&&q.here)setTimeout(()=>{if(!$('loot').classList.contains('on'))sqTalk();else{const w=setInterval(()=>{if(!$('loot').classList.contains('on')){clearInterval(w);sqTalk()}},500)}},700);
@@ -1641,7 +1644,7 @@ function sqNext(){const m=SQM();S.sqa[m]=sqSt()+1;const q=sqStep();save();
  try{render()}catch(_){}}
 function sqTick(){const q=sqStep();if(!q)return;if((q.t==='pass'&&(S.pass||0)>=2)||(q.t==='free'&&Object.keys(S.free||{}).length>=q.need)){uiFx('quest_complete',210,1200,38);toast('📜 Cel wykonany!',3000);sqNext()}}
 function sqArrive(x,y){const q=sqStep();if(!q||q.t!=='fight'||F)return false;const p=sqPos();if(!p||p[0]!==x||p[1]!==y)return false;
- sqDlg(q.nm,null,q.txt,'Do walki!',()=>{const A=actOf(),f=field(x,y),el=Math.max(elAt(x,y,SQM()),Math.min(A.elHi,S.p.lvl)),g={key:q.k,n:q.n,ag:true,px:50,py:62};
+ vo(`a${SQM()+1}_${sqSt()}`);sqDlg(GX(q.nm),null,GX(q.txt),'Do walki!',()=>{if(VOA)VOA.pause();const A=actOf(),f=field(x,y),el=Math.max(elAt(x,y,SQM()),Math.min(A.elHi,S.p.lvl)),g={key:q.k,n:q.n,ag:true,px:50,py:62};
   startFight(0,false,{f:{...f,x:'q'+SQM(),y:sqSt(),foes:[g],nm:q.nm},g,el,bg:f.t,nr:1,hm:q.hm||1,xp:xpn(Math.min(S.p.lvl,A.elHi))/A.fpl*A.xp*.7,gm:1.5});if(F){F.sq=1;$('flog').textContent=q.nm+'!'}});return true}
 function sqAfterWin(sqf,bs,ky,lo){const q=sqStep();if(!q)return;
  if(sqf&&q.t==='fight'){const A=actOf();lo.push({k:'item',it:genItem(2)});const g=Math.round(goldFight(A.elHi,3,SQM())*6);S.p.gold+=g;gainXp(xpn(Math.min(S.p.lvl,A.elHi))*.12);setTimeout(()=>{uiFx('quest_complete',210,1200,38);toast(`📜 ${q.nm}: wykonane! +${g} zł`,3500)},300);sqNext()}
