@@ -858,7 +858,7 @@ $('ench').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.
   const it=ESEL&&getIt(ESEL);if(!it)return;p.mat.esn=p.mat.esn||0;
   const pay=c=>{if(p.gold<c.g||p.mat.esn<c.e){toast('Za mało złota lub esencji');return false}p.gold-=c.g;p.mat.esn-=c.e;return true};
   if(a==='ea'&&!it.en){if(!pay(enAdd(it)))return;it.en={k:enPick(it),l:1};uiFx('enchant',200,1000,40);toast('Zaklęcie: '+ENS[it.en.k][0]);sfx.skill()}
-  else if(a==='eu'&&it.en&&it.en.l<5){const u=enUp(it);if(!pay(u))return;if(Math.random()*100<u.c){it.en.l++;uiFx('enchant',200,1000,40);toast(`Zaklęcie wzmocnione: ${it.en.l}/5`);sfx.win()}else{toast('Wzmocnienie nieudane, materiały stracone');sfx.hurt()}}
+  else if(a==='eu'&&it.en&&it.en.l<5){const u=enUp(it);if(!pay(u))return;if(Math.random()*100<u.c){it.en.l++;uiFx('enchant',200,1000,40);toast(`Zaklęcie wzmocnione: ${it.en.l}/5`);if(!snd('ench_success'))sfx.win()}else{toast('Wzmocnienie nieudane, materiały stracone');if(!snd('ench_fail'))sfx.hurt()}}
   else if(a==='er'&&it.en){if(!pay(enRe(it)))return;it.en.k=enPick(it);toast('Nowe zaklęcie: '+ENS[it.en.k][0]);sfx.skill()}
   else if(a==='es'&&(it.sn||0)<3){const k=enSock(it);if(!pay(k))return;if(Math.random()*100<k.c){it.sn=(it.sn||0)+1;toast('Nowe gniazdo!');sfx.chest()}else{toast('Nie udało się, materiały stracone');sfx.hurt()}}
   else if(a==='ed'&&ESEL[0]==='b'){if((it.r>=2||it.en||(it.so&&it.so.length))&&!confirm(`Rozbić „${it.n}” na ${deVal(it)} esencji? To nieodwracalne.${it.so&&it.so.length?' Klejnoty wrócą do Ciebie.':''}`))return;retGems(it);p.mat.esn+=deVal(it);p.bag=p.bag.filter(o=>o!==it);ESEL=null;toast('Rozbito');sfx.loot()}
@@ -1077,7 +1077,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.97';
+const VER='0.97b';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1811,7 +1811,7 @@ function openChest(key,big,k){uiFx('chest_open',200,1100,45);const p=S.p,lo=[],g
   for(let i=0;i<(big?2:1)+(Math.random()<.5?1:0);i++)lo.push(rndPot());
   if(big||Math.random()<.4)lo.push(rndGem());regDrop(lo,ctxReg(),big?2:1);
   if(big){S.cleared=S.cleared||{};const ck0=ckey(field(S.x,S.y));if(!S.cleared[ck0]&&(S.map||0)===3&&(S.pass||0)<2){S.pass=(S.pass||0)+1;toast(`🗝️ Klucz przełęczy! Otwiera się kolejna część gór (${S.pass}/2)`,4500);sfx.win()}S.cleared[ck0]=1;S.rec.dun=(S.rec.dun||0)+1}
-  sfx.chest();burst(innerWidth/2,innerHeight*.55,['🪙','💰','✨','💎'],24,180);if(big)banner('WIELKA SKRZYNIA!','#ffd34a');toast(`Skrzynia: +${g} zł`,3000);save();render();openLoot(lo,big?'Wielka skrzynia':'Skrzynia')}
+  if(!(big&&snd('chest_big_open')))sfx.chest();burst(innerWidth/2,innerHeight*.55,['🪙','💰','✨','💎'],24,180);if(big)banner('WIELKA SKRZYNIA!','#ffd34a');toast(`Skrzynia: +${g} zł`,3000);save();render();openLoot(lo,big?'Wielka skrzynia':'Skrzynia')}
 function openLocMap(){const L=S.loc,c=$('mapc'),cs=Math.min(54,Math.floor(Math.min(innerWidth-40,380)/7));$('ov').dataset.m='l';$('mzr').style.display='none';c.style.width=c.style.height='';c.width=c.height=cs*7;const g=c.getContext('2d');g.setTransform(1,0,0,1,0,0);
   g.fillStyle='#0b0b0e';g.fillRect(0,0,c.width,c.height);g.font=(cs*.5)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';
   const col=(x,y)=>L.vis[L.fl+':'+x+','+y]?'#a59a82':'#5b5546';
@@ -1892,7 +1892,7 @@ function usePot(k){const p=S.p;p.pot=p.pot||{};if(!(p.pot[k]>0))return;
   else if(k==='kamien'){F.sh=(F.sh||0)+Math.round(mh()*.4)}
   else if(k==='regen')addFx('regen','hp',mh()*.36,12);
   else if(k==='precyzja')F.cr=20;
-  p.pot[k]--;bump('pot');sfx.pot();{const[bx,by]=ctr(F?$('fhero'):$('hero'));burst(bx,by,[POT[k][1],'✨'],8,70)}toast(POT[k][0]);
+  p.pot[k]--;bump('pot');if(!snd(k==='hp'||k==='regen'?'pot_hp':k==='mana'||k==='sta'?'pot_mana':'pot_buff'))sfx.pot();{const[bx,by]=ctr(F?$('fhero'):$('hero'));burst(bx,by,[POT[k][1],'✨'],8,70)}toast(POT[k][0]);
   if(F){F.pcd=5;upd();renderPots()}else{save();render()}}
 // efekty w czasie (leczenie / regeneracja), działają w walce i poza nią
 const EF=[];let fxn=0;
