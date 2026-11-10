@@ -1086,7 +1086,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='0.99d';
+const VER='0.99e';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2389,7 +2389,7 @@ if(!S.shA){S.shA={};(S.portals||[]).forEach(m=>{if(m>0)S.shA[m-1]=1});S.shards=M
 S.chs=S.chs||{};S.ground=S.ground||{};S.evs=S.evs||{};S.cnt=S.cnt||{};S.rec=S.rec||{};S.best=S.best||{};S.ach=S.ach||{};if(S.loc&&!S.loc.id)S.loc=null;
 if(S.p.cls&&!S.p.tr)initTree(S.p);else if(S.p.cls&&S.p.tr)migTree(S.p);
 if(S.p.cls&&S.p.trc!==1){S.p.trc=1;if(Object.keys(S.p.rk||{}).some(id=>S.p.rk[id]>0&&TN[id]&&!brOk(id))){initTree(S.p);setTimeout(()=>toast('Klasy mają teraz własne gałęzie umiejętności. Drzewko zresetowane za darmo – rozdaj punkty od nowa.',7000),2500)}}
-if(S.p.lo&&S.p.lo.length>4)S.p.lo.length=4;
+if(S.p.lo&&S.p.lo.length>LOM())S.p.lo.length=LOM();
 render();
 if(S.loot)showLoot();
 if(!S.p.cls)showCls();else if(!S.p.g)gsel();
