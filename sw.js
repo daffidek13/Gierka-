@@ -15,6 +15,6 @@ self.addEventListener('fetch',e=>{
   }
   // gra i dane: najpierw sieć, ale przy wolnym łączu (>2,5 s) pokaż wersję z pamięci podręcznej
   e.respondWith(new Promise(res=>{let done=0;const fin=r=>{if(!done&&r){done=1;res(r)}};
-    const tm=setTimeout(()=>caches.match(e.request).then(fin),2500);
+    const tm=setTimeout(()=>{},0);
     fetch(e.request,{cache:'no-store'}).then(r=>{clearTimeout(tm);if(r.ok){const c=r.clone();caches.open(C).then(x=>x.put(e.request,c))}if(!done){done=1;res(r)}}).catch(()=>{clearTimeout(tm);caches.match(e.request).then(h=>{if(!done){done=1;res(h||Response.error())}})})}));
 });
