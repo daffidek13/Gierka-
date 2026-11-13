@@ -1134,7 +1134,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.05';
+const VER='1.06';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2205,7 +2205,7 @@ function mkSy(k){k=k||(l=>l[Math.floor(Math.random()*l.length)])(syPool());const
 function syConv(it){if(!it||it.r<3||it.sy||it.uq||it.set||it.t==='pamiatka')return;const l=syPool(it.t).filter(k=>!SYD[k][2]||SYD[k][2]===wkey(it));if(!l.length)return;const k=l[Math.floor(Math.random()*l.length)];it.sy=k;it.n=SYD[k][0];it.col='#b98cff'}
 const syLock=k=>Object.values((S.p&&S.p.eq)||{}).some(i=>i&&i.d>0&&i.sy===k);
 const hpCap=()=>Math.round(mh()*(syLock('lock_hp')?.3:1)),mpCap=()=>Math.round(mm()*(syLock('lock_mana')?.3:1)),spCap=()=>Math.round(sm()*(syLock('lock_sta')?.3:1));
-function healP(x){const p=S.p,c=hpCap(),nv=p.hp+x;if(nv>c){if(F&&F.sy&&F.sy.has('p_nadmiar'))F.ovf=(F.ovf||0)+Math.min(x,nv-c);p.hp=c}else p.hp=nv;return p.hp}
+function healP(x){const p=S.p,c=hpCap(),nv=p.hp+x,ov=Math.max(0,Math.min(x,nv-c));if(F&&F.sy&&F.sy.has('p_nadmiar')&&x>0)F.ovf=(F.ovf||0)+ov*3+(x-ov)*.75;p.hp=Math.min(nv,c);return p.hp}
 const syOn=k=>!!(F&&F.sy&&F.sy.has(k)),syNow=()=>performance.now();
 function syCd(k,s){const n=syNow();F.syc=F.syc||{};if((F.syc[k]||0)>n)return false;F.syc[k]=n+s*1000;return true}
 const SYC={fire:'#ff8a3a',ice:'#a8e0ff',lightning:'#bcd0ff',poison:'#8fe05a',shadow:'#b98cff',holy:'#ffe27a',physical:'#ffd9a0',bleed:'#ff6a5a'};
