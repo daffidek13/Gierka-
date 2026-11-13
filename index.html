@@ -1010,7 +1010,27 @@ function testHtml(){const T=S.test,m=S.map||0,a=actOf(m);return `<h3>🧪 Tryb t
   <div class="fch"><button data-a="tx">XP ×${T.tx||1}</button><button data-a="tg">Złoto ×${T.tg||1}</button><button data-a="tgold">+100 000 zł</button></div>
   <div class="fch"><button data-a="tl-10">Lvl −10</button><button data-a="tl-1">−1</button><button data-a="tl+1">+1</button><button data-a="tl+10">+10</button><button data-a="tl100">Lvl 100</button></div>
   <div class="fch">${ACT.map((x,i)=>`<button data-a="tact${i}"${i===m?' disabled':''}>Akt ${x.id} (lvl ${x.lv[0]})</button>`).join('')}</div>
-  <div class="fch"><button data-a="tboss">Przywołaj bossa obok</button><button data-a="tport">Odblokuj wszystkie portale</button><button data-a="theal">Pełne HP/mana</button><button data-a="toff">Wyłącz tryb testowy</button></div>`}
+  <div class="fch"><button data-a="tboss">Przywołaj bossa obok</button><button data-a="tport">Odblokuj wszystkie portale</button><button data-a="theal">Pełne HP/mana</button><button data-a="tchar">👥 6 postaci testowych z kombami</button><button data-a="toff">Wyłącz tryb testowy</button></div>`}
+// postacie testowe: 6 klas z gotowymi zestawami ukrytych połączeń
+const TCB={paladyn:{g:'m',bar:['w23','w15','w17','w21','w11','s19','w20'],eq:['lock_hp','p_niebo','s_wstrzas','x_stun_zbroja','p_tarcza_wybuch','w_rytm','m_trzy','odr_rana','p_ziemia','x_kolce'],bag:['p_nadmiar','p_blok_lecz','p_krucjata','p_osad','p_mlot_powrot','p_ksiega','p_aura','s_szarza','w_kontra'],ex:[{ty:'bron',wk:'miecz',own:1}]},
+ silacz:{g:'f',bar:['s19','s18','s4','s6','s22','s20','s28'],eq:['s_wstrzas','s_krzyk','s_szarza','s_gniew','s_echo_ziemi','s_rozlam','m_krytx2','m_trzy','x_rozszczep','x_kolce'],bag:['s_tarcza','s_halabarda','s_kopniak','s_krew_ziemi','w_kontra','w_rana','lock_hp']},
+ atleta:{g:'m',bar:['z10','z8','z27','z21','z17','z22','z19'],eq:['a_dobicie','a_rozciecie','a_cien_kopia','a_mgla','a_taniec','a_ped','a_jad_skok','a_biodro','a_rzut','m_trzy','x_rozszczep'],bag:['a_paraliz','w_rytm','x_plomien_buty','w_krwawo','m_krytx2']},
+ 'łowca':{g:'f',bar:['p18','p22','p19','p10','p6','p7','p23'],eq:['h_przebicie','h_grot','h_pulapka_x','h_mina','h_mis_rzut','h_mis_ryk','m_trzy','h_podciecie','h_burza_lancuch','x_stun_zbroja'],bag:['h_salwa','h_krwawa','a_cien_kopia','a_mgla','x_przywolaniec']},
+ uczony:{g:'m',bar:['i21','i2','i19','i6','i22','i9','i18'],eq:['u_zamiec','u_zar','m_trzy','u_obloki','u_piorun_aoe','u_tarcza_odbicie','w_rytm','x_zemsta','x_plomien_buty','x_kolce'],bag:['u_lancuch','u_kula_rozprysk','u_meteor','u_ksiega','u_duch','u_mana_kaskada','lock_mana','p_nadmiar']},
+ nekromanta:{g:'f',w0:'sztylet',bar:['n7','n2','n24','n6','n21','n23','n9'],eq:['n_kosci_wybuch','n_bol','n_klatwa_skok','n_czaszka','n_dotyk_aoe','n_armia','n_mur','x_mroz_zbroja','x_plomien_buty','x_kolce'],bag:['n_wlocznia','n_wyssanie','n_zgnilizna','u_zar','u_obloki','u_duch']}};
+const TCG={paladyn:'sw',silacz:'sw',atleta:'zw','łowca':'pz',uczony:'iw',nekromanta:'ni'};
+function tcBuild(){save();const base=JSON.stringify(S),me=S;let n=0;
+ try{for(const c in TCB){const b=TCB[c];S=JSON.parse(base);const p=S.p;p.cls=c;p.g=b.g;S.test=S.test||{tx:1,tg:1};
+  const cl=CL[c],tot=p.b.sil+p.b.zre+p.b.int+p.wit,bs=cl[0]+cl[1]+cl[2]+cl[3];p.b={sil:Math.round(tot*cl[0]/bs),zre:Math.round(tot*cl[1]/bs),int:Math.round(tot*cl[2]/bs)};p.wit=Math.round(tot*cl[3]/bs);p.pw=0;
+  initTree(p);Object.keys(TN).forEach(id=>{if(id==='o'||TCG[c].includes(id[0]))p.rk[id]=TN[id].t==='a'?3:1});syncTr(p);p.ps=0;p.gest={};
+  p.eq={};p.bag=[];b.eq.forEach(k=>{const it=mkSy(k);p.bag.push(it);equip(it.id)});
+  if(!p.eq.bron0){const it=genItem(3,0,b.w0?{ty:'bron',wk:b.w0,own:1}:{ty:'bron',own:1});p.bag.push(it);equip(it.id)}
+  ['helm','klata','spodnie','buty','rekawice','naramienniki','amulet','pierscien0','pierscien1'].forEach(sl=>{if(!p.eq[sl]){const it=genItem(3,0,{ty:sl.replace(/\d/,''),own:1});p.bag.push(it);equip(it.id)}});
+  b.bag.forEach(k=>p.bag.push(mkSy(k)));(b.ex||[]).forEach(o=>p.bag.push(genItem(3,0,o)));
+  p.lo=b.bar.filter(id=>TN[id]).slice(0,LOM());p.lox=p.lo.slice();p.hp=mh();p.mana=mm();p.sta=sm();
+  const sid=SM.n++;S.sid=sid;localStorage.setItem('rl-s-'+sid,JSON.stringify(S));SM.l[sid]={nm:'Test',cls:c,g:b.g,lvl:p.lvl,map:S.map||0,pt:S.pt||0,t:Date.now()-n*1000};n++}}
+ catch(e){toast('Błąd: '+e.message,5000)}
+ S=me;slSet(SM);save();toast(`Dodano ${n} postaci testowych. Przełączysz je w Opcjach → Postacie`,5000)}
 let VTAP=0,VT0=0;
 function testAct(a){const T=S.test;
   if(a==='ver'){const n=Date.now();VTAP=n-VT0<1500?VTAP+1:1;VT0=n;if(VTAP>=7&&!S.test){S.test={tx:1,tg:1};toast('Tryb testowy włączony');save()}else if(!S.test&&VTAP>=4)toast(`Jeszcze ${7-VTAP}…`);showOpt();return true}
@@ -1023,6 +1043,7 @@ function testAct(a){const T=S.test;
   else if(a==='tboss'){const nx=S.x+2,ny=S.y;S.boss={x:nx,y:ny,dead:false,k:actOf().boss.k};cache.clear();save();render();toast('Boss czeka 2 pola dalej')}
   else if(a==='tport'){S.portals=S.portals||[0];for(let q=0;q<ACT.length;q++)if(!S.portals.includes(q))S.portals.push(q);toast('Portale odblokowane')}
   else if(a==='theal'){p.hp=mh();p.mana=mm();p.sta=sm()}
+  else if(a==='tchar'){tcBuild()}
   else if(a==='toff'){S.test=null}
   else return false;
   save();showOpt();return true}
@@ -1134,7 +1155,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.06';
+const VER='1.07';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
