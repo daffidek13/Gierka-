@@ -1134,7 +1134,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.04';
+const VER='1.05';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2209,7 +2209,7 @@ function healP(x){const p=S.p,c=hpCap(),nv=p.hp+x;if(nv>c){if(F&&F.sy&&F.sy.has(
 const syOn=k=>!!(F&&F.sy&&F.sy.has(k)),syNow=()=>performance.now();
 function syCd(k,s){const n=syNow();F.syc=F.syc||{};if((F.syc[k]||0)>n)return false;F.syc[k]=n+s*1000;return true}
 const SYC={fire:'#ff8a3a',ice:'#a8e0ff',lightning:'#bcd0ff',poison:'#8fe05a',shadow:'#b98cff',holy:'#ffe27a',physical:'#ffd9a0',bleed:'#ff6a5a'};
-function syDmg(d,aoe,el){if(!F)return;d=Math.max(1,Math.round(d));el=el||'physical';const fi=$('fico');if(aoe){F.u.forEach((u,i)=>{if(u.hp>0){const e=uel(i);fl(d,SYC[el]||'#fff',0,0,e);if(e&&AN())fxAt('hit_'+(el==='bleed'?'physical':el),e,120,420)}});dmgAll(d)}else{const e=uel(tgt());fl(d,SYC[el]||'#fff',0,0,e);if(e&&AN())fxAt('hit_'+(el==='bleed'?'physical':el),e,130,420);dmgOne(d)}if(F&&F.hp<=1e-6)win()}
+function syDmg(d,aoe,el,raw){if(!F)return;d=Math.max(1,Math.round(d*(raw?1:3)*(F.sy&&F.sy.has('lock_hp')?1.6:1)));el=el||'physical';const fi=$('fico');if(aoe){F.u.forEach((u,i)=>{if(u.hp>0){const e=uel(i);fl(d,SYC[el]||'#fff',0,0,e);if(e&&AN())fxAt('hit_'+(el==='bleed'?'physical':el),e,120,420)}});dmgAll(d)}else{const e=uel(tgt());fl(d,SYC[el]||'#fff',0,0,e);if(e&&AN())fxAt('hit_'+(el==='bleed'?'physical':el),e,130,420);dmgOne(d)}if(F&&F.hp<=1e-6)win()}
 // uruchom efekt z limitem długości łańcucha
 function syDo(k,f){if(!F||(F.syd||0)>=6)return;F.syd=(F.syd||0)+1;try{f();if(F&&F.sy.has('x_pare')&&Math.random()<.15)f();if(F&&F.syd>1&&F.sy.has('m_kaskada'))F.cd=F.cd.map(c=>Math.max(0,c-.5))}finally{if(F)F.syd=Math.max(0,F.syd-1)}}
 function castFree(j){if(!F||j==null||!F.sl[j])return;F.fc=(F.fc||0)+1;try{cast(j,1)}finally{if(F)F.fc=Math.max(0,F.fc-1)}}
@@ -2239,7 +2239,7 @@ function syAuto(){const base=Math.round(atk()*(F.buff>0?F.bm:1)),n=F.sy.has('m_t
   syCount(1+(cr&&F.sy.has('m_krytx2')?1:0))}}
 function syCrit(){if(!F||!F.sy)return false;const p=S.p;return(F.bas&&F.sy.has('w_krwawo')&&p.hp<mh()*.35)||(F.sy.has('a_paraliz')&&(F.stun>0||(F.S&&F.S.shock>0)))||(!F.bas&&F.zem===2)}
 function syHit(d){if(!F||!F.sy.size)return;
- if(F.sy.has('s_wstrzas')&&F.stun>0&&syCd('s_wstrzas',.7))syDo('s_wstrzas',()=>syDmg(d*.4,1,'physical'));
+ if(F.sy.has('s_wstrzas')&&F.stun>0&&syCd('s_wstrzas',.7))syDo('s_wstrzas',()=>syDmg(d*.4,1,'physical',1));
  if(F&&F.sy.has('s_krzyk')&&F.fear>syNow()&&syCd('s_krzyk',2.5))syDo('s_krzyk',()=>syEl('stun',1))}
 function syAoe(id,k,j){if(!F||!F.sy.size)return false;const s=F.sy,n=syNow();
  return (s.has('w_start')&&!F.sk1)||(s.has('s_rozlam')&&(id==='s20'||id==='s22')&&F.S&&F.S.crack>0)||(s.has('s_szarza')&&id==='s4')||(s.has('p_osad')&&id==='w17'&&F.hol)||(s.has('p_mlot_powrot')&&(id==='w11'||id==='w16'))||(s.has('a_rzut')&&id==='z27')||(s.has('a_mgla')&&F.mgl>n)
@@ -2254,7 +2254,7 @@ function syAfter(id,k,j,ao,kc0,dm){if(!F)return;const s=F.sy,n=syNow(),el=elemOf
  if(s.has('m_echo'))syCount(2);
  const st=(SAP[id]||[]).map(x=>x[0]);st.forEach(q=>syAfterEl(q));
  const D=(f,key)=>{if(F)syDo(key||id,f)};
- if(s.has('s_echo_ziemi')&&id==='s6')setTimeout(()=>{if(F)D(()=>{if(AN())fxAt('p14_charge',$('fico'),260,700);syDmg(dm*.5,1,'physical');syEl('stun',1)})},1500);
+ if(s.has('s_echo_ziemi')&&id==='s6')setTimeout(()=>{if(F)D(()=>{if(AN())fxAt('p14_charge',$('fico'),260,700);syDmg(dm*.5,1,'physical',1);syEl('stun',1)})},1500);
  if(s.has('s_szarza')&&id==='s4')D(()=>syEl('stun',1.2));
  if(s.has('s_rozlam')&&id==='s22'){F.S=F.S||{};F.S.crack=8}
  if(s.has('s_kopniak')&&id==='s28')D(()=>{syEl('stun',2);syDmg(atk()*.8,0,'physical')});
@@ -2270,22 +2270,22 @@ function syAfter(id,k,j,ao,kc0,dm){if(!F)return;const s=F.sy,n=syNow(),el=elemOf
  if(s.has('a_rozciecie')&&id==='z19'){F.dots=F.dots||[];F.dots.push({k:'r',dps:atk()*.3,t:5});syEl('bleed',5)}
  if(s.has('a_biodro')&&k.t==='p'&&!/^p/.test(id)&&id!=='z26'&&syCd('a_biodro',1))D(()=>syDmg(atk()*.6,0,'physical'));
  if(s.has('h_grot')){const m={p17:'burn',p18:'frost',p19:'shock',p4:'poison'}[id];if(m)F.lel=m;else if((id==='p2'||id==='p22')&&F.lel)syEl(F.lel,3)}
- if(s.has('h_pulapka_x')&&(id==='p10'||id==='p20'))[1800,3600].forEach(t=>setTimeout(()=>{if(F)D(()=>syDmg(atk()*k.m*.5,0,'physical'),'h_pulapka_x')},t));
+ if(s.has('h_pulapka_x')&&(id==='p10'||id==='p20'))[1800,3600].forEach(t=>setTimeout(()=>{if(F)D(()=>syDmg(atk()*k.m*.5,0,'physical',1),'h_pulapka_x')},t));
  if(s.has('h_mina')&&(id==='p10'||id==='p20'))D(()=>{const e=F.lel||'burn';syDmg(sp()+atk()*.5,1,{burn:'fire',frost:'ice',shock:'lightning',poison:'poison'}[e]);syEl(e,3)});
- if(s.has('h_mis_rzut')&&id==='p22'&&F.pet&&F.pet.id==='p6')D(()=>{syEl('stun',1.5);syDmg(F.pet.dps*2,0,'physical');petAtk()});
+ if(s.has('h_mis_rzut')&&id==='p22'&&F.pet&&F.pet.id==='p6')D(()=>{syEl('stun',1.5);syDmg(F.pet.dps*2,0,'physical',1);petAtk()});
  if(s.has('h_podciecie')&&id==='p7')F.grp=n+5000;
  if(s.has('h_salwa')&&id==='p23'){syCount(6);if(F&&F.lel)syEl(F.lel,3)}
  if(s.has('h_krwawa')&&id==='p20'&&F.S&&F.S.bleed>0&&!F.pet){F.pet={t:8,dps:atk()*.8,id:'w9',at:0};petShow()}
  if(s.has('u_kula_rozprysk')&&id==='i2'&&killed)[0,150,300].forEach(t=>setTimeout(()=>{if(F)D(()=>{syDmg(sp()*.6,0,'fire');syEl('burn',3)},'u_kula_rozprysk')},200+t));
  if(s.has('u_meteor')&&id==='i9')F.crt=n+5000;
- if(s.has('u_ksiega')&&id==='i28')D(()=>{F.ukb=!F.ukb;syDmg(sp()*k.m*.6,0,F.ukb?'ice':'fire');syEl(F.ukb?'frost':'burn',4)});
- if(s.has('u_duch')&&F.pet&&F.pet.id==='i18'&&k.t==='m'&&dm>0)D(()=>syDmg(dm*.4,ao,el));
+ if(s.has('u_ksiega')&&id==='i28')D(()=>{F.ukb=!F.ukb;syDmg(sp()*k.m*.6,0,F.ukb?'ice':'fire',1);syEl(F.ukb?'frost':'burn',4)});
+ if(s.has('u_duch')&&F.pet&&F.pet.id==='i18'&&k.t==='m'&&dm>0)D(()=>syDmg(dm*.4,ao,el,1));
  if(s.has('u_tarcza_odbicie')&&id==='i10')F.mts=n+8000;
  if(s.has('n_wyssanie')&&id==='n4'&&F.pet&&!F.pet.ws){F.pet.ws=1;F.pet.dps*=1.4}
  if(s.has('n_mur')&&id==='n13')F.mur=n+6000;
- if(s.has('n_czaszka')&&id==='n21'&&F.pet&&/n6|n10/.test(F.pet.id)){const c=F.pet.id==='n10'?3:1;for(let q=0;q<c;q++)setTimeout(()=>{if(F)D(()=>syDmg(dm*.5,0,'shadow'),'n_czaszka')},180*(q+1))}
+ if(s.has('n_czaszka')&&id==='n21'&&F.pet&&/n6|n10/.test(F.pet.id)){const c=F.pet.id==='n10'?3:1;for(let q=0;q<c;q++)setTimeout(()=>{if(F)D(()=>syDmg(dm*.5,0,'shadow',1),'n_czaszka')},180*(q+1))}
  if(s.has('n_bol')&&id==='n24')F.bol=n+8000;
- if(s.has('lock_sta')&&k.r==='sta'&&dm>0&&!F.fc)D(()=>syDmg(dm,ao,el),'lock_sta')}
+ if(s.has('lock_sta')&&k.r==='sta'&&dm>0&&!F.fc)D(()=>syDmg(dm,ao,el,1),'lock_sta')}
 function syKill(i){if(!F)return;F.kc=(F.kc||0)+1;F.nkl=(F.nkl||0)+1;if(!F.sy||!F.sy.size)return;const s=F.sy,n=syNow(),bl=F.S&&F.S.bleed>0,po=(F.S&&F.S.poison>0)||(F.dots||[]).some(q=>q.k==='d'),cu=F.wk>0,cr=F.crt>n,pet=F.pet;
  if(s.has('n_klatwa_skok')&&cu)F.wk+=3;
  if(s.has('n_armia')&&pet&&pet.id==='n10'){pet.t+=2;pet.dps*=1.05}
@@ -2303,7 +2303,7 @@ function syDodge(){if(!F||!F.sy.size)return;const s=F.sy,n=syNow();
  if(F&&s.has('x_plomien_buty'))syDo('x_plomien_buty',()=>{syDmg(sp()*.3+atk()*.2,1,'fire');syEl('burn',3)})}
 function syBlock(d0){if(!F||!F.sy.size)return;const s=F.sy;
  if(s.has('w_kontra'))syDo('w_kontra',()=>syEl('stun',1));
- if(F&&s.has('s_tarcza'))syDo('s_tarcza',()=>syDmg(d0,0,'physical'));
+ if(F&&s.has('s_tarcza'))syDo('s_tarcza',()=>syDmg(d0,0,'physical',1));
  if(F&&s.has('p_blok_lecz')&&syCd('p_blok_lecz',4))syDo('p_blok_lecz',()=>{healP(mh()*.1+sp());fl('✚','#7fd37f',1);if(AN())fxAt('leczenie',$('fhero'),160,600)})}
 function syShield(){if(F&&F.sy.has('p_tarcza_wybuch'))syDo('p_tarcza_wybuch',()=>{if(AN())fxAt('w20',$('fico'),240,600);syDmg(sp()*1.2+atk()*.5,1,'holy');syEl('stun',.5)})}
 function syHurt(d,big){if(!F)return;const p=S.p,s=F.sy,n=syNow();
@@ -2319,18 +2319,19 @@ function syHurt(d,big){if(!F)return;const p=S.p,s=F.sy,n=syNow();
  if(F&&s.has('odr_cios')&&d>mh()*.08&&F.lj!=null&&syCd('odr_cios',6))syDo('odr_cios',()=>castFree(F.lj));
  if(F&&s.has('n_mur')&&F.mur>n)syDo('n_mur',()=>syDmg(sp()*.6,0,'shadow'));
  if(F&&s.has('n_zgnilizna')&&F.pet&&syCd('n_zgnilizna',2)){F.dots=F.dots||[];F.dots.push({k:'d',dps:sp()*.2,t:5,a:1});syEl('poison',5)}
- if(F&&s.has('u_tarcza_odbicie')&&F.mts>n)syDo('u_tarcza_odbicie',()=>{const e=['burn','frost','shock'][Math.floor(Math.random()*3)];syDmg(d*.6,0,{burn:'fire',frost:'ice',shock:'lightning'}[e]);syEl(e,3)})}
-function syPot(k){if(!F||!F.sy.size)return;if(F.sy.has('w_lyk')&&F.lj!=null)syDo('w_lyk',()=>castFree(F.lj));if(F&&F.sy.has('x_odwrot')&&(k==='hp'||k==='regen'))syDo('x_odwrot',()=>syDmg(mh()*.4,1,'holy'))}
+ if(F&&s.has('u_tarcza_odbicie')&&F.mts>n)syDo('u_tarcza_odbicie',()=>{const e=['burn','frost','shock'][Math.floor(Math.random()*3)];syDmg(d*.6,0,{burn:'fire',frost:'ice',shock:'lightning'}[e],1);syEl(e,3)})}
+function syPot(k){if(!F||!F.sy.size)return;if(F.sy.has('w_lyk')&&F.lj!=null)syDo('w_lyk',()=>castFree(F.lj));if(F&&F.sy.has('x_odwrot')&&(k==='hp'||k==='regen'))syDo('x_odwrot',()=>syDmg(mh()*.4,1,'holy',1))}
 function syPet(){if(!F||!F.sy.size||!F.pet)return;
  if(F.sy.has('h_mis_ryk')&&F.pet.id==='p6'&&Math.random()<.15&&syCd('h_mis_ryk',2))syDo('h_mis_ryk',()=>{const j=sySlot('p23');if(j>=0)castFree(j);else syDmg(atk(),1,'physical')});
  if(F&&F.sy.has('x_przywolaniec')&&F.lst&&syCd('x_przywolaniec',2))syDo('x_przywolaniec',()=>syEl(F.lst,3))}
 function syPetEnd(pt){if(!F||!F.sy.has('n_kosci_wybuch')||!/n6|n10/.test(pt.id)||(F.nkr||0)>=4)return;F.nkr=(F.nkr||0)+1;syDo('n_kosci_wybuch',()=>{if(AN())fxAt('eksplozja_trupow',$('fico'),240,600);syDmg(sp()*1.2,1,'shadow')});setTimeout(()=>{if(F&&!F.pet){F.pet={t:6,dps:pt.dps,id:pt.id,at:0};petShow()}},3000)}
 function syTick(){const s=F.sy,p=S.p,n=syNow();
- if(F.ovf>=1&&n>=(F.ovt||0)){F.ovt=n+500;const v=F.ovf;F.ovf=0;syDo('p_nadmiar',()=>syDmg(v,1,'holy'));if(!F)return}
+ if(F.ovf>=1&&n>=(F.ovt||0)){F.ovt=n+500;const v=F.ovf;F.ovf=0;syDo('p_nadmiar',()=>syDmg(v,1,'holy',1));if(!F)return}
  if(s.has('lock_mana'))p.mana=Math.min(mpCap(),p.mana+.45*(F.mm==null?1:F.mm));
  if(s.has('x_cierpliwosc')){F.rdy=F.rdy||[];F.cd.forEach((c,j)=>{if(c<=0&&!F.rdy[j])F.rdy[j]=n;else if(c>0)F.rdy[j]=0})}
- if(s.has('p_niebo')&&p.hp>0&&p.hp<mh()*.3&&n>=(F.nbt||0)){const c=mm()*.08;if(p.mana>=c){p.mana-=c;F.nbt=n+1500;syDo('p_niebo',()=>{if(AN())fxAt('w23',$('fico'),240,700);F.hol=1;syDmg((sp()+atk())*.6,1,'holy')})}}}
+ if(s.has('p_niebo')&&p.hp>0&&p.hp<mh()*.3&&n>=(F.nbt||0)){const c=mm()*.08;if(p.mana>=c){p.mana-=c;F.nbt=n+1500;syDo('p_niebo',()=>{if(AN())fxAt('w23',$('fico'),240,700);F.hol=1;syDmg(sp()*((TN.w23&&P_RK('w23'))||7)*.6,1,'holy',1)})}}}
 
+const P_RK=id=>{try{return skE(id).m}catch(_){return 0}};
 const syEq=()=>new Set(Object.values(S.p.eq||{}).filter(i=>i&&i.d>0&&i.sy).map(i=>i.sy));
 function hit(d,aoe){if(!F)return;const t=st();let cr=false;if(F.sy&&F.sy.size){const n=syNow();if((F.sy.has('a_mgla')&&F.mgl>n)||(F.sy.has('n_bol')&&F.bol>n))aoe=true;if(F.sy.has('lock_hp'))d=Math.round(d*1.6)}
   if(F.pk.has('dobij')&&F.wa.includes('topor')&&F.hp<F.hpu*F.g.n*.3)d=Math.round(d*1.3);
