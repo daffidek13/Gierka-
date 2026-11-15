@@ -1004,7 +1004,7 @@ function showOpt(){const o=S.opt=S.opt||{snd:1,vib:1},t=S.pt||0;
   ${slotsHtml()}<h3>Ustawienia</h3><button class="it" data-a="omus">Muzyka i odgłosy otoczenia: ${S.opt&&S.opt.mus===0?'wyłączone':'włączone'}</button><button class="it" data-a="odf">Trudność wrogów: ${['łatwa (−25% HP, −20% obrażeń)','normalna','trudna (+40% HP, +40% obrażeń, +25% XP)'][o.df!=null?o.df:1]}</button><button class="it" data-a="ofl">Długość walk: ${FLN[o.fl!=null?o.fl:2]}<br><small>Dłuższe walki: wrogowie mają więcej HP i słabiej biją, a za wygraną dostajesz więcej XP i złota.</small></button><button class="it" data-a="olt">Zbieranie lootu: ${o.lt?'dotknięcie zabiera od razu':'przeciągnięcie / podwójne dotknięcie'}<br><small>Gesty na oknie łupów: ⬇ weź wszystko · ➡ same materiały · ⬅ zostaw · ⬆ plecak. Dotknięcie przedmiotu zabiera go, podwójne dotknięcie zabiera wszystko.</small></button><button class="it" data-a="osnd">Dźwięk: ${o.snd===0?'wyłączony':'włączony'}</button><button class="it" data-a="oani">Animacje: ${o.an===0?'wyłączone':'włączone'}</button><button class="it" data-a="ovib">Wibracje: ${o.vib===0?'wyłączone':'włączone'}</button>
   <h3>Pomoc</h3><button class="it" data-a="otut">📖 Samouczek – jak grać</button><h3>Zapis gry</h3><p><small>Skopiuj zapis i schowaj go (np. w notatkach). Po wyczyszczeniu danych przeglądarki albo zmianie adresu wklejasz go tutaj i wczytujesz.</small></p>
   <textarea id="osv" rows="5" style="width:100%;background:#1d2027;color:var(--ink);border:1px solid #4a4e59;border-radius:8px;user-select:text;-webkit-user-select:text" placeholder="Tu pojawi się zapis albo wklej go tutaj"></textarea>
-  <button data-a="oexp">Pokaż i skopiuj zapis</button> <button data-a="oimp">Wczytaj zapis z pola</button>
+  <button data-a="oexpf">💾 Zapisz do pliku</button> <button data-a="oimpf">📂 Wczytaj z pliku</button><br><button data-a="oexp">Pokaż i skopiuj zapis</button> <button data-a="oimp">Wczytaj zapis z pola</button>
   ${S.test?testHtml():''}<h3>Świat</h3><button data-a="onew">Zacznij od nowa tą postacią</button><p style="text-align:center;margin:18px 0 8px"><button data-a="ver" style="background:none;border:0;color:#6c6f78;font-size:12px">Wersja ${VER}${S.test?' · tryb testowy':''}</button></p>`;$('opt').classList.add('on')}
 function testHtml(){const T=S.test,m=S.map||0,a=actOf(m);return `<h3>🧪 Tryb testowy</h3><p><small>Akt ${a.id}: ${a.nm} (lvl ${a.lv[0]}–${a.lv[1]}) · poziom ${S.p.lvl} · XP ×${T.tx||1} · złoto ×${T.tg||1}</small></p>
   <div class="fch"><button data-a="tx">XP ×${T.tx||1}</button><button data-a="tg">Złoto ×${T.tg||1}</button><button data-a="tgold">+100 000 zł</button></div>
@@ -1031,6 +1031,10 @@ function tcBuild(){save();const base=JSON.stringify(S),me=S;let n=0;
   const sid=SM.n++;S.sid=sid;localStorage.setItem('rl-s-'+sid,JSON.stringify(S));SM.l[sid]={nm:'Test',cls:c,g:b.g,lvl:p.lvl,map:S.map||0,pt:S.pt||0,t:Date.now()-n*1000};n++}}
  catch(e){toast('Błąd: '+e.message,5000)}
  S=me;slSet(SM);save();toast(`Dodano ${n} postaci testowych. Przełączysz je w Opcjach → Postacie`,5000)}
+function impSave(txt){const t=String(txt||'').replace(/\s+/g,'');let j;
+ try{j=JSON.parse(decodeURIComponent(escape(atob(t))))}catch(x){toast(t.length&&t.length%1000===0?`Zapis jest ucięty (${t.length} znaków). Użyj „Zapisz do pliku” zamiast kopiowania`:'To nie wygląda na zapis gry albo jest ucięty',5000);return}
+ if(!j||typeof j.seed!=='number'||!j.p||!j.p.cls){toast('Zapis jest niepełny');return}
+ if(!confirm('Nadpisać obecną grę wczytanym zapisem?'))return;try{localStorage.setItem('rl-save',JSON.stringify(j))}catch(x){}location.reload()}
 let VTAP=0,VT0=0;
 function testAct(a){const T=S.test;
   if(a==='ver'){const n=Date.now();VTAP=n-VT0<1500?VTAP+1:1;VT0=n;if(VTAP>=7&&!S.test){S.test={tx:1,tg:1};toast('Tryb testowy włączony');save()}else if(!S.test&&VTAP>=4)toast(`Jeszcze ${7-VTAP}…`);showOpt();return true}
@@ -1065,9 +1069,9 @@ $('opt').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.d
   if(a==='oani'){o.an=o.an===0?1:0;save();showOpt();render();return}
   if(a==='ovib'){o.vib=o.vib===0?1:0;save();showOpt();vib(60);return}
   if(a==='oexp'){const ta=$('osv');ta.value=b64(S);ta.focus();ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(x){}try{navigator.clipboard.writeText(ta.value).catch(()=>{})}catch(x){}toast(ok?'Zapis skopiowany':'Zaznacz tekst i skopiuj go ręcznie');return}
-  if(a==='oimp'){let j;try{j=JSON.parse(decodeURIComponent(escape(atob($('osv').value.trim()))))}catch(x){toast('To nie wygląda na zapis gry');return}
-    if(!j||typeof j.seed!=='number'||!j.p||!j.p.cls){toast('Zapis jest niepełny');return}
-    if(!confirm('Nadpisać obecną grę wczytanym zapisem?'))return;try{localStorage.setItem('rl-save',JSON.stringify(j))}catch(x){}location.reload();return}
+  if(a==='oimp'){impSave($('osv').value);return}
+  if(a==='oexpf'){try{const t=b64(S),bl=new Blob([t],{type:'text/plain'}),u=URL.createObjectURL(bl),l=document.createElement('a');l.href=u;l.download=`krysztal_osi_${S.p.cls||'postac'}_${S.p.lvl||1}.txt`;document.body.appendChild(l);l.click();setTimeout(()=>{URL.revokeObjectURL(u);l.remove()},1000);toast('Zapis pobrany do pliku')}catch(x){toast('Nie udało się zapisać pliku')}return}
+  if(a==='oimpf'){const i=document.createElement('input');i.type='file';i.accept='.txt,text/plain';i.onchange=()=>{const f=i.files&&i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>impSave(String(r.result||''));r.readAsText(f)};i.click();return}
   if(a==='onew'&&confirm('Zacząć nowy świat? Obecny postęp zostanie usunięty.')){newGame();$('opt').classList.remove('on');render();showCls()}};
 setInterval(()=>{if(!document.hidden&&S.p&&S.p.cls){S.pt=(S.pt||0)+1;if(S.pt%900===0&&S.p.lvl>=100&&!F&&!S.loc)invade();if(S.invT)for(const k in S.invT)if(S.pt-S.invT[k].t>900){const nm=S.invT[k].nm;delete S.invT[k];if(S.inv)delete S.inv[k];S.p.gold=Math.floor(S.p.gold*.97);toast(`${nm} nie przetrwała najazdu. Halina nie ma na Ciebie dobrego słowa (−3% złota).`,6000);save();render()}if(S.pt%30===0)save()}},1000);
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
@@ -1155,7 +1159,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.19';
+const VER='1.20';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
