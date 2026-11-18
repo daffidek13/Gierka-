@@ -1159,7 +1159,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.33';
+const VER='1.34';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2433,7 +2433,7 @@ function hit(d,aoe){if(!F)return;const t=st();let cr=false;if(F.sy&&F.sy.size){c
   S.rec.hit=Math.max(S.rec.hit||0,per);tl.forEach(i=>fl(per,cr?'#ffd34a':'#fff',0,cr,uel(i)));cr?sfx.crit():sfx.hit();
   F.cb=(Date.now()-(F.lt||0)<700)?(F.cb||0)+1:1;F.lt=Date.now();if(F.cb%10===0)fl('COMBO ×'+F.cb,'#ff9a3c',0,1);
   if(AN()){const dir=Math.random()<.5?-1:1;tl.forEach(i=>{const el=uel(i);if(el)el.animate([{transform:`translateX(${dir*(cr?18:8)}px) scale(${cr?1.14:1.05})`,filter:'brightness(2.2)'},{transform:'none',filter:'none'}],{duration:cr?240:150})});if(cr){shake($('fight'),7,260);const e0=uel(tl[0]);if(e0){const[bx,by]=ctr(e0);burst(bx,by,['✨','💥'],6,70)}}}
-  {const e0=uel(aoe?tgt():tgt());if(e0&&(cr||!aoe))fxAt(cr?'krytyk':'trafienie',e0,cr?190:140,cr?440:340)}
+  {const e0=uel(aoe?tgt():tgt());if(e0&&(cr||!aoe)){if(F.bas){if(cr)fxAt('aa_krytyk',e0,200,320)}else fxAt(cr?'krytyk':'trafienie',e0,cr?190:140,cr?440:340)}}
   if(aoe)dmgAll(per);else dmgOne(d);if(F.hp<=1e-6)win();else{syHit(per);if(F)upd()}}
 // ---------- gesty ----------
 const GD={kolo:['◯','Koło'],trojkat:['△','Trójkąt'],v:['V','Litera V'],daszek:['∧','Daszek'],lt:['‹','Strzałka <'],gt:['›','Strzałka >'],z:['Z','Litera Z'],n:['N','Litera N'],gora:['↑','Kreska w górę'],dol:['↓','Kreska w dół'],lewo:['←','Kreska w lewo'],prawo:['→','Kreska w prawo']};
@@ -2464,7 +2464,7 @@ fe0.addEventListener('pointerup',e=>{if(!GP||e.pointerId!==GP.id)return;const g=
 
 
 // ---------- animacja ataku podstawowego zależna od broni i klasy ----------
-let BFT=0;setTimeout(()=>['ciecie_mieczem','trafienie','hit_physical','hit_arcane','hit_shadow'].forEach(fxImg),2000);
+let BFT=0;setTimeout(()=>['ciecie_mieczem','trafienie','hit_physical','hit_arcane','hit_shadow','aa_miecz','aa_sztylet','aa_topor','aa_maczuga','aa_mlot','aa_halabarda','aa_luk','aa_kostur','aa_rozdzka','aa_ksiega','aa_czaszka','aa_piesci','aa_krytyk'].forEach(fxImg),2000);
 function basicFx(){if(!F||!AN()){heroAnim('atk');return}const now=performance.now(),cheap=now-BFT<140;BFT=now;
  const e=S.p.eq||{},w0=e.bron0&&e.bron0.d>0?WT[wkey(e.bron0)]:null,w1=e.bron1&&e.bron1.d>0?WT[wkey(e.bron1)]:null,cl=S.p.cls;
  const t=w0||(w1&&!['shield'].includes(w1)?w1:null)||'none';
@@ -2478,12 +2478,14 @@ function basicFx(){if(!F||!AN()){heroAnim('atk');return}const now=performance.no
   else if(kind==='heavy')h.animate([{transform:'none'},{transform:'translateY(8px) rotate(-6deg) scale(.96)',offset:.3},{transform:'translateY(-30px) rotate(5deg) scale(1.12)',offset:.6},{transform:'translateY(4px)',offset:.8},{transform:'none'}],{duration:380,easing:'ease-out'});
   else heroAnim('atk')}
  if(cheap)return;
- const shot=(html,css,dur,done)=>{const d=document.createElement('div');d.innerHTML=html;d.style.cssText=`position:absolute;left:${hx}px;top:${hy}px;pointer-events:none;z-index:8;${css}`;fe.appendChild(d);d.animate([{left:hx+'px',top:hy+'px'},{left:ex+'px',top:ey+'px'}],{duration:dur,easing:'ease-in'}).onfinish=()=>{d.remove();done&&done()}};
- if(kind==='cast'){const sz=t==='staff'?26:20;shot('',`width:${sz}px;height:${sz}px;margin:${-sz/2}px 0 0 ${-sz/2}px;border-radius:50%;background:radial-gradient(circle,#fff 0,${col} 45%,${col}00 72%);box-shadow:0 0 16px ${col},0 0 30px ${col}`,200,()=>F&&fxPlay('hit_'+el,ex,ey,t==='staff'?130:110,420))}
- else if(kind==='bow'){const ang=Math.atan2(ey-hy,ex-hx)*180/Math.PI,d=document.createElement('div');d.style.cssText=`position:absolute;left:${hx}px;top:${hy}px;width:46px;height:3px;margin:-1.5px 0 0 -23px;pointer-events:none;z-index:8;background:linear-gradient(90deg,#c9b38a 0,#8a6a3a 75%,#e8e8f0 76%,#fff 100%);border-radius:2px;box-shadow:0 0 6px #fff8;transform:rotate(${ang}deg)`;fe.appendChild(d);d.animate([{left:hx+'px',top:hy+'px'},{left:ex+'px',top:ey+'px'}],{duration:150,easing:'linear'}).onfinish=()=>{d.remove();snd('atk_arrow_hit',.5);F&&fxPlay('hit_physical',ex,ey,100,360)}}
- else if(kind==='heavy')setTimeout(()=>{if(!F)return;fxPlay(t==='halberd'?'ciecie_mieczem':'trafienie',ex,ey,t==='halberd'?190:170,420,{flip:Math.random()<.5});shake(te,8,220);fe.animate([{transform:'translateY(0)'},{transform:'translateY(4px)'},{transform:'none'}],{duration:160})},220);
- else if(kind==='fist')setTimeout(()=>F&&fxPlay('hit_physical',ex,ey,95,320),110);
- else{const sm=t==='dagger';setTimeout(()=>{if(!F)return;if(['mace','buzdygan'].includes(t))fxPlay('trafienie',ex,ey,135,340);else fxPlay('ciecie_mieczem',ex,ey,sm?110:145,sm?260:320,{flip:Math.random()<.5,rot:sm?(Math.random()*40-20):0})},120)}}
+ // paczka 56: osobny efekt dla każdej broni; bronie dystansowe lecą od bohatera do celu
+ const AAK={sword:'miecz',dagger:'sztylet',axe:'topor',mace:'maczuga',buzdygan:'maczuga',hammer2h:'mlot',halberd:'halabarda',bow:'luk',staff:'kostur',wand:'rozdzka',book:'ksiega',skull:'czaszka',none:'piesci'};
+ const ck=kind==='cast'?(CST.includes(w0)?w0:CST.includes(w1)?w1:'wand'):t,ak='aa_'+(AAK[ck]||'miecz');
+ if(kind==='cast'||kind==='bow'){const im=fxImg(ak),N0=FXN[ak]||8,sz=kind==='bow'?120:110,ang=Math.atan2(ey-hy,ex-hx)*180/Math.PI,d=document.createElement('div');
+  d.style.cssText=`position:absolute;left:${hx-sz/2}px;top:${hy-sz/2}px;width:${sz}px;height:${sz}px;pointer-events:none;z-index:8;background:url(${im.src}) ${3/(N0-1)*100}% 0/${N0*100}% 100% no-repeat;transform:rotate(${ang}deg)`;fe.appendChild(d);
+  d.animate([{left:`${hx-sz/2}px`,top:`${hy-sz/2}px`},{left:`${ex-sz/2}px`,top:`${ey-sz/2}px`}],{duration:kind==='bow'?150:200,easing:kind==='bow'?'linear':'ease-in'}).onfinish=()=>{d.remove();if(kind==='bow')snd('atk_arrow_hit',.5);F&&fxPlay(ak,ex,ey,kind==='bow'?150:160,300,{ns:1})}}
+ else if(kind==='heavy')setTimeout(()=>{if(!F)return;fxPlay(ak,ex,ey,210,320,{ns:1});shake(te,8,220);fe.animate([{transform:'translateY(0)'},{transform:'translateY(4px)'},{transform:'none'}],{duration:160})},220);
+ else setTimeout(()=>{if(!F)return;fxPlay(ak,ex,ey,t==='dagger'?150:kind==='fist'?140:175,300,{ns:1,flip:t!=='dagger'&&Math.random()<.35})},kind==='fist'?100:120)}
 // ---------- statusy i reakcje (combosy) ----------
 const comboCodex=()=>'<h3>⚔️ Reakcje statusów (combosy)</h3><p><small>Skille nakładają statusy na wroga (podpalenie, mróz, porażenie, krwawienie, trucizna, ogłuszenie). Kolejny skill może je wykorzystać:</small></p>'+[['🔥+❄️','Szok termiczny','ogień na zamrożonym (lub lód na podpalonym): +50% i dodatkowy wybuch w całą grupę'],['⚡+💫','Paraliż','porażenie na ogłuszonym (lub ogłuszenie na porażonym): wróg traci 3,5 s i +40%'],['🩸+☠️','Gangrena','krwawienie na zatrutym (lub trucizna na krwawiącym): silne obrażenia w czasie, 8 s'],['🔥+☠️','Toksyczny wybuch','ogień na zatrutym: zużywa truciznę i rani całą grupę'],['⚔️+❄️','Rozbicie lodu','cios fizyczny na zamrożonym: +80%'],['🔮+⚡','Przeciążenie','zaklęcie na porażonym: +50%'],['⚔️+💫','Uderzenie w oszołomionego','cios fizyczny na ogłuszonym: +50%'],['⚔️+🩸','Dobicie krwawiącego','cios fizyczny na krwawiącym: +35%'],['💥','Detonacja','Eksplozja arkanów zużywa wszystkie statusy: +70% za każdy']].map(([i,n,d])=>`<div class="at"><div><b>${i} ${n}</b><br><small>${d}</small></div></div>`).join('')
 
