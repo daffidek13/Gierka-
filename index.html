@@ -1170,7 +1170,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.38';
+const VER='1.39';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2028,7 +2028,7 @@ function fxUi(){const a=EF.map(e=>`${pI(e.k)} ${POT[e.k][2]} ${Math.ceil(e.t)}s`
   const e=$('fx'),qt=$('sqt'),qr=!F&&qt&&qt.style.display!=='none'?qt.getBoundingClientRect():null;e.style.top=F?'calc(env(safe-area-inset-top,0px) + 58px)':qr&&qr.height?(qr.bottom+6)+'px':'';{const lq=!F&&qr&&qr.height;e.style.left=lq?'10px':'';e.style.transform=lq?'none':'';e.style.maxWidth=lq?'62%':''}e.innerHTML=a.join('  ·  ');e.style.display=a.length?'block':'none'}
 setInterval(()=>{const p=S.p;if(!p.cls)return;let end=false;{const c=hpCap();if(p.hp>c)p.hp=c;const c2=mpCap();if(p.mana>c2)p.mana=c2;const c3=spCap();if(p.sta>c3)p.sta=c3}
   for(let i=EF.length-1;i>=0;i--){const e=EF[i],a=e.tot*.1/e.d;if(e.type==='hp')healP(a);else if(e.type==='mana')p.mana=Math.min(mm(),p.mana+a);else p.sta=Math.min(sm(),p.sta+a);e.t-=.1;if(e.t<=0){EF.splice(i,1);end=true}}
-  fxUi();orbUi();if(F){upd()}else if(end||(EF.length&&++fxn%10===0))render()},100);
+  fxUi();orbUi();if(F){if(!F.iv)upd()}else if(end||(EF.length&&++fxn%10===0))render()},100);
 function renderPots(){const p=S.p.pot||{};$('pots').innerHTML=Object.keys(POT).filter(k=>p[k]>0).map(k=>`<button data-p="${k}">${pI(k)}<small>×${p[k]}</small></button>`).join('')}
 $('pots').onclick=e=>{const b=e.target.closest('button');if(b&&F)usePot(b.dataset.p)};
 function spawnWd(f){ // wędrujące potwory pojawiają się na pustych polach
@@ -2120,7 +2120,7 @@ function auraUpd(){if(!F)return;const n=performance.now(),p=S.p,s=F.sy||new Set(
  const hw=$('fhero')&&($('fhero').querySelector('.hw')||$('fhero'));auraSet(hw,'saura',L.slice(0,2));
  F.u.forEach((u,i)=>{const e=uel(i);if(!e||u.hp<=0)return;const A=[];if(i===0&&F.g.boss&&!u.hide){if(F.enr)A.push('szal');if(u.sh>0)A.push('oslona');else if(F.br){const k=Object.keys(F.br)[0];if(k)A.push('res_'+k)}}if(u.mb||F.g.elite)A.unshift('czempion');auraSet(e,'eaura',A.slice(0,2))})}
 setTimeout(()=>['serce','mloty','krucjata','mgla','cien','zemsta','gniew','ped','przyzwanie','pajeczyna','kajdany','ciezarki','czempion','szal','oslona'].forEach(n=>fxImg('aura_'+n)),3500);
-function startFight(i,amb,ov){
+function startFight(i,amb,ov){fxPre();
   if(F||!S.p.cls)return;WAVEP=0;const f=ov?ov.f:cur(),g=ov?ov.g:f.foes[i];if(!g||(!ov&&isDead(f,i)))return;
   const FL=FLV[(S.opt&&S.opt.fl!=null)?S.opt.fl:2],DF=[.75,1,1.4][(S.opt&&S.opt.df!=null)?S.opt.df:1],st0=ST[g.key],AC=ov?ACT[4]:actOf(S.map),nn=g.camp?Math.min(6,g.n):g.n,L=S.p.lvl,night=!ov&&!S.loc&&tod()==='noc',bo=!!g.boss,el=ov?ov.el:bo?AC.elHi:elAt(S.x,S.y,S.map),w=Math.sqrt(st0[0]/20),dmod=(DF>1?1.2:DF<1?.8:1)*Math.pow(FL/6,-.55)*(night?1.15:1)*AC.dmg;
   let hpu=bo?Math.round(2.2*ELX.ttk*Dref(el)*AC.bossHp*AC.hp*DF*(FL/6)):Math.round(ELX.ttk/3*Dref(el)*w*Math.pow(3/nn,.5)*AC.hp*DF*(FL/6));
@@ -2152,7 +2152,7 @@ const FXS={w18:['t','w18'],w23:['t','w23'],p23:['t','p23'],p24:['t','p24'],n24:[
  s8:['t','wir_ostrzy'],z8:['t','wir_ostrzy'],w2:['h','leczenie'],w5:['h','leczenie'],w13:['h','leczenie'],i10:['h','tarcza'],s14:['h','tarcza']};
 Object.assign(FXS,{i9:['t','p14_meteor'],i14:['t','p14_supernova'],i12:['t','p14_ice_storm'],i21:['t','p14_ice_spike'],i22:['t','p14_chain_lightning'],i6:['t','p14_thunder'],i23:['t','p14_arcane_burst'],s4:['t','p14_charge'],s8:['t','p14_blade_whirl'],n12:['t','p14_bone_prison'],n4:['h','p14_life_drain'],z6:['t','p14_shadow_step']});
 const FXBIG=new Set(['p2','p4','p7','p9','p10','p12','p16','p20','p22','z10','z12','z17','z18','z20','z21','z22','z25','z26','i17','i27','i28','n2','n7','n17','n18','n21','n22','s6','s18','s19','s22','s25','s26','s27','w11','w16']);Object.assign(FXS,{s6:['t','s6'],s10:['h','s10'],s18:['t','s18'],s19:['t','s19'],s22:['t','s22'],s25:['t','s25'],s26:['t','s26'],s27:['t','s27'],w11:['t','w11'],w14:['h','w14'],w15:['h','w15'],w16:['t','w16'],h5:['h','h5'],p2:['pp','p2'],p4:['pp','p4'],p7:['t','p7'],p9:['t','p9'],p10:['t','p10'],p12:['pp','p12'],p16:['t','p16'],p20:['t','p20'],p22:['pp','p22'],z10:['t','z10'],z12:['t','z12'],z17:['pp','z17'],z18:['t','z18'],z20:['t','z20'],z21:['t','z21'],z22:['t','z22'],z25:['t','z25'],z26:['pp','z26'],i17:['t','i17'],i27:['pp','i27'],i28:['pp','i28'],n2:['t','n2'],n7:['t','n7'],n17:['t','n17'],n18:['t','n18'],n21:['pp','n21'],n22:['pp','n22'],n13:['h','n13']}); // paczki 53–55
-setTimeout(()=>Object.values(FXS).flat().forEach(n=>n.length>1&&n!=='pp'&&fxImg(n)),2500);
+const fxPre=()=>{try{if(!S.p||!S.p.cls)return;Object.keys(FXS).forEach(id=>{if(TN[id]&&!brOk(id))return;FXS[id].forEach(n=>n.length>1&&n!=='pp'&&fxImg(n))})}catch(_){}};setTimeout(fxPre,2500);
 // efekty interfejsu (paczka 15): wyświetlane na środku ekranu, ponad oknami
 function uiFx(n,sz,dur,y){if(n==='teleport'||n.startsWith('portal_'))snd('portal',.7);else if(n==='gold_pickup')snd('ui_coins',.6);else{const q={level_up:'ui_levelup',quest_complete:'ui_quest_done',legendary_loot:'loot_legendary',rare_loot:'loot_rare',chest_open:'chest_open',enchant:'ench_success',revive:'hero_revive',summon:'sk_summon'}[n];if(q)snd(q)}if(!AN())return;const im=fxImg('ui_'+n);const go=()=>{const e=document.createElement('div');sz=sz||200;e.style.cssText=`position:fixed;left:50%;top:${y||42}%;width:${sz}px;height:${sz}px;margin:${-sz/2}px 0 0 ${-sz/2}px;z-index:400;pointer-events:none;background:url(${im.src}) 0 0/800% 100% no-repeat;filter:drop-shadow(0 0 18px #000c)`;document.body.appendChild(e);const t0=performance.now();dur=dur||1100;const st=t=>{const k=Math.min(7,Math.floor((t-t0)/dur*8));e.style.backgroundPosition=`${k/7*100}% 0`;if(t-t0<dur)requestAnimationFrame(st);else e.animate([{opacity:1},{opacity:0}],{duration:250}).onfinish=()=>e.remove()};requestAnimationFrame(st)};if(im.complete&&im.naturalWidth)go();else im.onload=go}
 setTimeout(()=>['hit_physical','hit_fire','hit_ice','hit_lightning','hit_poison','hit_shadow','hit_holy','hit_arcane'].forEach(fxImg),2600);
@@ -2809,7 +2809,7 @@ if(S.loot)showLoot();
 if(!S.p.cls)showCls();else if(!S.p.g)gsel();
 
 // Wczesne ładowanie grafik osad i horyzontu (cache przeglądarki + SW), żeby ekrany otwierały się od razu
-(function(){const urls=[];try{for(const t in VAR)VAR[t].forEach((v,n)=>urls.push(`assets/world/w_${t}_${n+1}.jpg`));['wioska','miasteczko','zamek','obozowisko','klasztor','stolica'].forEach(t=>urls.push(`assets/world/w_hz_${t}.png`))}catch(_){}
+(function(){const urls=[];try{wps().forEach(o=>{if(VAR[o.f.poi]&&o.f.vr!=null)urls.push(`assets/world/w_${o.f.poi}_${o.f.vr+1}.jpg`)});['wioska','miasteczko','zamek','obozowisko','klasztor','stolica'].forEach(t=>urls.push(`assets/world/w_hz_${t}.png`))}catch(_){}
 const keep=[];let i=0;const nx=()=>{if(i>=urls.length)return;const im=new Image();im.decoding='async';im.onload=im.onerror=()=>setTimeout(nx,150);im.src=urls[i++];keep.push(im)};
 const go=()=>{nx();nx()};(window.requestIdleCallback||setTimeout)(go,{timeout:2500})})();
 </script>
