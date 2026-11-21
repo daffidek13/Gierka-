@@ -384,6 +384,7 @@ body.play .orb{display:block}#orbL{left:-12px}#orbR{right:-12px}
 .exg{border:2px dashed #7a6a3a;border-radius:14px;padding:4px 4px 6px;min-width:0;background:#13141a}.exg>small{display:block;text-align:center;font-size:10px;color:#e0b04a;margin-bottom:4px}.exi{display:flex;gap:6px}.exi .tn{max-width:none}
 #tdet{position:fixed;left:0;right:0;bottom:0;z-index:12;max-height:48vh;overflow:auto;background:#12141ae8;backdrop-filter:blur(4px);border-top:2px solid #6a5a34;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 10px);border-radius:16px 16px 0 0;font-size:14px}#tdet.mini{padding:8px 14px calc(env(safe-area-inset-bottom,0px) + 8px)}
 .tdh{display:flex;gap:10px;align-items:center}.tdh .tbig{width:48px;height:48px;display:block;flex:none}.tdn{margin:6px 0;line-height:1.35}.tdn.nx{color:#bfe8b0}.gr{color:#6fe08a;font-weight:bold}#tdet .row{margin-top:8px}#tdet .row button{padding:9px}
+.wxi{width:1.35em;height:1.35em;vertical-align:-.3em;margin-left:2px}
 </style>
 </head>
 <body>
@@ -640,7 +641,7 @@ function render(dx=0,dy=0,pp=0){document.body.classList.toggle('inloc',!!S.loc);
   let tsrc=`assets/world/t_${S.loc?S.loc.k:f.t}.jpg`,fl2=false;if(S.loc){const rv=roomVar();if(rv){tsrc=rv.src;fl2=rv.flip}}const tkey=tsrc+(fl2?'F':''),old=v.querySelector('img.tile');
   if(!old||old.dataset.s!==tkey){if(old)old.remove();const im=new Image();im.className='tile';im.alt='';im.decoding='async';im.dataset.s=tkey;if(fl2)im.style.transform='scaleX(-1)';if(tsrc.includes('_r_'))im.style.objectFit='fill';im.onerror=()=>im.remove();im.src=tsrc;v.prepend(im)}
   {const hs=heroSig()+'|'+auraKey(),he=$('hero');if(he.dataset.s!==hs||!he.firstChild){he.innerHTML=heroHtml();he.dataset.s=hs}}wxSet(S.loc?'':tod(),S.loc?'':wth());$('tname').textContent=S.loc?(S.loc.tomb?'Grobowiec Sethuna':POI[S.loc.k][0]):f.poi&&SET[f.poi]?f.nm:t.n;
-  $('coords').textContent=`Pole ${S.x}, ${S.y} · mapa ${(S.map||0)+1} · ${TODE[tod()]}${wth()?WX[wth()].e:''}${bossHint()}`;
+  $('coords').innerHTML=`Pole ${S.x}, ${S.y} · mapa ${(S.map||0)+1} · ${TODE[tod()]}${wth()?`<img class="wxi" src="assets/ui/u_wx_${wth()}.png" alt="">`:''}${bossHint()}`;
   if(S.loc){S.loc.vis=S.loc.vis||{};S.loc.vis[S.loc.fl+':'+S.loc.x+','+S.loc.y]=1;$('coords').textContent=`Piętro ${S.loc.fl+1} z ${S.loc.fls}`}
   $('poi').onclick=S.loc?null:SET[fo.poi]?()=>{if(needFree(fo)){startFree(fo);return}TCUR=fo;TSEC=null;openTown()}:fo.poi&&fo.poi!=='oaza'?()=>enterLoc(fo):null;$('poi').className=!S.loc&&fo.poi&&SET[fo.poi]?'hzp':'';$('poi').innerHTML=S.loc?'':fo.poi&&SET[fo.poi]?`<div class="hz" style="--hzc:${HZC[fo.t]||'#cfe6b0'};width:${({wioska:68,miasteczko:78,zamek:74,obozowisko:74,klasztor:74,miasto:84})[fo.poi]||80}%"><img src="assets/world/w_hz_${fo.poi==='miasto'?'stolica':fo.poi}.png" onerror="this.onerror=null;this.src='assets/world/p_${fo.poi}.png';this.classList.add('fb')" alt="" draggable="false"><b>${fo.nm} <small>(${POI[fo.poi][0].toLowerCase()})</small></b><u>${needFree(fo)?'zajęte przez demony · tap, aby odbić':'tap, aby wejść'}</u></div>`:fo.poi?icon('',fo.tomb?`assets/world/p_grobowiec.png|assets/world/p_${fo.poi}.png`:`assets/world/p_${fo.poi}.png`,POI[fo.poi][1])+(SET[fo.poi]?fo.nm+' <small>('+POI[fo.poi][0].toLowerCase()+')</small>':POI[fo.poi][0])+(SET[fo.poi]?(needFree(fo)?' · zajęte przez demony':' · tap, aby wejść'):(S.cleared&&S.cleared[ckey(fo)]?' (wyczyszczone)':' · tap, aby wejść')):'';
   $('foes').innerHTML=f.foes.map((o,i)=>isDead(f,i)?'':`<button class="foe${o.ag?' ag':''}${o.elite?' el':''}${POP?' pop':''}" data-i="${i}" style="--i:${i};left:${slot(i)[0]}%;top:${slot(i)[1]}%;z-index:${slot(i)[1]};transform:translate(-50%,-85%) scale(${(.8+slot(i)[1]/100*.4).toFixed(2)})">${icon('',`assets/enemies/e_${o.key}.png`,E[o.key][1])}<b>${o.camp?'⛺ ':o.elite?'👑 ':''}×${o.n}</b><small${o.elite?' style="color:#ffd34a"':''}>${o.elite?o.nm+' (czempion)':o.camp?'Obóz: '+o.camp.map(k=>E[k][0]).join(', '):E[o.key][0]}${o.ag?' · atakuje!':''}</small></button>`).join('')+objs()+(S.loc?roomHtml()+walls():'');
@@ -753,7 +754,7 @@ function setCodex(){const c=setCnt(),p=S.p,L=o=>Object.entries(o).map(([k,v])=>'
 function showCodex(){const n=ACH.filter(a=>S.ach[a[0]]).length,t=S.pt||0,w=wth(),
   where=k=>Object.entries(SP).filter(([,l])=>l.includes(k)).map(([x])=>T[x].n).join(', ')||({krolowa:'boss jaskiń',licz:'boss ruin',boss:'Władca Zła',smok:'rzadko w górach'}[k]||'?');
   $('codex').innerHTML=`<button data-a="x">✕ Zamknij</button>
-  <h3>Teraz</h3><p>${TODE[tod()]} ${{dzien:'Dzień',zmierzch:'Zmierzch',noc:'Noc: wrogowie +15% obrażeń, +20% XP',swit:'Świt'}[tod()]}${w?` · ${WX[w].e} ${WX[w].n}`:' · bezchmurnie'}</p>
+  <h3>Teraz</h3><p>${TODE[tod()]} ${{dzien:'Dzień',zmierzch:'Zmierzch',noc:'Noc: wrogowie +15% obrażeń, +20% XP',swit:'Świt'}[tod()]}${w?` · ${ui('wx_'+w,WX[w].e)} ${WX[w].n}`:' · bezchmurnie'}</p>
   <p><small>🌧️ Deszcz: +10% many, −5% uniku · 🌫️ Mgła: +8% uniku, −5% krytyka · ⛈️ Burza: +25% mocy zaklęć, −10 pancerza. Pogoda nie działa w lochach.</small></p>
   ${setCodex()}
   <h3>Osiągnięcia ${n}/${ACH.length}</h3>${ACH.map(a=>`<div class="at"><div><b>${S.ach[a[0]]?'🏆':'○'} ${a[1]}</b><br><small>${a[2]} · nagroda ${a[4]} zł</small></div></div>`).join('')}
@@ -1170,7 +1171,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.40';
+const VER='1.41';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2109,7 +2110,7 @@ function stUi(){if(!F)return;let c=$('fst');if(!c){c=document.createElement('div
  add('stun',F.stun,4,'💫');[['burn',8],['frost',6],['shock',6],['bleed',8],['poison',10],['gang',8]].forEach(([q,m])=>add(q,F.S[q],m,STN[q][0]));
  if(F.dots&&F.dots.length){if(!(F.S.poison>0)&&F.dots.some(d=>d.k==='d'))L.push(['poison',1,'☠️']);if(!(F.S.bleed>0)&&F.dots.some(d=>d.k==='r'))L.push(['bleed',1,'🩸'])}
  add('weak',F.wk,10,'😱');
- const key=L.map(x=>x[0]).join();if(c.dataset.k!==key){c.dataset.k=key;c.innerHTML=L.map(([k,,e])=>`<div class="fsi" data-k="${k}">${k==='weak'?`<span class="fse">${e}</span>`:`<img src="assets/skills/s_st_${k}.png" alt="" onerror="this.outerHTML='<span class=fse>${e}</span>'">`}<u><i></i></u></div>`).join('')}
+ const key=L.map(x=>x[0]).join();if(c.dataset.k!==key){c.dataset.k=key;c.innerHTML=L.map(([k,,e])=>`<div class="fsi" data-k="${k}">${`<img src="assets/skills/s_st_${k}.png" alt="" onerror="this.outerHTML='<span class=fse>${e}</span>'">`}<u><i></i></u></div>`).join('')}
  L.forEach(([k,f])=>{const i=c.querySelector(`.fsi[data-k="${k}"] i`);if(i)i.style.width=Math.round(f*100)+'%'})}
 // ---- aury stanów w walce (paczka 58): bohater max 2, wrogowie: czempion, szał, osłona, odporność ----
 function auraSet(el,cls,list){if(!el)return;const key=list.join(',');if(el.dataset.au===key&&el.querySelector('.'+cls))return;el.dataset.au=key;el.querySelectorAll('.'+cls).forEach(x=>x.remove());list.forEach((n,i)=>{const sp=document.createElement('span');sp.className=cls+(i?' '+cls+'2':'');sp.style.backgroundImage=`url(assets/fx/fx_aura_${n}.webp)`;el.appendChild(sp)})}
@@ -2705,7 +2706,7 @@ function initTree(p){const t=CLT[p.cls]||CLT.silacz;p.rk={};p.bq={};t[0].forEach
 const skDesc=e=>{const A=atk(),P=sp(),r=Math.round;switch(e.t){case 'p':return `Zadaje ~${r(A*e.m)} obrażeń (atak ×${e.m})`;case 'm':return `Zadaje ~${r(P*e.m)} obrażeń (moc zaklęć ×${e.m})`;case 'h':return `Leczy ~${r(mh()*e.m/100+P)} HP (${e.m}% maks. HP + moc zaklęć)`;case 'b':return `Twój atak ×${e.m} przez ${e.d} s`;case 's':return `Tarcza na ~${r(mh()*e.m/100)} HP (${e.m}% maks. HP)`;case 'r':return `Krwawienie: ~${r(A*e.m)} obrażeń w ${e.d} s (~${r(A*e.m/e.d)}/s)`;case 'd':return `Trucizna: ~${r((A+P)*.6*e.m)} obrażeń w ${e.d} s`;case 'w':return `Wróg zadaje ${r(e.m*100)}% mniej obrażeń przez ${e.d} s`;case 'u':return `Przywołaniec: ~${r((e.r==='mana'?P:A)*e.m)} obrażeń/s przez ${e.d} s`}return ''},skNum=e=>{const A=atk(),P=sp(),r=Math.round;return {p:()=>r(A*e.m),m:()=>r(P*e.m),h:()=>r(mh()*e.m/100+P),s:()=>r(mh()*e.m/100),r:()=>r(A*e.m),d:()=>r((A+P)*.6*e.m)}[e.t]?.()||''};
 let TSEL=null;
 const PSI={sil:'💪',zre:'🌀',int:'🧠',wit:'❤️',def:'🛡️',atkp:'⚔️',hpp:'💖',crit:'🎯',ls:'🩸',dod:'💨',stap:'🔋',manap:'🔷',spp:'✨'};
-const tIc=id=>{const n=TN[id];return icon('',`assets/skills/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):((n.x&&n.x.ic)||PSI[Object.keys(n.e||{})[0]]||'⭐'))};
+const tIc=id=>{const n=TN[id];return icon('',(n.x&&n.x.fr?`assets/skills/s_tr_${n.x.fr}.png|`:'')+`assets/skills/s_${id}.png`,n.t==='a'?(SKI[n.e.t]||'✨'):((n.x&&n.x.ic)||PSI[Object.keys(n.e||{})[0]]||'⭐'))};
 const exOth=id=>{const x=TN[id].x;return x&&x.ex?Object.values(TN).filter(q=>q.id!==id&&q.x&&q.x.ex===x.ex):[]};
 const cflOf=id=>{const x=TN[id].x;return x&&x.ex?Object.values(TN).find(q=>q.id!==id&&q.x&&q.x.ex===x.ex&&S.p.tr.includes(q.id)):null};
 let SBSEL=-1,SBF='',GSEL=null;
