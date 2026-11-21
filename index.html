@@ -283,7 +283,8 @@ body.night .foe::before,body.night .obj::before{opacity:.8}
 .doll .dh::before{content:"";position:absolute;left:50%;bottom:0;width:150px;height:150px;margin-left:-75px;border-radius:50%;background:radial-gradient(closest-side,#ffd98a55,#0000);z-index:0}
 .doll .dh::after{content:"";position:absolute;left:50%;bottom:-6px;width:130px;height:24px;margin-left:-65px;border-radius:50%;background:radial-gradient(closest-side,#000d,#0000);z-index:0}
 .doll .hv{position:relative;z-index:1;width:150px;height:240px}
-.doll .dmid .tl{width:64px}.doll .dmid .sm{font-size:11px;padding:4px 8px;min-height:0;border-radius:8px;background:#0006;border:1px solid #6a5a34;color:inherit}
+.doll .dmid .tl{width:64px}
+.doll .drow{gap:4px;align-items:flex-end}.doll .drow>.tl:nth-child(odd){width:46px;flex:none}.doll .drow>.tl:nth-child(odd) .ph{font-size:8px}.doll .drow>.tl:nth-child(odd) .lvb,.doll .drow>.tl:nth-child(odd) b{font-size:9px}.doll .dmid .sm{font-size:11px;padding:4px 8px;min-height:0;border-radius:8px;background:#0006;border:1px solid #6a5a34;color:inherit}
 .pg .doll .tl{border-radius:12px;border-width:2px}
 .pg .doll .tl:not(.fi){border-style:dashed;background:#00000040;box-shadow:inset 0 0 10px #000}
 .pg .doll .tl.fi{box-shadow:inset 0 0 12px #0008,0 0 10px color-mix(in srgb,var(--c) 55%,transparent)}
@@ -335,7 +336,9 @@ body.night .foe::before,body.night .obj::before{opacity:.8}
 .ub{display:block;width:78%;height:6px;border-radius:3px;background:#000b;border:1px solid #fff4;overflow:hidden;margin-top:1px}
 .ub i{display:block;height:100%;width:100%;background:linear-gradient(#ff9a8a,#c8402e);transition:width .15s}
 .eu-m{display:none;position:absolute;top:-16px;left:50%;transform:translateX(-50%);color:#ffd34a;font-size:16px;text-shadow:0 0 6px #000;z-index:2;animation:pulse 1s ease-in-out infinite}
-.eu.tg .eu-m{display:block}.eu.dead{pointer-events:none}#skills button.seal,#skx button.seal{opacity:.35;filter:grayscale(1)}#skills button.sealv,#skx button.sealv{opacity:1;filter:none}#skills button.sealv .ik,#skx button.sealv .ik{position:relative}#skills button.sealv .ik>*,#skx button.sealv .ik>*{filter:grayscale(1) brightness(.5)}#skills button.sealv .ik::after,#skx button.sealv .ik::after{content:'';position:absolute;inset:-22%;background:url(assets/fx/fx_boss_pieczec.webp) 0 0/800% 100% no-repeat;animation:au8 .96s steps(8) infinite;pointer-events:none}.eu-c{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:22px;z-index:2}#skx{position:absolute;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 128px);z-index:6;display:flex;flex-direction:column;gap:8px}#skx button{width:46px;height:46px;padding:0;margin:0;border:0;background:none;position:relative}#skx .ik{display:block;position:relative;width:46px;height:46px;border-radius:50%;border:2px solid #c9a24a;background:radial-gradient(#3a2e18,#120d06);overflow:hidden;font-size:20px;line-height:42px;box-shadow:0 0 10px #000}#skx .ik .ic{width:100%;height:100%}#skx .ik i{position:absolute;left:0;right:0;top:0;background:#000a;height:0}#fpet{position:absolute;left:12%;bottom:calc(env(safe-area-inset-bottom,0px) + 205px);width:150px;height:120px;pointer-events:none;z-index:5}#fpet .pu{position:absolute}.pcn{position:absolute;left:4px;top:-14px;background:#000a;color:#ffe9a8;border-radius:8px;padding:0 6px;font-size:13px}#fico.elite .eu img,.foe.el img{filter:drop-shadow(0 0 10px #ffd34a) drop-shadow(0 0 4px #ff9a3c)}
+.eu.tg .eu-m{display:block}.eu.dead{pointer-events:none}#skills button.seal,#skx button.seal{opacity:.35;filter:grayscale(1)}#skills button.sealv,#skx button.sealv{opacity:1;filter:none}#skills button.sealv .ik,#skx button.sealv .ik{position:relative}#skills button.sealv .ik>*,#skx button.sealv .ik>*{filter:grayscale(1) brightness(.5)}#skills button.sealv .ik::after,#skx button.sealv .ik::after{content:'';position:absolute;inset:-22%;background:url(assets/fx/fx_boss_pieczec.webp) 0 0/800% 100% no-repeat;animation:au8 .96s steps(8) infinite;pointer-events:none}.eu-c{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:22px;z-index:2}#sktop{position:absolute;left:0;right:0;bottom:100%;margin-bottom:6px;display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none}
+#sktop>*{pointer-events:auto}
+#skx{display:flex;flex-direction:row;gap:10px}#skx:empty{display:none}#skx button{width:38px;height:38px;padding:0;margin:0;border:0;background:none;position:relative}#skx .ik{display:block;position:relative;width:38px;height:38px;border-radius:50%;border:2px solid #c9a24a;background:radial-gradient(#3a2e18,#120d06);overflow:hidden;font-size:20px;line-height:34px;box-shadow:0 0 10px #000}#skx .ik .ic{width:100%;height:100%}#skx .ik i{position:absolute;left:0;right:0;top:0;background:#000a;height:0}#fpet{position:absolute;left:12%;bottom:calc(env(safe-area-inset-bottom,0px) + 205px);width:150px;height:120px;pointer-events:none;z-index:5}#fpet .pu{position:absolute}.pcn{position:absolute;left:4px;top:-14px;background:#000a;color:#ffe9a8;border-radius:8px;padding:0 6px;font-size:13px}#fico.elite .eu img,.foe.el img{filter:drop-shadow(0 0 10px #ffd34a) drop-shadow(0 0 4px #ff9a3c)}
 #gtr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}
 #fe{touch-action:none}#fe img{-webkit-user-drag:none;user-select:none}
 #skills button .gl{position:absolute;top:-4px;right:-2px;font-size:15px;line-height:1;color:#ffd34a;text-shadow:0 0 4px #000,0 0 6px #000;font-weight:bold}
@@ -385,7 +388,7 @@ body.play .orb{display:block}#orbL{left:-12px}#orbR{right:-12px}
 #tdet{position:fixed;left:0;right:0;bottom:0;z-index:12;max-height:48vh;overflow:auto;background:#12141ae8;backdrop-filter:blur(4px);border-top:2px solid #6a5a34;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 10px);border-radius:16px 16px 0 0;font-size:14px}#tdet.mini{padding:8px 14px calc(env(safe-area-inset-bottom,0px) + 8px)}
 .tdh{display:flex;gap:10px;align-items:center}.tdh .tbig{width:48px;height:48px;display:block;flex:none}.tdn{margin:6px 0;line-height:1.35}.tdn.nx{color:#bfe8b0}.gr{color:#6fe08a;font-weight:bold}#tdet .row{margin-top:8px}#tdet .row button{padding:9px}
 .wxi{width:1.35em;height:1.35em;vertical-align:-.3em;margin-left:2px}
-#fbuf{position:absolute;left:0;right:0;bottom:100%;margin-bottom:6px;display:flex;justify-content:center;gap:4px;pointer-events:none}
+#fbuf{display:flex;min-height:0;justify-content:center;gap:4px;pointer-events:none}
 #fbuf img{width:26px;height:26px;filter:drop-shadow(0 1px 2px #000)}
 </style>
 </head>
@@ -1173,7 +1176,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.43';
+const VER='1.44';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -2118,7 +2121,7 @@ function stUi(){if(!F)return;let c=$('fst');if(!c){c=document.createElement('div
  const key=L.map(x=>x[0]).join();if(c.dataset.k!==key){c.dataset.k=key;c.innerHTML=L.map(([k,,e])=>`<div class="fsi" data-k="${k}">${`<img src="assets/skills/s_st_${k}.png" alt="" onerror="this.outerHTML='<span class=fse>${e}</span>'">`}<u><i></i></u></div>`).join('')}
  L.forEach(([k,f])=>{const i=c.querySelector(`.fsi[data-k="${k}"] i`);if(i)i.style.width=Math.round(f*100)+'%'})}
 // ---- aury stanów w walce (paczka 58): bohater max 2, wrogowie: czempion, szał, osłona, odporność ----
-function bufUi(){if(!F)return;const sk=$('skills');if(!sk)return;let c=$('fbuf');if(!c||c.parentNode!==sk){c=document.createElement('div');c.id='fbuf';sk.appendChild(c)}
+function bufUi(){if(!F)return;const sk=$('skills');if(!sk)return;let c=$('fbuf');if(!c)return;
  const n=performance.now(),s=F.sy||new Set(),L=[];if(F.buff>0)L.push('furia');if(F.sh>0)L.push('tarcza');if(F.cr>0)L.push('precyzja');if(EF.some(e=>e.k==='regen'))L.push('regen');
  if(F.kru>n)L.push('krucjata');if(s.has('s_gniew')&&(F.gnw||0)>=6)L.push('gniew');if(F.mgl>n)L.push('mgla');if(F.shd>n)L.push('cien');if(F.zem===1)L.push('zemsta');if(s.has('a_ped')&&(F.pd||0)>=3)L.push('ped');
  const key=L.join();if(c.dataset.k!==key){c.dataset.k=key;c.innerHTML=L.map(k=>`<img src="assets/ui/b_${k}.png" alt="">`).join('')}}
@@ -2141,7 +2144,7 @@ function startFight(i,amb,ov){fxPre();
   $('fe').style.background=`url(assets/world/t_${ov?ov.bg:S.loc?S.loc.k:f.t}.jpg) center/cover,linear-gradient(160deg,${T[f.t].c},${T[f.t].c2})`;
   drawUnits();$('fico').classList.toggle('elite',!!g.elite);
   $('skills').innerHTML=[0,1,2,3].map(j=>{const k=F.sl[j];return k?`<button data-j="${j}"><span class="ik">${icon('',`assets/skills/s_${k.id}.png`,SKI[k.e.t]||'✨')}<i></i></span><em>${k.n} ${k.e.rk||1}</em><small>${k.e.c}${k.e.r==='mana'?'✦':'⚡'}${skNum(k.e)?' · '+skNum(k.e):''}${AOE.has(k.id)?' ◎':''}</small>${gBadge(k.id)}</button>`:`<button data-j="${j}" class="emp"><span class="ik">＋</span><em>Wolny slot</em><small>&nbsp;</small></button>`}).join('');
-  {let x=$('skx');if(!x){x=document.createElement('div');x.id='skx';$('skills').parentNode.appendChild(x);x.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&F)cast(+b.dataset.j)})}x.innerHTML=F.sl.slice(4).map((k,q)=>`<button data-j="${q+4}"><span class="ik">${icon('',`assets/skills/s_${k.id}.png`,SKI[k.e.t]||'✨')}<i></i></span>${gBadge(k.id)}</button>`).join('')}
+  {const os=$('skx');if(os&&!os.closest('#skills'))os.remove();let tp=$('sktop');if(!tp||!tp.closest('#skills')){tp=document.createElement('div');tp.id='sktop';tp.innerHTML='<div id="fbuf"></div><div id="skx"></div>';$('skills').appendChild(tp)}const x=$('skx');x.innerHTML=F.sl.slice(4).map((k,q)=>`<button data-j="${q+4}"><span class="ik">${icon('',`assets/skills/s_${k.id}.png`,SKI[k.e.t]||'✨')}<i></i></span>${gBadge(k.id)}</button>`).join('')}
   $('flog').textContent=amb?`${E[g.key][0]} atakuje!`:'Walka!';
   if(g.boss&&BFX[g.key])BFX[g.key].forEach(fxImg);$('fhero').innerHTML=heroHtml();autoUi();renderPots();$('fight').classList.add('on');F.iv=setInterval(tick,100);upd();fightIntro(g,amb);if(!ov&&g.boss)bsay(g.key,0);
 }
