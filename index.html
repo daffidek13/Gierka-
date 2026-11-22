@@ -1203,7 +1203,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.49';
+const VER='1.50';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie',rcr:'% niższy koszt many/staminy',rrg:'% regeneracji many/staminy'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1237,7 +1237,7 @@ const st=()=>{const p=S.p,b=p.b||{sil:0,zre:0,int:0},r=ZERO();r.sil=b.sil;r.zre=
   if(p.bl&&p.bl.n>0)for(const a in p.bl.s)r[a]+=p.bl.s[a];const w=!S.loc&&WX[wth()];if(w)for(const a in w.s)r[a]+=w.s[a];return r};
 E.boss=['Vorgan','😈'];E.krolowa=['Arachnea','🕷️'];E.licz=['Sethun','☠️'];
 E.herszt=['Bork Grubozęby','👹'];E.wiedzma=['Wiedźma','🧙‍♀️'];E.mumia=['Mumia','🏺'];E.dzin=['Dżin','🧞'];E.wywerna=['Wywerna','🦎'];E.demon=['Demon','😈'];E.upadly=['Upadły rycerz','🗡️'];
-const mh=()=>{const t=st();return Math.round((30+t.wit*10+S.p.lvl*4+t.hp)*(1+t.hpp/100))},mm=()=>{const t=st();return Math.round((20+t.int*5+S.p.lvl*5)*(1+t.manap/100))},sm=()=>{const t=st();return Math.round((30+t.zre*4+S.p.lvl*5)*(1+t.stap/100))};
+const mh=()=>{const t=st();return Math.round((30+t.wit*10+S.p.lvl*4+t.hp)*(1+t.hpp/100))},mm=()=>{const t=st();return Math.round((40+t.int*1.5+S.p.lvl)*(1+t.manap/100))},sm=()=>{const t=st();return Math.round((50+t.zre*1.2+S.p.lvl)*(1+t.stap/100))};
 const atk=()=>{const t=st();return Math.round((3+S.p.lvl*2+t.sil+t.zre*.5)*(1+capPct(t.atkp)/100))},sp=()=>{const t=st();return Math.round((t.int*2+S.p.lvl*2)*(1+capPct(t.spp)/100))};
 const rs=()=>{const t=st(),a=t.def+t.wit*.5+t.sil*.3;return Math.min(75,a/(a+40+S.p.lvl*3)*100)};
 
@@ -1639,7 +1639,7 @@ function showChar(){
     <div class="dmid"><div class="dh"><div class="hv">${heroHtml()}</div></div><div class="drow">${tile(p.eq.pamiatka0,'e:pamiatka0','Pamiątka')}${tile(p.eq.buty,'e:buty',SLN.buty)}${tile(p.eq.pamiatka1,'e:pamiatka1',p.lvl>=40?'Pamiątka':'od 40 poz.')}</div></div>
     <div class="dcol">${['amulet','pierscien0','pierscien1','bron0','bron1'].map(k=>tile(p.eq[k],'e:'+k,SLN[k])).join('')}</div></div>
   <div class="hb dbars">${bar('x',p.xp,xpn(p.lvl),`XP ${p.xp}/${xpn(p.lvl)}`)}${bar('h',p.hp,mh(),`HP ${Math.ceil(p.hp)}/${mh()}`)}${bar('m',p.mana,mm(),`Mana ${Math.round(p.mana)}/${mm()}`)}${bar('s',p.sta,sm(),`Stamina ${Math.round(p.sta)}/${sm()}`)}</div>
-  <div class="sg">${[['Atak',atk()],['Moc zaklęć',sp()],['Odporność',Math.round(rs())+'%'],['Krytyk',Math.round(Math.min(85,t.zre*.5+t.crit))+'%'],['Unik',Math.round(Math.min(35,t.zre+t.dod))+'%'],['Kradzież życia',Math.round(t.ls)+'%'],['Regeneracja w walce',`${mRg().toFixed(1)} many · ${sRg().toFixed(1)} staminy /s`],['Koszt skilli',Math.min(100,Math.round(t.rcr))>=100?'♾️ darmowe':`×${costMul().toFixed(2)}${t.rcr>0?` (−${Math.round(Math.min(100,t.rcr))}%)`:''}`]].map(([a,b])=>`<div class="sc"><small>${a}</small><b>${b}</b></div>`).join('')}</div>
+  <div class="sg">${[['Atak',atk()],['Moc zaklęć',sp()],['Odporność',Math.round(rs())+'%'],['Krytyk',Math.round(Math.min(85,t.zre*.5+t.crit))+'%'],['Unik',Math.round(Math.min(35,t.zre+t.dod))+'%'],['Kradzież życia',Math.round(t.ls)+'%'],['Regeneracja w walce',`${mRg().toFixed(1)} many · ${sRg().toFixed(1)} staminy /s`],['Koszt skilli',Math.min(100,Math.round(t.rcr))>=100?'♾️ darmowe':(t.rcr>0?`−${Math.round(Math.min(100,t.rcr))}%`:'pełny')]].map(([a,b])=>`<div class="sc"><small>${a}</small><b>${b}</b></div>`).join('')}</div>
   ${p.scrolls?`<button class="wide" data-a="scroll">${ui('odprysk','💎')} Użyj Odprysku Osi (${p.scrolls}): teleport do miasta</button>`:''}`;
   else if(CTAB==='bag')h=`<div class="fch bgt"><span>${p.bag.length}/${BCAP()}</span><button data-a="sm" class="${MSEL?'on':''}">${MSEL?ui('ok','✔')+' Gotowe':ui('zaznacz','☑')+' Zaznacz'}</button><button data-a="cmpt">${ui('porownaj','⚖')} ${CMPON()?'wł.':'wył.'}</button><button data-a="sort">${ui('sort','⇅')} ${['rzadkość','typ','poziom'][S.sm||0]}</button></div>${bfHtml(p.bag)}<div class="bg">${BF.t||BF.s?(p.bag.filter(bfOk).map(i=>tile(i,'b:'+i.id)).join('')||'<p><small>Brak pasujących przedmiotów</small></p>'):Array.from({length:BCAP()},(_,i)=>p.bag[i]?tile(p.bag[i],'b:'+p.bag[i].id):'<div class="em"></div>').join('')}</div>`;
   else if(CTAB==='st')h=`<h3>Wolne punkty: ${p.pw}</h3>${[['wit','Witalność','zdrowie i odporność'],['sil','Siła','atak fizyczny, pancerz'],['zre','Zręczność','krytyk, unik, stamina, trochę ataku'],['int','Inteligencja','moc zaklęć i mana']].map(([k,n,d])=>`<div class="at"><div><b>${n} ${Math.round(t[k])}</b><br><small>${d}</small></div>${p.pw?`<button class="plus" data-a="at${k}">+</button>`:''}</div>`).join('')}
@@ -2741,8 +2741,8 @@ const mxOf=id=>{const n=TN[id];if(id==='o')return 1;if(n.t==='p'){const x=n.x;re
 const ulOf=id=>{const d=dep(id);return d<=1?1:(d-1)*RK.ulStep};
 const rqLv=(id,r)=>(r-1)*RK.rlv+ulOf(id);
 const rk=id=>(S.p&&S.p.rk&&S.p.rk[id])||0;
-const costMul=()=>{const L=(S.p&&S.p.lvl)||1,t=st();return (1+(L-1)*.05)*Math.max(0,1-Math.min(100,t.rcr||0)/100)};
-const mRg=()=>{const t=st();return (1.5+mm()*.008)*(1+(t.rrg||0)/100)},sRg=()=>{const t=st();return (3+sm()*.012)*(1+(t.rrg||0)/100)};
+const costMul=()=>{const t=st();return Math.max(0,1-Math.min(100,t.rcr||0)/100)};
+const mRg=()=>{const t=st();return (1+mm()*.01)*(1+(t.rrg||0)/100)},sRg=()=>{const t=st();return (2+sm()*.012)*(1+(t.rrg||0)/100)};
 function skE(id,r){const n=TN[id],e=n.e;r=r||rk(id)||1;if(n.t!=='a')return e;const k=r-1,o={...e,rk:r},mb=1+RK.dm*k;
   if(e.m!=null)o.m=e.t==='b'?+(1+(e.m-1)*mb).toFixed(2):e.t==='w'?Math.min(.85,+(e.m*mb).toFixed(2)):+(e.m*mb).toFixed(2);
   o.c=Math.round(Math.max(Math.round(e.c*RK.minc),Math.round(e.c*(1-RK.dc*k)))*costMul());o.cd=+(e.cd*Math.pow(1-RK.dcd,Math.floor(k/3))).toFixed(1);
