@@ -704,9 +704,9 @@ function orbLoop(ts){requestAnimationFrame(orbLoop);if(!document.body.classList.
         q.b=q.b.filter(b=>{b.y-=b.s*dt*H*.004;b.x+=Math.sin(b.y*.08)*.25;if(b.y<top+4)return false;g.beginPath();g.arc(b.x,b.y,b.r,0,7);g.fillStyle='rgba(255,255,255,.3)';g.fill();return true})}
       g.restore()})});}
 requestAnimationFrame(orbLoop);
-function hudUi(){const p=S.p;if(!p||!$('hud'))return;orbUi();const pc=(a,b)=>Math.max(0,Math.min(100,a/b*100)).toFixed(1),xn=xpn(p.lvl);
+function hudUi(){const p=S.p;if(!p||!$('hud'))return;orbUi();const pc=(a,b)=>Math.max(0,Math.min(100,a/b*100)).toFixed(1),xn=xpNeed(p);
   $('hud').innerHTML=`<div class="r"><div class="b hp"><u style="width:${pc(p.hp,mh())}%"></u><span>❤ ${Math.ceil(p.hp)}/${mh()}</span></div><div class="b mp"><u style="width:${pc(p.mana,mm())}%"></u><span>✦ ${Math.floor(p.mana)}/${mm()}</span></div><div class="b sp"><u style="width:${pc(p.sta,sm())}%"></u><span>⚡ ${Math.floor(p.sta)}/${sm()}</span></div></div>
-  <div class="r"><div class="b xp"><u style="width:${pc(p.xp,xn)}%"></u><span>Poz. ${p.lvl} · ${p.xp}/${xn} XP</span></div><div class="g">Poz. ${p.lvl} · ${ui('zloto','🪙')} ${p.gold}</div></div>`}
+  <div class="r"><div class="b xp"><u style="width:${pc(p.xp,xn)}%"></u><span>Poz. ${p.lvl}${p.lvl>=100?' · P'+(p.mx||0):''} · ${p.xp}/${xn} XP</span></div><div class="g">Poz. ${p.lvl}${p.lvl>=100?' · P'+(p.mx||0):''} · ${ui('zloto','🪙')} ${p.gold}</div></div>`}
 setInterval(()=>{if(!F&&S.p)hudUi()},800);
 function heroAnim(k,dx){if(!AN())return;const h=document.querySelector((F?'#fhero':'#hero')+' .hw');if(!h)return;
   if(k==='walk')h.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${(dx||0)*5}px,-9px) rotate(${(dx||0)*4}deg)`,offset:.35},{transform:'translate(0,0) rotate(0)'},{transform:'translate(0,-4px)',offset:.7},{transform:'none'}],{duration:340,easing:'ease-out'});
@@ -869,7 +869,7 @@ function svRender(id,head,body,key){const el=$(id),old=el.querySelector('.svb'),
   el.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.6||Date.now()-t0>700)return;if(e.target.closest('#gdlg'))return;
    const bs=[...el.querySelectorAll('.svt button')],i=bs.findIndex(b=>b.classList.contains('on')),j=i+(dx<0?1:-1);if(i<0||j<0||j>=bs.length)return;SVSC[id]=dx<0?1:-1;bs[j].click()},{passive:true})}
  el.classList.add('on')}
-const TABI={'Obrażenia':'reakcje','Świat':'mapa','Osiągnięcia':'wyzwanie','Rekordy':'bieglosc','Bestie':'ksiega','Ulepsz':'tab_ulepsz','Rozłóż':'tab_rozloz','Przetop':'tab_przetop','Komplety':'tab_komplety','Kup':'tab_kup','Sprzedaj':'tab_sprzedaj','Szybko':'tab_szybko','Odkup':'tab_odkup','Postać':'tab_postac','Plecak':'tab_plecak','Atrybuty':'tab_atrybuty','Zapasy':'tab_zapasy','Gniazda':'tab_klejnoty','Łączenie':'tab_klejnoty','Zaklnij':'tab_zaklnij'};
+const TABI={'Paragon':'bieglosc','Obrażenia':'reakcje','Świat':'mapa','Osiągnięcia':'wyzwanie','Rekordy':'bieglosc','Bestie':'ksiega','Ulepsz':'tab_ulepsz','Rozłóż':'tab_rozloz','Przetop':'tab_przetop','Komplety':'tab_komplety','Kup':'tab_kup','Sprzedaj':'tab_sprzedaj','Szybko':'tab_szybko','Odkup':'tab_odkup','Postać':'tab_postac','Plecak':'tab_plecak','Atrybuty':'tab_atrybuty','Zapasy':'tab_zapasy','Gniazda':'tab_klejnoty','Łączenie':'tab_klejnoty','Zaklnij':'tab_zaklnij'};
 function svTabs(tabs,cur,pre){return `<div class="svt">${tabs.map(([k,i,n,bd])=>`<button class="${cur===k?'on':''}" data-a="${pre}${k}"><i>${TABI[n]?ui(TABI[n],i):i}</i>${n}${bd?`<b>${bd}</b>`:''}</button>`).join('')}</div>`}
 // przycisk akcji: stan ok (stać cię) / risk (ryzyko) / no (brakuje – z powodem)
 function actB(a,title,sub,state,why){return `<button class="act ${state||'ok'}" data-a="${a}"${state==='no'?' disabled':''}><b>${title}</b>${sub?`<small>${sub}</small>`:''}${why?`<em>${why}</em>`:''}</button>`}
@@ -1204,7 +1204,7 @@ const actOf=m=>ACT[Math.min(m==null?(S.map||0):m,ACT.length-1)];
 const Dref=e=>12+ELX.dk*Math.pow(e,2.15),HPREF=l=>40+9.7*Math.pow(l,1.4),capPct=x=>x<=100?x:100+(x-100)*.5;
 const elAt=(x,y,m)=>{const a=actOf(m);return Math.max(1,Math.round(a.elLo+(a.elHi-a.elLo)*Math.min(1,Math.hypot(x,y)/ELX.zone)))};
 const goldFight=(el,n,m)=>(3+.8*el)*Math.pow(n,.8)*actOf(m).gold;
-const VER='1.53';
+const VER='1.54';
 const SK=[{n:'Cios',res:'sta',cost:15,cd:4,dm:3},{n:'Kula ognia',res:'mana',cost:20,cd:6,dm:5},{n:'Leczenie',res:'mana',cost:25,cd:10,heal:35}];
 const CL={uczony:[3,4,10,3,'Uczony','Dużo many i inteligencji, mocna magia, mało HP.'],silacz:[10,4,3,8,'Siłacz','Dużo HP i siły, mocne ciosy, mało many.'],atleta:[5,9,4,5,'Atleta','Dużo staminy i zręczności, uniki, średnie HP.'],łowca:[4,10,3,5,'Łowca','Strzały, trucizny i zwierzęcy towarzysze. Dużo staminy i zręczności.','atleta'],nekromanta:[2,3,10,5,'Nekromanta','Przywołuje sługi, rzuca klątwy i wysysa życie wrogów.','uczony'],paladyn:[8,3,4,9,'Paladyn','Pancerz, leczenie i wytrzymałość. Najtwardsza klasa.','silacz']};
 const LB={sil:'Sił',zre:'Zręcz',int:'Int',wit:'Wit',hp:'HP',def:'Pancerz',ls:'% kradzieży życia',crit:'% krytyka',dod:'% uniku',atkp:'% ataku',spp:'% mocy zaklęć',hpp:'% HP',manap:'% many',stap:'% staminy',cdr:'% szybsze odnowienie',rcr:'% niższy koszt many/staminy',rrg:'% regeneracji many/staminy',cdf:'% niższego minimum odnowienia'},RN=['Zwykły','Magiczny','Rzadki','Legendarny'],RC=['#cfcfcf','#6aa8ff','#f0d04a','#ff9a3c'];
@@ -1227,7 +1227,7 @@ const enWrap=(it,h)=>{if(!it||!it.en||!ENV[it.en.k])return h;const c=ENV[it.en.k
 const enTxt=it=>it.en&&ENS[it.en.k]?`<div style="color:#b98cff">✧ ${ENS[it.en.k][0]} ${it.en.l}/5: +${enV(it)} ${LB[ENS[it.en.k][1]]}</div>`:'';
 const ARS=['helm','klata','spodnie','buty','rekawice','naramienniki'],acN=ac=>{const e=S.p.eq||{};return ARS.filter(k=>e[k]&&e[k].d>0&&(e[k].ac||'plyta')===ac).length},wkAll=()=>['bron0','bron1'].map(k=>(S.p.eq||{})[k]).filter(w=>w&&w.d>0).map(wkey),wkNow=()=>{const w=(S.p.eq||{}).bron0;return w&&w.d>0?wkey(w):''};
 const BQ={atkp:['⚔️','Siła ciosów',1,'% ataku'],spp:['🔮','Moc magii',1,'% mocy zaklęć'],hpp:['❤️','Wytrzymałość',1,'% zdrowia'],crit:['🎯','Precyzja',.3,'% szansy na krytyk'],dod:['💨','Refleks',.3,'% szansy na unik'],manap:['💧','Głębia many',1,'% many'],rcr:['♾️','Oszczędność',1,'% niższego kosztu many i staminy'],cdf:['⏱️','Rytm',1,'% niższego minimum odnowienia']},BQMX=30;
-const st=()=>{const p=S.p,b=p.b||{sil:0,zre:0,int:0},r=ZERO();r.sil=b.sil;r.zre=b.zre;r.int=b.int;r.wit=p.wit||0;if(p.bq)for(const k in p.bq)if(BQ[k])r[k]=(r[k]||0)+p.bq[k]*BQ[k][2];
+const st=()=>{const p=S.p,b=p.b||{sil:0,zre:0,int:0},r=ZERO();r.sil=b.sil;r.zre=b.zre;r.int=b.int;r.wit=p.wit||0;if(p.pg)for(const k in p.pg)if(PGN[k])r[k]=(r[k]||0)+p.pg[k]*PGN[k][3];if(p.bq)for(const k in p.bq)if(BQ[k])r[k]=(r[k]||0)+p.bq[k]*BQ[k][2];
   for(const k in p.eq||{}){const it=p.eq[k];if(it&&it.d>0){const mu=1+.12*(it.up||0);for(const a in it.s)r[a]+=it.s[a]*mu;(it.so||[]).forEach(g=>{const[b,t]=gP(g),src=GEM[b][2][enG(it)];for(const a in src)r[a]+=src[a]*GTM[t-1]});if(it.en&&ENS[it.en.k])r[ENS[it.en.k][1]]+=enV(it)}}
   const sc=setCnt();for(const id in sc)for(const th in SETS[id].b)if(sc[id]>=+th)for(const a in SETS[id].b[th])r[a]+=SETS[id].b[th][a];
   (p.tr||[]).forEach(id=>{const n=TN[id];if(n&&n.t==='p')for(const a in n.e)r[a]+=n.e[a]*(rk(id)||1);const x=n&&n.x;if(!x)return;if(x.ar){const c=acN(x.ar[0]);for(const a in x.ar[1])r[a]+=x.ar[1][a]*c}if(x.wp&&x.wp[0].split(',').some(t=>wkAll().includes(t)))for(const a in x.wp[1])r[a]+=x.wp[1][a]});
@@ -1244,9 +1244,20 @@ const rs=()=>{const t=st(),a=t.def+t.wit*.5+t.sil*.3;return Math.min(75,a/(a+40+
 
 // ---------- Etap 3: mistrzostwo i Szczeliny ----------
 const MPD={m1:{n:'Żelazna krew',d:'+2% HP',s:{hpp:2}},m2:{n:'Moc bojowa',d:'+2% ataku',s:{atkp:2}},m3:{n:'Moc magii',d:'+2% mocy zaklęć',s:{spp:2}},m4:{n:'Czujne oko',d:'+1% krytyka',s:{crit:1}},m5:{n:'Uskok',d:'+1% uniku',s:{dod:1}},m6:{n:'Krwiożerca',d:'+0,5% kradzieży życia',s:{ls:.5}},m7:{n:'Pośpiech',d:'+1% szybszego odnowienia',s:{cdr:1}},m8:{n:'Pancerz mistrza',d:'+4 pancerza',s:{def:4}},m9:{n:'Dobrobyt',d:'+3% złota'},m10:{n:'Wiedza',d:'+3% zdobywanego XP'},m11:{n:'Wieczne źródło',d:'+4% regeneracji many i staminy',s:{rrg:4}},m12:{n:'Płynność',d:'+2% niższego minimum odnowienia',s:{cdf:2}}};
+const PGC={r:['Rdzeń','bez limitu'],a:['Atak','do 50 pkt na cechę'],o:['Obrona','do 50 pkt na cechę'],z:['Zasoby','do 50 pkt na cechę']};
+const PGN={sil:['r','Siła','💪',5,''],zre:['r','Zręczność','🌀',5,''],int:['r','Inteligencja','🧠',5,''],wit:['r','Witalność','❤️',5,''],
+ atkp:['a','Siła ciosów','⚔️',1,'% ataku'],spp:['a','Moc zaklęć','🔮',1,'% mocy zaklęć'],crit:['a','Precyzja','🎯',.2,'% krytyka'],cdr:['a','Pośpiech','⏩',.3,'% szybsze odnowienie'],
+ hpp:['o','Zdrowie','💖',1,'% HP'],def:['o','Pancerz','🛡️',3,' pancerza'],dod:['o','Uskok','💨',.2,'% uniku'],ls:['o','Kradzież życia','🩸',.1,'% kradzieży życia'],
+ manap:['z','Głębia many','💧',1,'% many'],stap:['z','Głębia staminy','🔋',1,'% staminy'],rrg:['z','Regeneracja','♻️',2,'% regeneracji'],rcr:['z','Oszczędność','♾️',.4,'% niższego kosztu']};
+const pgMax=k=>PGN[k][0]==='r'?1e9:50;
+function pgAdd(k,n){const p=S.p;p.pg=p.pg||{};n=Math.min(n,p.pgp||0,pgMax(k)-(p.pg[k]||0));if(n<=0)return;p.pg[k]=(p.pg[k]||0)+n;p.pgp-=n}
 const mpv=k=>((S.p&&S.p.mps)||{})[k==='gold'?'m9':'m10']*.03||0;
-function mpHtml(){const p=S.p;if(p.lvl<100)return '';const m=p.mx||0;
-  return `<h3>Mistrzostwo · poziom ${m}</h3><p><small>Po 100. poziomie każdy kolejny daje już tylko punkt atrybutu (także witalności). Co 10 takich poziomów wybierasz drobny pasyw (do 10 rang każdy). Postęp: ${m%10}/10 · wolne wybory: ${p.pp||0}</small></p>`+Object.keys(MPD).map(id=>{const d=MPD[id],r=(p.mps||{})[id]||0;return `<div class="at"><div><b>${d.n} ${r}/10</b><br><small>${d.d} na rangę</small></div>${p.pp>0&&r<10?`<button class="plus" data-a="mp:${id}">+</button>`:''}</div>`}).join('')}
+function mpHtml(){const p=S.p;if(p.lvl<100)return '';const m=p.mx||0,pg=p.pg||{},fr=p.pgp||0;
+  let h=`<h3 style="color:#ffd34a">Paragon · poziom ${m}</h3><p><small>Po 100. poziomie postać rośnie dalej bez końca. Każdy poziom paragonu daje punkt do rozdania poniżej. Rdzeń nie ma limitu, pozostałe cechy do 50 punktów. Co 10 poziomów dodatkowo wybierasz pasyw mistrzostwa.</small></p><p><b>Wolne punkty paragonu: ${fr}</b></p>`;
+  for(const c in PGC){h+=`<h3>${PGC[c][0]} <small style="opacity:.7">· ${PGC[c][1]}</small></h3>`;Object.keys(PGN).filter(k=>PGN[k][0]===c).forEach(k=>{const d=PGN[k],r=pg[k]||0,mx=pgMax(k),ok=fr>0&&r<mx;h+=`<div class="at"><div><b>${d[2]} ${d[1]} ${c==='r'?r:r+'/'+mx}</b><br><small>teraz +${+(r*d[3]).toFixed(1)}${d[4]||' '+d[1].toLowerCase()} · za punkt +${d[3]}${d[4]||''}</small></div><div style="display:flex;gap:4px">${ok?`<button class="plus" data-a="pg:${k}:1">+</button>`:''}${ok&&fr>=10?`<button class="plus" data-a="pg:${k}:10">+10</button>`:''}</div></div>`})}
+  h+=`<h3>Mistrzostwo · co 10 poziomów</h3><p><small>Postęp: ${m%10}/10 · wolne wybory: ${p.pp||0}</small></p>`+Object.keys(MPD).map(id=>{const d=MPD[id],r=(p.mps||{})[id]||0;return `<div class="at"><div><b>${d.n} ${r}/10</b><br><small>${d.d} na rangę</small></div>${p.pp>0&&r<10?`<button class="plus" data-a="mp:${id}">+</button>`:''}</div>`}).join('');
+  if(fr>0)h+=`<p><button class="it" data-a="pgr">Reset paragonu (darmowy, zwraca wszystkie punkty)</button></p>`;else if(Object.keys(pg).length)h+=`<p><button class="it" data-a="pgr">Reset paragonu (darmowy)</button></p>`;
+  return h}
 function mpPick(id){const p=S.p;if(!(p.pp>0)||!MPD[id])return;p.mps=p.mps||{};if((p.mps[id]||0)>=10)return;p.pp--;p.mps[id]=(p.mps[id]||0)+1;toast(`${MPD[id].n} ${p.mps[id]}/10`);save()}
 let RFT=null,RFSEL=0,RFNM=false,INVW=0;
 const RFB=['herszt','krolowa','licz','smok','boss'],RFA=['ork','pajak','mumia','wywerna','demon'],RFW=['demon','upadly','troll','wywerna','mumia','dzin','skorpion'];
@@ -1322,9 +1333,9 @@ const npcSay=k=>{const d=NPCL[k];if(d)toast(`${d.n}: „${d.l[Math.floor(Math.ra
 const QK=[['{osada}: pastuch liczy owce i za każdym razem wychodzi mu mniej.'],['Kupcy nie chcą jeździć tym traktem, a karczma nie ma czym handlować.'],['Sołtyska potrzebuje dowodu, że da się ich pokonać. Najlepiej {n} dowodów.'],['Lirena potrzebuje ich… części. Nie pytaj do czego.'],['Zbyszko twierdzi, że ich skóra lepiej trzyma nity niż ta od kupca.'],['{osada}: dzieci boją się wychodzić z domu. Rodzice zresztą też.']];
 const QR=['Zwiadowca nie wrócił. Sprawdź, jak daleko doszedł i co zobaczył.','Marian chce wiedzieć, czy na końcu drogi jest jakaś konkurencyjna karczma.','Kryształ Osi drga w tamtą stronę. Ktoś musi zobaczyć dlaczego.','Mapy znów się przetasowały, a kartograf potrzebuje świeżych notatek.'];
 // Poziomy: max 100. Po maksie każde kolejne 'xpn' XP daje 1 punkt atrybutu (bez końca).
-const xpn=l=>Math.round(100*l*(1+l*.08));
+const xpn=l=>Math.round(100*l*(1+l*.08));const xpNeed=p=>p.lvl<100?xpn(p.lvl):Math.round(xpn(100)*(1+(p.mx||0)*.02));
 const XPEN=g=>g>0?[1,.82,.64,.46,.28,.1][Math.min(5,g)]:1; // kara XP za przewagę nad górną granicą poziomów aktu
-function gainXp(x){const p=S.p;x=Math.round(x*((S.test&&S.test.tx)||1)*(1+mpv('xp')));p.xp+=x;let up=false;while(p.xp>=xpn(p.lvl)){p.xp-=xpn(p.lvl);if(p.lvl<100){p.lvl++;p.ps+=2+(p.lvl%10===0?1:0)}else{p.mx=(p.mx||0)+1;if(p.mx%10===0)p.pp=(p.pp||0)+1}p.pw++;up=true}return up}
+function gainXp(x){const p=S.p;x=Math.round(x*((S.test&&S.test.tx)||1)*(1+mpv('xp')));p.xp+=x;let up=false;while(p.xp>=xpNeed(p)){p.xp-=xpNeed(p);if(p.lvl<100){p.lvl++;p.ps+=2+(p.lvl%10===0?1:0);p.pw++}else{p.mx=(p.mx||0)+1;p.pgp=(p.pgp||0)+1;if(p.mx%10===0)p.pp=(p.pp||0)+1}up=true}return up}
 const RESP=100; // po tylu krokach pole odnawia wrogów
 const isDead=(f,i)=>{const k=f.x+','+f.y;if(S.dt&&S.dt[k]!==undefined&&S.steps-S.dt[k]>RESP){delete S.dead[k];delete S.dt[k]}return(S.dead[k]||[]).includes(i)};
 const fmt=it=>`<span style="color:${RC[it.r]}">${it.n}${it.up?' +'+it.up:''}</span> ${Object.entries(it.s).map(([k,v])=>'+'+v+' '+LB[k]).join(', ')} · ${it.d}/${it.md}${it.d<=0?' (zepsuty)':''}${it.fx?' ✦'+FXD[it.fx][0]:''}${it.en&&ENS[it.en.k]?' ✧'+ENS[it.en.k][0]:''}`;
@@ -1632,19 +1643,20 @@ function showChar(){
     ${SEL[0]==='b'&&CMPON()?cmpHtml(it):''}<div class="row"><button data-a="do">${SEL[0]==='e'?'Zdejmij':'Załóż'}</button>${SEL[0]==='b'?`<button data-a="drop">Wyrzuć</button>`:''}<button data-a="sc">Zamknij</button></div></div>`}
   const order=['amulet','helm','naramienniki','bron0','klata','bron1','pierscien0','spodnie','pierscien1','rekawice','buty','pamiatka0',null,'pamiatka1',null];
   const ord=['amulet','helm','naramienniki','bron0','klata','bron1','pierscien0','spodnie','pierscien1','rekawice','buty','pamiatka0',null,'pamiatka1',null];
-  const tabs=[['eq','🛡️','Postać'],['bag','🎒','Plecak',p.bag.length>=BCAP()?'!':''],['st','📊','Atrybuty',p.pw||''],['zap','🧪','Zapasy']];if(setsHtml())tabs.push(['set','★','Komplety']);
+  const tabs=[['eq','🛡️','Postać'],['bag','🎒','Plecak',p.bag.length>=BCAP()?'!':''],['st','📊','Atrybuty',p.pw||''],['zap','🧪','Zapasy']];if(setsHtml())tabs.push(['set','★','Komplety']);if(p.lvl>=100)tabs.push(['pg','✦','Paragon',(p.pgp||0)+(p.pp||0)||'']);
   if(!tabs.some(x=>x[0]===CTAB))CTAB='eq';
   const hd=`<div class="svh chh"><div class="svn"><b>${CL[p.cls][4]}</b><small>poziom ${p.lvl} · ${ui('zloto','🪙')} ${p.gold}</small></div><button class="chb2" data-a="tree">🌳${p.ps?`<b>${p.ps}</b>`:''}</button><button class="chb2" data-a="bar">⚡</button><button class="svx" id="cx">✕</button></div>`+svTabs(tabs,CTAB,'ct:');
   let h='';
   if(CTAB==='eq')h=`<div class="doll"><div class="dcol">${['helm','naramienniki','klata','rekawice','spodnie'].map(k=>tile(p.eq[k],'e:'+k,SLN[k])).join('')}</div>
     <div class="dmid"><div class="dh"><div class="hv">${heroHtml()}</div></div><div class="drow">${tile(p.eq.pamiatka0,'e:pamiatka0','Pamiątka')}${tile(p.eq.buty,'e:buty',SLN.buty)}${tile(p.eq.pamiatka1,'e:pamiatka1',p.lvl>=40?'Pamiątka':'od 40 poz.')}</div></div>
     <div class="dcol">${['amulet','pierscien0','pierscien1','bron0','bron1'].map(k=>tile(p.eq[k],'e:'+k,SLN[k])).join('')}</div></div>
-  <div class="hb dbars">${bar('x',p.xp,xpn(p.lvl),`XP ${p.xp}/${xpn(p.lvl)}`)}${bar('h',p.hp,mh(),`HP ${Math.ceil(p.hp)}/${mh()}`)}${bar('m',p.mana,mm(),`Mana ${Math.round(p.mana)}/${mm()}`)}${bar('s',p.sta,sm(),`Stamina ${Math.round(p.sta)}/${sm()}`)}</div>
+  <div class="hb dbars">${bar('x',p.xp,xpNeed(p),`XP ${p.xp}/${xpNeed(p)}`)}${bar('h',p.hp,mh(),`HP ${Math.ceil(p.hp)}/${mh()}`)}${bar('m',p.mana,mm(),`Mana ${Math.round(p.mana)}/${mm()}`)}${bar('s',p.sta,sm(),`Stamina ${Math.round(p.sta)}/${sm()}`)}</div>
   <div class="sg">${[['Atak',atk()],['Moc zaklęć',sp()],['Odporność',Math.round(rs())+'%'],['Krytyk',Math.round(Math.min(85,t.zre*.5+t.crit))+'%'],['Unik',Math.round(Math.min(35,t.zre+t.dod))+'%'],['Kradzież życia',Math.round(t.ls)+'%'],['Regeneracja w walce',`${mRg().toFixed(1)} many · ${sRg().toFixed(1)} staminy /s`],['Minimum odnowienia',CDV()?`lekkie ${Math.round(60*(1-Math.min(100,t.cdf)/100))}% · ciężkie ${Math.round(Math.max(40,60-20*Math.min(100,t.cdf)/100))}%`:'wyłączone'],['Koszt skilli',Math.min(100,Math.round(t.rcr))>=100?'♾️ darmowe':(t.rcr>0?`−${Math.round(Math.min(100,t.rcr))}%`:'pełny')]].map(([a,b])=>`<div class="sc"><small>${a}</small><b>${b}</b></div>`).join('')}</div>
   ${p.scrolls?`<button class="wide" data-a="scroll">${ui('odprysk','💎')} Użyj Odprysku Osi (${p.scrolls}): teleport do miasta</button>`:''}`;
   else if(CTAB==='bag')h=`<div class="fch bgt"><span>${p.bag.length}/${BCAP()}</span><button data-a="sm" class="${MSEL?'on':''}">${MSEL?ui('ok','✔')+' Gotowe':ui('zaznacz','☑')+' Zaznacz'}</button><button data-a="cmpt">${ui('porownaj','⚖')} ${CMPON()?'wł.':'wył.'}</button><button data-a="sort">${ui('sort','⇅')} ${['rzadkość','typ','poziom'][S.sm||0]}</button></div>${bfHtml(p.bag)}<div class="bg">${BF.t||BF.s?(p.bag.filter(bfOk).map(i=>tile(i,'b:'+i.id)).join('')||'<p><small>Brak pasujących przedmiotów</small></p>'):Array.from({length:BCAP()},(_,i)=>p.bag[i]?tile(p.bag[i],'b:'+p.bag[i].id):'<div class="em"></div>').join('')}</div>`;
   else if(CTAB==='st')h=`<h3>Wolne punkty: ${p.pw}</h3>${[['wit','Witalność','zdrowie i odporność'],['sil','Siła','atak fizyczny, pancerz'],['zre','Zręczność','krytyk, unik, stamina, trochę ataku'],['int','Inteligencja','moc zaklęć i mana']].map(([k,n,d])=>`<div class="at"><div><b>${n} ${Math.round(t[k])}</b><br><small>${d}</small></div>${p.pw?`<button class="plus" data-a="at${k}">+</button>`:''}</div>`).join('')}
-  <p class="hint">Siłę ataku, krytyk i unik widzisz w zakładce Postać.</p>${mpHtml()}`;
+  <p class="hint">Siłę ataku, krytyk i unik widzisz w zakładce Postać.</p>`;
+  else if(CTAB==='pg')h=mpHtml();
   else if(CTAB==='zap')h=`<h3>Surowce</h3><div class="chips">${chipsHtml()}</div><p class="hint">Dotknij surowca, żeby zobaczyć, do czego służy.</p>
   ${p.scrolls?`<button class="wide" data-a="scroll">${ui('odprysk','💎')} Użyj Odprysku Osi (${p.scrolls}): teleport do miasta</button>`:''}
   <h3>Mikstury</h3>${Object.keys(POT).map(k=>{const n=(p.pot||{})[k]||0;return `<div class="at"><div><b>${pI(k)} ${POT[k][0]} ×${n}</b><br><small>${POT[k][3]}</small></div>${n&&['hp','mana','sta','regen'].includes(k)?`<button data-a="pu:${k}">Użyj</button>`:''}</div>`}).join('')}
@@ -1661,6 +1673,8 @@ $('chr').onclick=e=>{const ci=e.target.closest('[data-info]');if(ci){toast(ci.da
   if(b.id==='cx'){SEL=null;MSEL=null;$('chr').classList.remove('on');render();if(S.loot)showLoot();return}
   if(a&&a.startsWith('ct:')){CTAB=a.slice(3);SEL=null;MSEL=null;showChar();return}
   if(a&&a.startsWith('mp:')){mpPick(a.slice(3))}
+  else if(a&&a.startsWith('pg:')){const q=a.split(':');pgAdd(q[1],+q[2]||1)}
+  else if(a==='pgr'){const n=Object.values(p.pg||{}).reduce((x,y)=>x+y,0);p.pgp=(p.pgp||0)+n;p.pg={}}
   else if(a&&a.startsWith('at')&&p.pw){p.pw--;const k=a.slice(2);if(k==='wit')p.wit++;else p.b[k]++}
   else if(a&&a.startsWith('bf:')){bfClick(a)}
   else if(a==='cmpt'){const o=S.opt=S.opt||{snd:1,vib:1};o.cmp=CMPON()?0:1}
@@ -2857,6 +2871,7 @@ $('tree').onclick=e=>{const b=e.target.closest('button');if(!b)return;const p=S.
 if(!S.shA){S.shA={};(S.portals||[]).forEach(m=>{if(m>0)S.shA[m-1]=1});S.shards=Math.min(5,Object.keys(S.shA).length)}
 S.chs=S.chs||{};S.ground=S.ground||{};S.evs=S.evs||{};S.cnt=S.cnt||{};S.rec=S.rec||{};S.best=S.best||{};S.ach=S.ach||{};if(S.loc&&!S.loc.id)S.loc=null;
 if(S.p.cls&&!S.p.tr)initTree(S.p);else if(S.p.cls&&S.p.tr)migTree(S.p);
+if(S.p.lvl>=100&&S.p.pgv!==1){S.p.pgv=1;S.p.pgp=(S.p.pgp||0)+(S.p.mx||0)}
 if(S.p.cls&&S.p.trc!==1){S.p.trc=1;if(Object.keys(S.p.rk||{}).some(id=>S.p.rk[id]>0&&TN[id]&&!brOk(id))){initTree(S.p);setTimeout(()=>toast('Klasy mają teraz własne gałęzie umiejętności. Drzewko zresetowane za darmo – rozdaj punkty od nowa.',7000),2500)}}
 {const P=S.p;if(P.lox&&P.lo&&P.lox.length>P.lo.length&&P.lo.every(id=>P.lox.includes(id)))P.lo=P.lox.filter(id=>(P.tr||[]).includes(id)&&TN[id]);if(P.lo&&P.lo.length>LOM())P.lo.length=LOM()}
 render();
